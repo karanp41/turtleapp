@@ -1,0 +1,24 @@
+<div id="nestInfoPage" data-role="page">
+			<div data-role="header"  data-position="fixed" >		
+				<h3>NestInfo</h3>
+				<button href="#" onClick="editNest($('#nestid').text());" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">EDIT</button>
+		</div><!-- /header -->
+		<div role="main" class="ui-content">
+		<div id="nestInfo"  class="nestInfo">
+		Loading info about nest....
+		
+		</div>
+		<a data-role="button" onclick="showTemp();" id="showTempLog" disabled="disabled">Show  temperature graph</a>
+		<table cellpadding="0" cellspacing="0" border="0" class="display" id="predation" width="100%">
+		<thead>
+        	<tr>
+
+		</tr>
+		</thead>
+		</table>
+
+		</div><!-- /content -->
+		<div data-role="footer" data-position="fixed">
+
+			</div><!-- /footer -->
+		</div><!-- /page -->

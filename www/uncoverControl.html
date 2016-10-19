@@ -1,0 +1,131 @@
+<div id="uncoverPage" data-role="page">
+			<div data-role="header"  data-position="fixed" >		
+				<h3>Uncover for Control</h3>
+				<a href="#" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Login</a>
+		</div><!-- /header -->
+		<div role="main" class="ui-content">
+			<p id="message" class="message"></p>
+		<form id="UncoverData">
+		<div>
+			<label for="RFID">NEST tag</label>
+			<input type="text" name="RFID" id="rfid" ></input>
+			<input type="button" onClick="scanOnce()" value="Read TAG"></input>
+		</div>
+		<div>
+			<label for="nestID">NEST ID</label>
+			<input type="text" disabled="disabled" name="nestID" id="nestID" placeholder=""></input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="controlDate">Control date:</label>
+			<input type="text" data-role="date" data-inline="true" name="controlDate" id="controlDist" ></input>
+		</div>
+			<div class="ui-field-contain">
+			<label for="locationUncover">Nest location:</label>
+				<p id="locationUncover" name="locationUncover" class="message"></p>
+			</div>
+			<div class="ui-field-contain">
+				<label for="drySand">Height dry sand (cm):</label> <input
+					name="drySand" type="number" id="drySand"></input>
+			</div>
+			<div class="ui-field-contain">
+				<label for="wetSand">Height wet sand (cm):</label> <input
+					type="number" name="wetSand" id="wetSand"></input>
+			</div>
+			<div class="ui-field-contain">
+				<label for="diaEggChamb">Diameter Egg Chamber (cm):</label> <input
+					type="number" id="diaEggChamb" name="diaEggChamb"></input>
+			</div>
+		<div class="ui-field-contain">
+			<label for="predatorInNest">Predator in the nest:</label>
+			<textarea type="textarea" name="predatorInNest" id="predatorInNest" > </textarea>
+		</div>
+		<div class="ui-field-contain">
+			<label for="predatedEggs"># predated eggs in nest:</label>
+			<input type="number" name="predatedEggs" id="predatedEggs" > </input>
+		</div>
+			<hr />
+		<div class="ui-field-contain">
+			<label for="dead"># dead hatchling in nest:</label>
+			<input type="number" name="dead" id="dead" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="alive"># alive hatchlings in nest:</label>
+			<input type="number" name="alive" id="alive" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="deadOutside"># dead hatchling outside nest:</label>
+			<input type="number" name="deadOutside" id="deadOutside" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="aliveOutside"># alive hatchlings outside nest:</label>
+			<input type="number" name="aliveOutside" id="aliveOutside" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="emptyshells"># empty shells:</label>
+			<input type="number" name="emptyshells" id="emptyshells" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="unfertilized"># unfertilized:</label>
+			<input type="number" name="unfertilized" id="unfertilized" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="earlyEmbryonic"># early embryonic:</label>
+			<input type="number" name="earlyEmbryonic" id="earlyEmbryonic" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="middleEmbryonic"># middle Embryonic:</label>
+			<input type="number" name="middleEmbryonic" id="middleEmbryonic" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="late"># late embryonic:</label>
+			<input name="late" type="number" id="late" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="deadEmbr">Total # of dead Embryos:</label>
+			<input name="deadEmbr" type="number" id="deadEmbr" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="eggsInNest">Total # eggs in the nest:</label>
+			<input name="eggsInNest" type="number" id="eggsInNest" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="samples"># samples taken:</label>
+			<input name="samples" type="number" id="samples" > </input>
+		</div>
+		
+		<div class="ui-field-contain">
+			<label for="incub"># removed for incubation:</label>
+			<input type="number" name="incub" id="incub" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="empty">Nest is empty:</label>
+			<input type="checkbox" name="empty" value="1" id="empty" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="comment">Comment:</label>
+			<textarea type="textarea" name="comment" id="comment" > </textarea>
+		</div>
+		</form>
+		<div class="ui-grid-b">
+			<div class="ui-block-b">
+			<a href="#popupConfirmUncover" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
+			</div>
+		</div>
+		</div><!-- /content -->
+		<div data-role="footer" data-position="fixed">
+			</div><!-- /footer -->
+			
+	<div data-role="popup" id="popupConfirmUncover" data-theme="a"
+		class="ui-corner-all">
+		<form>
+			<div style="padding: 10px 20px;">
+				<h3>Summary of the data below. Submit?</h3>
+				<div id="summary"></div>
+				<button id="successfulButton" class="ui-btn"
+					onClick="recordUncover();">Yes</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">No</a>
+			</div>
+		</form>
+	</div>
+		</div><!-- /page -->

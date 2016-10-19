@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.hrafn.caenrfid"
+    version="0.2.12">
+    <name>Caenrfid</name>
+    <description>CaenRFID</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,coolest</keywords>
+    <repo></repo>
+    <issue></issue>
+    <js-module src="www/js/caenrfid.js" name="Caenrfid">
+        <clobbers target="Caenrfid" />
+    </js-module>
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="Caenrfid" >
+                <param name="android-package" value="Caenrfid"/>
+            </feature>
+        </config-file>
+        <source-file src="src/android/Caenrfid.java" target-dir="src/" />
+        <source-file src="src/android/caenrfidlibrary.jar" target-dir="libs" framework="true" />    
+    </platform>
+</plugin>

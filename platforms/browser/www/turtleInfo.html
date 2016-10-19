@@ -1,0 +1,121 @@
+<div id="turtleInfo" data-role="page">
+	<div data-role="header" data-position="fixed">
+		<h3>TurtleInfo</h3>
+	</div>
+	<!-- /header -->
+	<div role="main" class="ui-content">
+		<p id="message" class="message"></p>
+		<form id="turtleInfoForm">
+			<!-- <div>
+				<label for="DBID">DBID (0 for new)</label> <input type="text"
+					 id="dbid" name="dbid" placeholder=""></input>
+			</div> -->
+
+			<div>
+				<label for="tagID">tagID</label> <input type="text"
+					 id="tagid" name="tagID" placeholder=""></input>
+			</div>
+
+			<div>
+				<label for="replacedID">replacedID</label> <input type="text"
+					id="replacedID" name="replacedID" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="replacedDate">Replaced date</label><input type="text"
+					name="replacedDate" id="replacedDate" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="taggingDate">Tagging date</label><input type="text"
+					name="taggingDate" id="taggingDate" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="nameOfMeasurer">Name of Measurer</label>
+			<input type="text"
+					name="nameOfMeasurer" id="nameOfMeasurer" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="straight_carapace_length">SCL</label> <input type="number"
+					name="straight_carapace_length" id="straight_carapace_length" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="straight_carapace_width">SCW</label> <input type="number"
+					name="straight_carapace_width" id="straight_carapace_width" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="curved_carapace_length">CCL</label> <input type="number"
+					name="curved_carapace_length" id="curved_carapace_length" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="curved_carapace_width">CCW</label> <input type="number"
+					name="curved_carapace_width" id="curved_carapace_width" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="nuchal">N</label> <input type="number"
+					name="nuchal" id="nuchal" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="costal_right">CR</label> <input type="number"
+					name="costal_right" id="costal_right" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="costal_left">CL</label> <input type="number"
+					name="costal_left" id="costal_left" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="marginal_right">MR</label> <input type="number"
+					name="marginal_right" id="marginal_right" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="vertbral">vertbral</label> <input type="number"
+					name="vertbral" id="vertbral" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="marginal_left">ML</label> <input type="number"
+					name="marginal_left" id="marginal_left" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="supracaudal">SC</label> <input type="number"
+					name="supracaudal" id="supracaudal" placeholder=""></input>
+			</div>
+
+			<div>
+			<label for="devices">Devices</label> <input type="text"
+					name="devices" id="devices" placeholder=""></input>
+			</div>
+			<div>
+			<label for="notes">Notes</label> <textarea 
+					name="notes" id="notes" placeholder=""></textarea>
+			</div>
+			<a href="#popupConfirmTurtleInfo" id="confirmButton" data-rel="popup" 
+			data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" 
+			data-transition="pop">Save</a>
+			<a class="ui-btn ui-btn-b ui-corner-all" href="record-nest.html" >Cancel</a>
+		</form>
+	</div>
+	<div data-role="popup" id="popupConfirmTurtleInfo" data-theme="a" class="ui-corner-all">
+		<form> 	
+			<div style="padding: 10px 20px;">
+				<h3>Summary of the data below. Submit?</h3>
+				<div id="summary"></div>
+				<button id="successfulButton" class="ui-btn"
+					onClick="saveTurtle();">Yes</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">No</a>
+			</div>
+		</form>
+	</div>
+</div>

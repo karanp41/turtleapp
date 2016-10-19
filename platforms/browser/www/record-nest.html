@@ -1,0 +1,352 @@
+<div data-role="page" id="recordNestPage">
+	<div data-role="header" data-position="fixed">
+		<h3>Record New Nest</h3>
+		<select id="connected" data-role="flipswitch">
+     	 	<option value="online">online</option>
+      		<option value="offline">offline</option>
+    	</select>
+		<a href="index.html" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Home</a> 
+	</div>
+	<!-- /header -->
+	<div role="main" class="ui-content">
+		<p id="message" class="message"></p>
+		<form id="NestData">
+			<button type="reset" value="Reset">Reset page</button>
+
+			<div class="ui-field-contain">
+				<label for="rfid">Nest Tag RFID:</label>
+				<!-- <input readonly name=rfid  type="text" id="rfid"></input> -->
+				<input name=rfid  type="text" id="rfid"></input>
+				<input type="button" onClick="scanOnce()" value="Read TAG"></input> 
+			</div>
+			<div class="ui-field-contain">
+				<label for="Specie">Species:</label> 
+				<select name="species" id="Specie">
+					<option value="0">Select Specie</option>					
+				</select>
+			</div>
+			<hr />
+			<!-- <input id="dbid" type="hidden" disabled="disabled" name="dbid" value="new"></input> -->
+			<input type="hidden" id="rfidHEX" name="rfidHEX"></input>
+			<input type="hidden" name="origLat" 	id="lat" />
+			<input type="hidden" name="origLong" 	id="long" />
+			<input type="hidden" name="accurazy" 	id="accurazy" />
+			<input type="hidden" name="alt_lat" 	id="alt_lat" />
+			<input type="hidden" name="alt_long" 	id="alt_long" />
+			<input type="hidden" name="alt_accurazy"  id="alt_accurazy"/>
+			<div class="ui-field-contain">
+				<label for="nestID">Nest ID:</label> 
+				<input name="NestID" type="text" id="nestID"></input>
+			</div>
+			<div class="ui-field-contain">
+				<label for="turtleId">Turtle ID:</label> 
+				<input readonly name="turtleTagID" type="text" id="turtleTagID" ></input>
+				<input name="turtleId" type="hidden" id="turtleId" ></input>
+				<ul data-role="listview" id="turtlesAutoComplete" data-filter="false" data-filter-reveal="true" data-input="#turtleId">					
+				</ul>
+				<a href="turtleInfo.html"  data-role="button" data-theme="a" data-icon="up" id="turtleId">+</a>
+			</div>
+			
+			
+			<div data-role="collapsible" data-collapsed="true" class="ui-accordion">
+				<h3>Relocated nest (position B)</h3>
+				<div class="ui-field-contain">
+					<label for="alt_loc">Altered location:</label> 
+					<input type="button" value="click for current position" 
+					onClick="altGetCurLoc();" name="alt_loc" id="alt_loc"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="alt_date">Alteration date:</label> <input type="text"
+						name="alterationTime" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="alt_date"></input>
+				</div>
+				
+				<div class="ui-field-contain">
+				<label for="AlterationTime">Alteration time:</label> <select
+					name="altTimeOptions" id="AlterationTime">
+					<option value="0">Select Alteration Time</option>
+				</select>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="wetZoneAlt">Dist. wet zone (m):</label> <input
+						type="number" id="wetZoneAlt" name="alt_wetZone"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="tideZoneAlt">Dist. high tide zone (m):</label> <input
+						type="number" id="tideZoneAlt" name="alt_tideZone"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="drySandZoneAlt">Dist. dry zone (m):</label> <input
+						type="number" id="drySandZoneAlt" 
+						onblur="$('#distanceSeaAlt').val(Number($('#tidezoneAlt').val())+Number($('#wetZoneAlt').val())+Number($('#drySandZoneAlt').val()));" 
+						name="alt_dryZone"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="distanceSeaAlt">Dist. from sea (m):</label> <input
+						type="number" id="distanceSeaAlt" name="alt_distSea"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="vegetation">Dist. (m) to vegetation:</label> <input
+						type="number" id="vegetation" name="alt_vegetation"> </input>
+				</div>
+				
+				
+				
+				<div class="ui-field-contain">
+				<label for="leftLandMarkAlt">Left landmark:</label> <select
+					name="altLeftLandmark" id="leftLandMarkAlt">
+					<option value="0">Select left LandMark</option>
+				</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="leftMarkNumAlt">Left landmark #:</label> <input
+						type="number" id="leftMarkNumAlt" name="altLeftLandmarkNum"> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="leftMarkDistAlt">Left landmark distance (m):</label> <input
+						type="number" id="leftMarkDistAlt" name="altLeftLandmarkDist"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+				<label for="rightLandMarkAlt">Right Landmark:</label> <select
+					name="altRightLandmark" id="rightLandMarkAlt">
+					<option  value="0">Select Right LandMark</option>
+				</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="rightMarkNumAlt">Right landmark #:</label> <input
+						type="number" id="rightMarkNumAlt" name="altRightLandmarkNum"> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="rightMarkNumAlt">Right landmark distance (m):</label> <input
+						type="number" id="rightMarkDistAlt" name="altRightLandmarkDist"> </input>
+				</div>
+				
+				<div class="ui-field-contain">
+				<label for="nestLocAlt">Nest area:</label> <select
+					name="alt_nestLoc" id="nestLocAlt">
+					<option value="0">Select Nest Area</option>
+				</select>
+				</div>
+				
+				<div class="ui-field-contain">
+				<label for="gridcoverAlt">Nest covered with:</label> <select
+					name="gridCoverAlt" id="gridcoverAlt">
+					<option value="0">Select Nest cover</option>
+				</select>
+			</div>
+				
+			<div class="ui-field-contain">
+				<label for="commentAlt">Comment relocated nest:</label> <textarea 
+					name="commentAlt" type="textarea" id="commentAlt"></textarea >
+			</div>
+			
+			<div class="ui-field-contain">
+					<label for="devicesAlt">Devices:</label> <input type="text"
+						id="devicesAlt" name="devicesAlt"></input>
+			</div>
+			
+			</div>
+
+
+			<div data-role="collapsible" data-collapsed="false"  class="ui-accordion">
+				<h3>Original nest (Position A)</h3>
+				<div class="ui-field-contain">
+					<label for="nestingDate">Nesting date:</label> <input type="text"
+						name="nestingDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="nestingDate"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="nestingTime">Nesting time:</label> <input type="text"
+						type="number" name="nestingTime" data-role="number" data-inline="true" placeholder="HHMM" id="nestingTime"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="certain">How many days uncertain?:</label>
+						<select name="certain" id="certain">
+							<option value="0">SELECT</option>
+							<option value="<3hrs">2-3 days</option>
+							<option value="<6hrs">3-5 days</option>
+							<option value="<12hrs">More than 10 days</option>         
+						</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="loc">Nest location:</label> <input type="button"
+						value="click for current position" onClick="getCurLoc();"
+						name="loc" id="loc"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="wetZone">Dist. wet zone (m):</label> <input type="number"
+						id="wetZone" name="wetZone"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="tideZone">Dist. high tide zone (m):</label> <input
+						type="number" id="tideZone" name="tideZone"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="drySandZone">Dist. dry zone (m):</label> <input
+						type="number" id="drySandZone" name="drySand"
+						onblur="$('#distSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySandZone').val()));"
+						> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="distSea">Distance from sea (m):</label> <input name="distanceFromSea"
+						type="number" id="distSea"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="vegetation">Dist. (m) to vegetation:</label> <input
+						type="number" id="vegetation" name="vegetation"> </input>
+				</div>
+	
+				<div class="ui-field-contain">
+					<label for="leftLandMark">Left landmark:</label> <select
+						name="leftLandMark" id="leftLandMark">
+						<option value="0">Select Left Landmark</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="leftMarkNum">Left landmark #:</label> <input
+						type="number" id="leftMarkNum" name="leftMarkNum"> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="leftMarkDist">Left landmark distance (m):</label> <input
+						type="number" id="leftMarkDist" name="leftMarkDist"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="rightLandMark">Right Landmark:</label> <select
+						name="rightLandMark" id="rightLandMark">
+						<option value="0">Select Right Landmark</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="rightMarkNum">Right landmark #:</label> <input
+						type="number" id="rightMarkNum" name="rightMarkNum"> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="rightMarkNum">Right landmark distance (m):</label> <input
+						type="number" id="rightMarkDist" name="rightMarkDist"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="nestLoc">Nest area:</label> <select name="nestLoc"
+						id="nestLoc">
+						<option value="0">Select Nest Area</option>
+					</select>
+				</div>
+
+				<hr />
+
+				<div class="ui-field-contain">
+					<label for="heightOfWetSand">Height dry sand (cm):</label> <input
+						name="heightOfWetSand" type="number" id="heightOfWetSand"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="heightOfDrySand">Height wet sand (cm):</label> <input
+						type="number" name="heightOfDrySand" id="heightOfDrySand"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="dmgEggs"># damaged eggs:</label> <input type="number"
+						id="dmgEggs" name="dmgEggs"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="totEggs">Total # eggs:</label> <input type="number"
+						id="totEggs" name="totEggs"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="diaEggChamb">Diameter Egg Chamber (cm):</label> <input
+						type="number" id="diaEggChamb" name="diameterEggChamber"></input>
+				</div>
+
+				<!--div class="ui-field-contain">
+					<fieldset data-role="controlgroup" data-type="horizontal">
+						<legend for="checkbox-h-2a">Stages:</legend>
+						<input type="checkbox" name="crawl" value="crawl" id="checkbox-h-2a"> <label
+							for="checkbox-h-2a">Crawl</label> 
+							<input type="checkbox"
+							name="hole"  value="hole" id="checkbox-h-2b"> <label
+							for="checkbox-h-2b">Hole</label> 
+							<input type="checkbox"
+							name="pit" value="bodyPit" id="checkbox-h-2c"> <label
+							for="checkbox-h-2c">Body pit</label> 
+							<input type="checkbox"
+							name="chamber" value="eggChamber" id="checkbox-h-2d"> <label
+							for="checkbox-h-2d">Egg chamber</label> 
+							<input type="checkbox"
+							name="newNest" value="newNest" id="checkbox-h-2e"> <label
+							for="checkbox-h-2e">New Nest</label>
+					</fieldset>
+				</div-->
+				<div class="ui-field-contain">
+					<label for="numberOfBodyPits"># of hole/body pits:</label> 
+					<input name="numberOfBodyPits" type="text"
+						id="numberOfBodyPits"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="gridCover">Nest covered with:</label> 
+					<select	name="gridCover" id="gridCover">
+						<option value="0">Select Nest cover</option>
+					</select>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="comment">Comment original nest:</label> <textarea
+						name="comment" type="textarea" id="comment"></textarea>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="devices">Devices:</label> <input type="text"
+						id="devices" name="devices"></input>
+				</div>
+
+			</div>
+
+
+		</form>
+		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
+		<a href="#popupConfirm2" id="loginButton2" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Unsuccessful</a>
+		
+	</div>
+	<!-- /content -->
+	<div data-role="footer" data-position="fixed"></div>
+	<!-- /footer -->
+
+	<div data-role="popup" id="popupConfirm" data-theme="a"
+		class="ui-corner-all">
+		<form> 	
+			<!-- <div style="padding: 10px 20px;"> -->
+				<h3>Summary of the data below. Submit?</h3>
+				<div id="summary"></div>
+				<button id="successfulButton" class="ui-btn"
+					onClick="recordNewNest();">Yes</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">No</a>
+			<!-- </div> -->
+		</form>
+	</div>
+	
+	<div data-role="popup" id="popupConfirm2" data-theme="a"
+		class="ui-corner-all">
+		<form>
+			<div style="padding: 10px 20px;">
+				<h3>Summary of the data below. Submit?</h3>
+				<div id="summary2"></div>
+				<button class="ui-btn" id="unsuccessfulButton"
+					onClick="recordNewNestUnsuccessful();">Yes</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">No</a>
+			</div>
+		</form>
+	</div>
+
+</div>
+
+
+<!-- /page -->

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
+        <meta name="format-detection" content="telephone=yes" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+        <link rel="stylesheet" type="text/css" href="css/index.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/jquery.mobile.datepicker.css" />
+        <link rel="stylesheet" href="leaflet/leaflet.css" />
+        <link rel="stylesheet" href="css/jquery.jqplot.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/RFIDNest.css" />
+        <title>RFIDNesting</title>
+    </head>
+    <body>
+    
+	    <div data-role="page" id="menuPage">
+				<div data-role="header">
+					<h1>Menu</h1>
+
+					<!-- <a href="#popupLogin" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all" data-transition="pop">Sign in</a> -->
+					
+				</div>
+			
+				<div role="main" id="frontPage" class="ui-content">
+					<p id="message" class="message"></p>
+					<p id="id" hidden="hidden" class="message"></p>
+					<div class="ui-field-contain">
+					<ul id="menu" data-role="listview">
+						<li data-role="list-divider">Record</li>
+						<li><a href="record-nest.html">Nest information</a></li>
+						<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
+						<li><a href="turtles.html">Turtles</a></li>
+						<li><a href="predation.html">Predation</a></li>
+						<li><a href="emergence.html">Emergence</a></li>
+						<li><a href="uncoverControl.html">Uncover for Control</a></li>
+						<li><a href="temperature.html">Temperature</a></li>
+						<li data-role="list-divider">View</li>
+						<li><a href="index-old.html">Map/discovery view</a></li> 
+						<li><a href="nestList.html">NestList</a></li>
+						<li data-role="list-divider">Offline</li>
+						<li><a href="offlineMsgList.html">Offline events</a></li>
+					</ul>
+					</div>
+				</div>
+			
+				<div data-role="footer" data-position="fixed">
+				</div>
+			<div data-role="popup" id="popupLogin" data-theme="a"
+				class="ui-corner-all">
+			</div>
+		</div><!-- /page -->
+
+
+
+		<div data-role="page" id="loginPage">
+
+		  	<div data-role="header">
+		    	<h1>Turtle Nesting Safe</h1>
+		  	</div>
+
+		  	<div data-role="main" class="ui-content">
+			    <form>        
+					<div class="login-form-wrapper">					            
+						<h3>Please sign in</h3>
+						<label for="un" class="ui-hidden-accessible">Username:</label>
+						<input type="text" name="user" id="un" value=""
+							placeholder="username" data-theme="a">             <label
+							for="pw" class="ui-hidden-accessible">Password:</label>
+						<input type="password" name="pass" id="pw" value=""
+							placeholder="password" data-theme="a">             
+						<button type="submit"
+							class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left " onClick="login($('#un').val(),$('#pw').val());">Sign
+							in</button>
+						        
+					</div>				    
+				</form>
+		  	</div>
+
+		  	<!-- <div data-role="footer">
+		    	<h1>Footer Text</h1>
+		  	</div> -->
+
+		</div>
+			
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/constants.js"></script>
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile.min.js"></script>
+        <script type="text/javascript" src="js/jquery.ui.datepicker.js"></script>
+        <script type="text/javascript" src="js/jquery.mobile.datepicker.js"></script>
+        <script type="text/javascript" src="js/jquery.jqplot.min.js"></script>
+        <script type="text/javascript" src="js/plugins/jqplot.dateAxisRenderer.js"></script>
+		<script type="text/javascript" src="js/plugins/jqplot.logAxisRenderer.js"></script>
+		<script type="text/javascript" src="js/plugins/jqplot.canvasTextRenderer.js"></script>
+		<script type="text/javascript" src="js/plugins/jqplot.canvasAxisTickRenderer.js"></script>
+		<script type="text/javascript" src="../src/plugins/jqplot.highlighter.js"></script>
+		<script src="leaflet/leaflet.js"></script>
+        <script type="text/javascript" src="js/RFIDNest.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/commonmethods.js"></script>
+        <script type="text/javascript" src="js/pageinit.js"></script>
+        
+    </body>
+</html>

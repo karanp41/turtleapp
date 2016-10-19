@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.hrafn.rfidnestingtesting" version="0.0.46" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>RFIDNesting Testing</name>
+    <description>
+		RFID Turtle nesting application.
+    </description>
+    <author email="geir.vevle@hrafn.com" href="http://hrafn.no">
+        Geir Vevle
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <access origin="*" launch-external="yes" />
+</widget>

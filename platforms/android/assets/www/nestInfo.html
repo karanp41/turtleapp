@@ -1,0 +1,29 @@
+<div id="nestInfoPage" data-role="page">
+			<div data-role="header"  data-position="fixed" >		
+				<h3>NestInfo</h3>
+				<button href="#" onClick="editNest($('#nestid').text());" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">EDIT</button>
+		</div><!-- /header -->
+		<div role="main" class="ui-content">
+			<div id="nestInfo"  class="nestInfo">
+			Loading info about nest....
+			
+			</div>
+			<div>
+				<!-- <a data-role="button" disabled="disabled">Show  temperature graph</a> -->
+				<a data-role="button" onClick="findNest(curTag)">Find nest</a>
+				<br/>
+			</div>
+			<ul data-role="listview" data-divider-theme="a">
+				<!--li data-role="list-divider">Link nest</li>
+				<li><button type="button" id="linkaAdoptAnestButton" onClick="linkAdoptANest();" class="nests" >Link to AdoptANest</button> </li-->
+				<!-- <li><a type="button" href="linkToTempTag.html" class="nests" >Link to Temperature Tag</a> </li> -->			
+				<li data-role="list-divider">Events</li>
+				<li><a type="button" href="predation.html" class="nests" >Predation</a> </li>
+				<li><a type="button" href="emergence.html" class="nests" >Emergence</a> </li>
+				<li><a type="button" href="uncoverControl.html" class="nests" >Uncover for Control</a> </li>			
+			</ul>
+		</div><!-- /content -->
+		<div data-role="footer" data-position="fixed">
+
+			</div><!-- /footer -->
+		</div><!-- /page -->

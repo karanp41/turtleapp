@@ -1,0 +1,31 @@
+<?php
+include_once("db.inc.php");
+error_log(print_r($_GET['content'],true));
+//$_GET = unserialize($_GET['content']);
+error_log(print_r($_GET,true));
+
+$sql = "INSERT INTO nests VALUES(".
+		"0,".
+		"'".$_GET['rfid']."',".
+		"'',".
+		"'".$_GET['turtleId'].",".
+		"'".$_GET['certain'].",".
+		"'".$_GET['species'].",".
+		$_GET['dist'].",".
+		$_GET['wetSand'].",".
+		$_GET['drySand'].",".
+		$_GET['diaEggChamb'].",".
+		$_GET['probability'].",".
+		$_GET['alt_date'].",".
+		$_GET['lat'].",".
+		$_GET['long'].",".
+		$_GET['alt_lat'].",".
+		$_GET['alt_long'].",".
+		$_GET['alt_wetSand'].",".
+		$_GET['alt_drySand'].",".
+		$_GET['alt_dmgEggs'].",".
+		$_GET['alt_totalEggs'].",".
+		$_GET['success'].");";
+error_log($sql);
+
+?>

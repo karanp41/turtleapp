@@ -1,0 +1,26 @@
+input.ok-button{
+	background-color:#00FF00;
+}
+
+input.not-ok-button{
+	background-color:#FF0000;
+}
+
+#map { height: 450px; }
+
+
+.nestInfo{
+	background-color:"orange";
+	border-size:2px;
+}
+
+
+/**** 18th Oct BY Krishan ****/
+
+.ui-header .ui-title {
+    margin-right: 10%;
+    margin-left: 10%;
+}
+.login-form-wrapper{
+	padding: 10px 20px;
+}

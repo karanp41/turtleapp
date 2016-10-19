@@ -1,0 +1,73 @@
+<div id="uncoverPage" data-role="page">
+			<div data-role="header"  data-position="fixed" >		
+				<h3>Uncovering & Control</h3>
+				<a href="#" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Login</a>
+		</div><!-- /header -->
+		<div role="main" class="ui-content">
+			<p id="message" class="message"></p>
+		<form id="UncoverData">
+		<div>
+			<label for="RFID">NEST tag</label>
+			<input type="text" id="rfid" ></input>
+			<input type="button" onClick="scanOnce()" value="ReadRFID"></input>
+		</div>
+		<div>
+			<label for="nestID">NEST ID</label>
+			<input type="text" disabled="disabled" name="nestID" id="nestID" placeholder=""></input>
+		</div>
+		<div class="ui-field-contain">
+				<p id="locationUncover" class="message"></p>
+		</div>
+		<hr>
+		<div class="ui-field-contain">
+			<label for="dead">Dead hatchling in nest:</label>
+			<input type="number" name="dead" id="dead" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="alive">Alive hatchlings in nest:</label>
+			<input type="number" name="alive" id="alive" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="emptyshells">No. empty shells:</label>
+			<input type="number" name="empty" id="emptyshells" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="dmg">Damaged eggs:</label>
+			<input type="number" name="dmg" id="dmg" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="unfert">Unfertilized:</label>
+			<input type="number" name="unfertilized" id="unfert" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="embry">Early embryonic:</label>
+			<input type="number" name="earlyEmbryonic" id="embry" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="middle">Middle Embryonic:</label>
+			<input type="number" name="middleEmbryonic" id="middle" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="late">Late embryonic:</label>
+			<input type="number" id="late" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="incub">Removed for incubation:</label>
+			<input type="number" id="incub" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="empty">Nest is empty:</label>
+			<input type="checkbox" id="empty" > </input>
+		</div>
+		<div class="ui-field-contain">
+			<label for="comment">Nest is empty:</label>
+			<input type="textarea" name="comment" id="comment" > </input>
+		</div>
+		</form>
+		<div class="ui-grid-b">
+			<div class="ui-block-b"><button onClick="recordUncover();">Record</button></div>
+		</div>
+		</div><!-- /content -->
+		<div data-role="footer" data-position="fixed">
+			</div><!-- /footer -->
+		</div><!-- /page -->

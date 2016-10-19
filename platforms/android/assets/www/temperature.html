@@ -1,0 +1,36 @@
+
+<div data-role="page" id="temperature">
+			<div data-role="header">
+				<h1>Temperature</h1>				
+			</div><!-- /header -->
+		
+			<div role="main" id="frontPage" class="ui-content">
+			<div class="ui-field-contain">
+			<label for="pow">Reader power (10-450mw):</label>
+			<input type="number" name="pow" id="pow" value="450"> </input>
+			</div>
+			<div class="ui-field-contain">
+			<label for="tempint">Temperature interval (sec.):</label>
+			<input type="number" name="tempint" id="tempint" value="1800" > </input>
+			</div>
+			<button onClick="restartTemp();">Restart Temperature sensor(s)</button>
+			<button onClick="readTemp();">Read Temperature sensor(s)</button>
+			
+			<div id="chartdiv" style="height:400px;width:100%;"></div>
+			<div><textarea  id="tempData"></textarea></div>
+			
+<!-- 			<div><button onClick="openFile();">OpenFile</button>
+			<button onClick="saveToFile();">Save to file</button>
+			<button onClick="readFromFile();">Read from file</button></div> -->
+
+			<ul data-role="listview"  id="fileList" data-filter="true" data-theme="b">
+				
+			</ul>
+
+			
+			
+			</div><!-- /content -->
+		
+			<div data-role="footer" data-position="fixed">
+			</div><!-- /footer -->
+	</div><!-- /page -->

@@ -1,0 +1,42 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-file": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-camera": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-datepicker": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "com.hrafn.caenrfid": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "com.verso.cordova.clipboard": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-geolocation": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-x-toast": {
+            "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        }
+    },
+    "dependent_plugins": {}
+}
