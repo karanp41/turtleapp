@@ -46,6 +46,11 @@ $(document).on('pageinit','#uncoverPage', function(){
 	$('#nestID').val(nestID);
 });
 
+$(document).on('pageinit','#turtleInfo', function(){
+	setCurrentDate('#replacedDate');
+	setCurrentDate('#taggingDate');
+});
+
 $(document).on('pageinit','#nestListPage', function(){
 	populateNestList();
 });

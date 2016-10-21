@@ -39,10 +39,10 @@
 				<input name="NestID" type="text" id="nestID"></input>
 			</div>
 			<div class="ui-field-contain">
-				<label for="turtleId">Turtle ID:</label> 
-				<input readonly name="turtleTagID" type="text" id="turtleTagID" ></input>
+				<label for="turtleId">Turtle Tag ID:</label> 
+				<input name="turtleTagID" type="text" data-type="search" id="turtleTagID" ></input>
 				<input name="turtleId" type="hidden" id="turtleId" ></input>
-				<ul data-role="listview" id="turtlesAutoComplete" data-filter="false" data-filter-reveal="true" data-input="#turtleId">					
+				<ul data-role="listview" id="turtlesAutoComplete" data-filter="true" data-filter-reveal="true" data-input="#turtleTagID">					
 				</ul>
 				<a href="turtleInfo.html"  data-role="button" data-theme="a" data-icon="up" id="turtleId">+</a>
 			</div>
@@ -161,7 +161,7 @@
 				</div>
 				<div class="ui-field-contain">
 					<label for="nestingTime">Nesting time:</label> <input type="text"
-						type="number" name="nestingTime" data-role="number" data-inline="true" placeholder="HHMM" id="nestingTime"></input>
+						type="time" name="nestingTime" data-role="number" data-inline="true" placeholder="HHMM" id="nestingTime"></input>
 				</div>
 				<div class="ui-field-contain">
 					<label for="certain">How many days uncertain?:</label>
@@ -320,29 +320,31 @@
 
 	<div data-role="popup" id="popupConfirm" data-theme="a"
 		class="ui-corner-all">
-		<form> 	
-			<!-- <div style="padding: 10px 20px;"> -->
-				<h3>Summary of the data below. Submit?</h3>
-				<div id="summary"></div>
-				<button id="successfulButton" class="ui-btn"
-					onClick="recordNewNest();">Yes</button>
-				<a href="#" data-rel="back" data-role="button" data-theme="a"
-					data-icon="delete">No</a>
-			<!-- </div> -->
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<form class="summary-popup-form">				
+			<h3>Preview of Nest Data</h3><hr>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn"
+				onClick="recordNewNest();">RECORD NOW</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">No, Need Corrections </a>
 		</form>
 	</div>
 	
 	<div data-role="popup" id="popupConfirm2" data-theme="a"
 		class="ui-corner-all">
-		<form>
-			<div style="padding: 10px 20px;">
-				<h3>Summary of the data below. Submit?</h3>
-				<div id="summary2"></div>
-				<button class="ui-btn" id="unsuccessfulButton"
-					onClick="recordNewNestUnsuccessful();">Yes</button>
-				<a href="#" data-rel="back" data-role="button" data-theme="a"
-					data-icon="delete">No</a>
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<form class="summary-popup-form">
+			<h3>Preview of Nest Data</h3>				
+			<div id="popupBasic" class="red-banner">
+			  <p><b>NOTE:</b> You opting this because not sure where nest is, but it is likely here</p>
 			</div>
+			<hr>
+			<div id="summary2"></div>
+			<button class="ui-btn" id="unsuccessfulButton"
+				onClick="recordNewNestUnsuccessful();">RECORD NOW</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">No, Need Corrections </a>		
 		</form>
 	</div>
 

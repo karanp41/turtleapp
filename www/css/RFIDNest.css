@@ -24,3 +24,22 @@ input.not-ok-button{
 .login-form-wrapper{
 	padding: 10px 20px;
 }
+
+.summary-popup-form table {
+    margin: 0 auto;
+}
+.summary-popup-form tr {
+    font-size: 15px;
+}
+.summary-popup-form tr:nth-child(even) {
+    background: #e9e9e9;
+}
+.summary-popup-form{
+	padding: 0 8px;
+}
+.red-banner {
+    background: rgba(245, 101, 101, 0.53);
+    color: #666;
+    padding: 0px 12px;
+    border-radius: 6px;
+}

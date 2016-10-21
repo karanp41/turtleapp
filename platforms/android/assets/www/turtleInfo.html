@@ -22,12 +22,12 @@
 			</div>
 
 			<div>
-			<label for="replacedDate">Replaced date</label><input type="text"
+			<label for="replacedDate">Replaced date</label><input type="date"
 					name="replacedDate" id="replacedDate" placeholder=""></input>
 			</div>
 
 			<div>
-			<label for="taggingDate">Tagging date</label><input type="text"
+			<label for="taggingDate">Tagging date</label><input type="date"
 					name="taggingDate" id="taggingDate" placeholder=""></input>
 			</div>
 
@@ -104,18 +104,18 @@
 			data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" 
 			data-transition="pop">Save</a>
 			<a class="ui-btn ui-btn-b ui-corner-all" href="record-nest.html" >Cancel</a>
+
 		</form>
 	</div>
 	<div data-role="popup" id="popupConfirmTurtleInfo" data-theme="a" class="ui-corner-all">
-		<form> 	
-			<div style="padding: 10px 20px;">
-				<h3>Summary of the data below. Submit?</h3>
-				<div id="summary"></div>
-				<button id="successfulButton" class="ui-btn"
-					onClick="saveTurtle();">Yes</button>
-				<a href="#" data-rel="back" data-role="button" data-theme="a"
+		<form class="summary-popup-form">
+			<h3>Summary of the data below. Submit?</h3>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn"
+				onClick="saveTurtle();">Yes</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
 					data-icon="delete">No</a>
-			</div>
 		</form>
 	</div>
+
 </div>

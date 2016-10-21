@@ -884,18 +884,28 @@ function confirm(func){
 function showDataInConfirm(fields,target){
 	console.log(fields,target)
 	$( target ).empty();
-    jQuery.each( fields, function( i, field ) {
-    	if (typeof $("label[for='"+field.name+"']").html() != "undefined"){
-    		console.log(field.name, field.value)
-    		$( target ).append('<div class="summary-single-field">')
-    		if ( jQuery.inArray( field.name, DYNAMIC_FIELDS_ARRAY)>=0 ) {
-	    		$( target ).append("<b>"+$("label[for='"+field.name+"']").html()+":</b> " + $("#"+field.name+" option[value='"+field.value+"']").text() + "<br/> " );
-	    	}else{	    		
-	    		$( target ).append("<b>"+$("label[for='"+field.name+"']").html()+":</b> " +field.value + "<br/> " );
+
+	var HTML = '';
+	HTML += '<table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow" id="myTable"><thead><tr><th>Field Name</th><th data-priority="1">Value</th></tr></thead><tbody>';
+
+	    jQuery.each( fields, function( i, field ) {
+	    	if (typeof $("label[for='"+field.name+"']").html() != "undefined"){
+	    		console.log(field.name, field.value)
+	    		
+	    		if ( jQuery.inArray( field.name, DYNAMIC_FIELDS_ARRAY)>=0 ) {
+	    			if(field.value==0){
+	    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td> - </td></tr>" ;
+	    			}else{
+	    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $("#"+field.name+" option[value='"+field.value+"']").text() + "</td></tr>" ;
+	    			}		    		
+		    	}else{	    		
+		    		HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
+		    	}	    	
 	    	}
-	    	$( target ).append('</div>')
-    	}
-    });
+	    });
+
+    HTML += '</tbody></table>';
+    $( target ).append(HTML);
 }
 
 function recordNewNest(){
@@ -982,6 +992,7 @@ function recordPerdation(){
 
 function saveTurtle(){
 
+	
 	var data = jQuery('#turtleInfoForm').serializeArray();
 	var requestData = {};
 	for (var i = 0, l = data.length; i < l; i++) {
@@ -1002,16 +1013,28 @@ function saveTurtle(){
 			// data = JSON.parse(data);
 			if(data.code == '201'){
 				console.log(data.message)
-				showToast(data.message, 'center', 'long')				
-			}else{
+				showToast(data.message, 'center', 'long')
+			}else if(data.code == '200'){
+				$.mobile.changePage( "popupdialogs/confirmTurtleTagPoup.html", { role: "dialog" } );
 				console.log(data.message)
 				showToast(data.message, 'center', 'long')
-				// $.mobile.loadPage( "record-nest.html" );
-				$.mobile.changePage("record-nest.html");
+				// $.mobile.changePage("record-nest.html");
+			}else{
+				showToast('Seems like something went wrong', 'center', 'long')
 			}
 		},
 		dataType:"json"
 	});
+}
+
+
+
+function setCurrentDate(field){
+	var now = new Date();
+	var day = ("0" + now.getDate()).slice(-2);
+	var month = ("0" + (now.getMonth() + 1)).slice(-2);
+	var today = now.getFullYear()+"-"+(month)+"-"+(day);
+	$(field).val(today);
 }
 
 function viewTurtle(tagid){
@@ -1483,13 +1506,13 @@ function getRecordNestInformation(){
 				    }));
 				});
 
-				var leftLandMarkAlt = data.data.NestLandmark;
-				$.each(leftLandMarkAlt, function (i, item) {
-				    $('#leftLandMarkAlt').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
+				// var leftLandMarkAlt = data.data.NestLandmark;
+				// $.each(leftLandMarkAlt, function (i, item) {
+				//     $('#leftLandMarkAlt').append($('<option>', { 
+				//         value: i,
+				//         text : item 
+				//     }));
+				// });
 
 				var leftLandMarkAlt = data.data.NestLandmark;
 				$.each(leftLandMarkAlt, function (i, item) {
@@ -1511,12 +1534,16 @@ function getRecordNestInformation(){
 				    }));
 				});
 
-				var NestLocation = data.data.NestLocation;
-				$.each(NestLocation, function (i, item) {
+				var NestLocationAlt = data.data.RelocatedNestLocation;
+				$.each(NestLocationAlt, function (i, item) {
 				    $('#nestLocAlt').append($('<option>', { 
 				        value: i,
 				        text : item 
 				    }));
+				});
+
+				var NestLocation = data.data.NestLocation;
+				$.each(NestLocation, function (i, item) {
 				    $('#nestLoc').append($('<option>', { 
 				        value: i,
 				        text : item 
