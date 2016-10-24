@@ -386,8 +386,7 @@ function scanRFID(){
 function stopRFID(){
 	$.mobile.loading('hide');
 	rfidRunning = false;
-	Caenrfid.stopRFID(function(data){alert("rfid stopped");},function (err){alert("error"+err)});
-	
+	Caenrfid.stopRFID(function(data){alert("rfid stopped");},function (err){alert("error"+err)});	
 }
 
 function saveToFile(data){
@@ -529,7 +528,7 @@ function uploadTempFromFile(filename){
 		 var reader = new FileReader();
 
 		 reader.onloadend = function(e) {
-			 //alert("inside:"+this.result);
+			 console.log("inside:"+this.result);
 			 $.ajax({
 					beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 					complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -565,35 +564,37 @@ function readEventFromFile(filename){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
         console.log("got main dir" + filename,dir);
         dir.getFile(filename, {create:false}, function(file) {
+
+        	var file_data = file;   
+    		var form_data = new FormData();                  
+    		form_data.append('file', file_data);
+
+
             console.log("got the file", file);
             logOb = file;
+
+            logOb.file(function(file) {
+			 var reader = new FileReader();
+
+			 	reader.onloadend = function(e) {
+				 	console.log(this.result);
+				 	console.log(file);
+				 	console.log(logOb);
+				 	var ServerURI = HOST + API_PATH + UPLOAD_FILE;
+				 	var fileURL = file.localURL;
+				 	uploadFileToServer(ServerURI, fileURL);
+					//	plotTemperature(this.result,false); Should be to execute eent into database.
+			 	};
+
+			 	reader.readAsText(file);
+		 	}, function fail(e) {
+				alert("FileSystem Error");
+				alert(e);
+		 	});
+
         });
     });
-	 logOb.file(function(file) {
-		 var reader = new FileReader();
-
-		 reader.onloadend = function(e) {
-			 //alert("inside:"+this.result);
-			 $.ajax({
-					beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-					complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-					url: this.result,
-					success: function(data) {
-						//$.mobile.changePage("index.html");
-						alert("Nest data recorded");
-					},
-					error: function(data) {
-						alert("Something went wrong. Error message: " + data);
-					}
-				});
-	//			 plotTemperature(this.result,false); Should be to execute eent into database.
-		 };
-
-		 reader.readAsText(file);
-	 }, function fail(e) {
-			alert("FileSystem Error");
-			alert(e);
-	 });
+	 
 }
 
 
@@ -925,7 +926,7 @@ function recordNewNest(){
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_NEST;
 	console.log('requestData',requestData)
-	if (connected=="online"){	
+	if (connected=="online"){
 		var data = {}
 		$.ajax({
 			type: "POST",

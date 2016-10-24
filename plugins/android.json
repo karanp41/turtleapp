@@ -36,6 +36,9 @@
         },
         "cordova-plugin-x-toast": {
             "PACKAGE_NAME": "com.hrafn.rfidnesting"
+        },
+        "cordova-plugin-file-transfer": {
+            "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
         }
     },
     "dependent_plugins": {}

@@ -1,3 +1,5 @@
+
+// SHOWING TOAST MESSAGE IN APP
 function showToast(message, position, duration, onSuccess, onSuccess) {
   window.plugins.toast.showWithOptions(
     {
@@ -9,6 +11,7 @@ function showToast(message, position, duration, onSuccess, onSuccess) {
   );
 }
 
+// GETTING QUERYSTRING FROM URL
 function getUrlVars(){
     var vars = [], hash;
     var hashes = window.location.href.slice(window.location.href.indexOf('?') + 1).split('&');

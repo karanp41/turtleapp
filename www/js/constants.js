@@ -34,6 +34,9 @@ var logOb = null;
 
 var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMark', 'certain', 'Specie']
 
+
+
+
 /**********     CONFIG CONSTANT    ********/
 
 var options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
@@ -53,16 +56,17 @@ var API_PATH = 'webservices/';
 var LOGIN = 'login';
 var GET_RECORD_NEST_INFORMATION = 'getRecordNestInformation';
 
-var SAVE_NEST = 'saveNest';
-var LIST_NESTS = 'listNests';
-var FIND_NESTS = 'findNests';
+var SAVE_NEST 		= 'saveNest';
+var LIST_NESTS 		= 'listNests';
+var FIND_NESTS 		= 'findNests';
 var FIND_NESTS_BY_RFID = 'NestByRFID';
 
-var LIST_TURTLES = 'listTurtles';
-var SAVE_TURTLE = 'saveTurtle';
+var LIST_TURTLES 	= 'listTurtles';
+var SAVE_TURTLE 	= 'saveTurtle';
 
 var SAVE_PREDATIONS = 'savePredations';
-var SAVE_EMERGENCE = 'saveEmergences';
-var SAVE_UNCOVER = 'saveUncover';
+var SAVE_EMERGENCE 	= 'saveEmergences';
+var SAVE_UNCOVER 	= 'saveUncover';
 
-var NEST_PREDATION = 'nestPredation';
+var NEST_PREDATION 	= 'nestPredation';
+var UPLOAD_FILE 	= 'UploadCSV';
