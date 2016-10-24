@@ -250,6 +250,21 @@ module.exports = [
         "clobbers": [
             "window.FileTransfer"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-network-information/www/network.js",
+        "id": "cordova-plugin-network-information.network",
+        "clobbers": [
+            "navigator.connection",
+            "navigator.network.connection"
+        ]
+    },
+    {
+        "file": "plugins/cordova-plugin-network-information/www/Connection.js",
+        "id": "cordova-plugin-network-information.Connection",
+        "clobbers": [
+            "Connection"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -265,7 +280,8 @@ module.exports.metadata =
     "com.verso.cordova.clipboard": "0.1.0",
     "cordova-plugin-geolocation": "2.4.0",
     "cordova-plugin-x-toast": "2.5.2",
-    "cordova-plugin-file-transfer": "1.6.0"
+    "cordova-plugin-file-transfer": "1.6.0",
+    "cordova-plugin-network-information": "1.3.0"
 };
 // BOTTOM OF METADATA
 });

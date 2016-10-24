@@ -580,28 +580,10 @@ function readEventFromFile(filename){
 				 	console.log(this.result);
 				 	console.log(file);
 				 	console.log(logOb);
-				 	$.ajax({
-
-				 		url: HOST + API_PATH + UPLOAD_FILE,
-				 		// dataType: 'text',
-				 		cache: false,
-		                contentType: false,
-		                processData: false,
-		                data: form_data,
-		                type: 'post',
-
-						beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-						complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-						success: function(data) {
-							console.log(data);
-							showToast('File uploaded', 'center', 'long')
-						},
-						error: function(data) {
-							console.log(data);
-							showToast('Error', 'center', 'long')
-						}
-					});
-				//	plotTemperature(this.result,false); Should be to execute eent into database.
+				 	var ServerURI = HOST + API_PATH + UPLOAD_FILE;
+				 	var fileURL = file.localURL;
+				 	uploadFileToServer(ServerURI, fileURL);
+					//	plotTemperature(this.result,false); Should be to execute eent into database.
 			 	};
 
 			 	reader.readAsText(file);
@@ -609,7 +591,6 @@ function readEventFromFile(filename){
 				alert("FileSystem Error");
 				alert(e);
 		 	});
-
 
         });
     });

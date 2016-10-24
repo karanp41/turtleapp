@@ -39,6 +39,9 @@
         },
         "cordova-plugin-file-transfer": {
             "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
+        },
+        "cordova-plugin-network-information": {
+            "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
         }
     },
     "dependent_plugins": {}

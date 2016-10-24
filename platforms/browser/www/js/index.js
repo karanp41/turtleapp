@@ -49,23 +49,37 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-//        locate();
+        // locate();
         username = localStorage.getItem("turtle_nesting_username");
         document.addEventListener("scanRFID", scanRFID, false);
+        // document.addEventListener("offline", this.onOffline, false);
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-//        var parentElement = document.getElementById(id);
-//        var listeningElement = parentElement.querySelector('.listening');
-//        var receivedElement = parentElement.querySelector('.received');
-//
-//        listeningElement.setAttribute('style', 'display:none;');
-//        receivedElement.setAttribute('style', 'display:block;');
-//
-//        console.log('Received Event: ' + id);
-    }
+    //        var parentElement = document.getElementById(id);
+    //        var listeningElement = parentElement.querySelector('.listening');
+    //        var receivedElement = parentElement.querySelector('.received');
+    //
+    //        listeningElement.setAttribute('style', 'display:none;');
+    //        receivedElement.setAttribute('style', 'display:block;');
+    //
+    //        console.log('Received Event: ' + id);
+    },
+    // onOffline: function () {
+    //     alert('Gone offline')
+    // }
 };
 
 
 
 app.initialize();
+
+document.addEventListener("offline", onOffline, false);
+onOffline: function () {
+        alert('Gone offline')
+    }
+
+document.addEventListener("online", yourCallbackFunction, false);
+yourCallbackFunction: function () {
+        alert('Gone oinline')
+    }

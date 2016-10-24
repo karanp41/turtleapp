@@ -49,21 +49,37 @@ var app = {
     // function, we must explicitly call 'app.receivedEvent(...);'
     onDeviceReady: function() {
         app.receivedEvent('deviceready');
-//        locate();
+        // locate();
         username = localStorage.getItem("turtle_nesting_username");
         document.addEventListener("scanRFID", scanRFID, false);
+        
+
+        document.addEventListener("offline", onOffline, false);
+        function onOffline() {
+            showToast('Connection Lost. You may still able to record data offline and later you may sync when you come online.', 'bottom', 'long')
+        }
+
+        document.addEventListener("online", onOnline, false);
+        function onOnline() {
+            showToast('Connection established. You have some offline data saved in device. Press OK to sync.', 'bottom', 'long')
+        }
+
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-//        var parentElement = document.getElementById(id);
-//        var listeningElement = parentElement.querySelector('.listening');
-//        var receivedElement = parentElement.querySelector('.received');
-//
-//        listeningElement.setAttribute('style', 'display:none;');
-//        receivedElement.setAttribute('style', 'display:block;');
-//
-//        console.log('Received Event: ' + id);
-    }
+    //        var parentElement = document.getElementById(id);
+    //        var listeningElement = parentElement.querySelector('.listening');
+    //        var receivedElement = parentElement.querySelector('.received');
+    //
+    //        listeningElement.setAttribute('style', 'display:none;');
+    //        receivedElement.setAttribute('style', 'display:block;');
+    //
+    //        console.log('Received Event: ' + id);
+    },
+    // onOffline: function () {
+    //     alert('Gone offline')
+    // }
 };
 
 

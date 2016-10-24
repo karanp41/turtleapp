@@ -457,22 +457,65 @@ function saveToFile(){
 }
 
 function saveEventToFile(event){
-	
-	
 	if(!logOb) return;
 	 //var log = data + " [" + (new Date()) + "]\n";
-	// console.log("going to log "+log);
-	 logOb.createWriter(function(fileWriter) {
-		 //fileWriter.seek(fileWriter.length);
-
-		 var blob = new Blob([event], {type:'text/plain'});
-		 fileWriter.write(blob);
-		 alert("file written" + event);
-	 },  function fail(e) {
-			alert("FileSystem Error");
-			alert(e);
-	 });
+	// console.log("going to log "+log);	
+	logOb.createWriter(function(fileWriter) {
+		//fileWriter.seek(fileWriter.length);
+		var blob = new Blob([event], {type:'text/plain'});
+		fileWriter.write(blob);
+		alert("file written" + event);
+	},  function fail(e) {
+		alert("FileSystem Error");
+		alert(e);
+	});	
 }
+
+
+function saveEventToFileNest(data){
+
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+		var fileDate = new Date();
+		var filename = "Nest_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		    dir.getFile(filename + ".csv", {create:true}, function(file) {
+		        console.log("got the file", file);
+		        logOb = file;		        
+	        	if(!logOb) return;
+				logOb.createWriter(function(fileWriter) {
+					console.log(data);
+					var fields = [];
+					var values = [];
+					for (var property in data) {
+					    if (data.hasOwnProperty(property)) {
+					        // fields += '"'+property+'",';
+					        fields.push(property);
+					        // values += '"'+data[property]+'",';
+					        values.push(data[property]);
+					    }
+					}
+					// return;
+					/*var CSV = [
+					    '"1","val1","val2","val3","val4"',
+					    '"2","val1","val2","val3","val4"',
+					    '"3","val1","val2","val3","val4"'
+					  ].join('\n');*/
+					var CSV = [
+					    fields.join(),
+					    values.join()
+					  ].join('\n');
+					var contentType = 'text/csv';
+					var csvFile = new Blob([CSV], {type: contentType});
+					fileWriter.write(csvFile);
+					alert("file written" + CSV);
+				},  function fail(e) {
+					alert("FileSystem Error");
+					alert(e);
+				});
+		    });
+	});	
+}
+
+
 
 function readFromFile(filename){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
@@ -549,7 +592,7 @@ function uploadTempFromFile(filename){
 						alert("Something went wrong. Error message: " + data);
 					}
 				});
-	//			 plotTemperature(this.result,false); Should be to execute eent into database.
+			// plotTemperature(this.result,false); Should be to execute eent into database.
 		 };
 
 		 reader.readAsText(file);
@@ -582,31 +625,8 @@ function readEventFromFile(filename){
 				 	console.log(logOb);
 				 	var ServerURI = HOST + API_PATH + UPLOAD_FILE;
 				 	var fileURL = file.localURL;
-
 				 	uploadFileToServer(ServerURI, fileURL);
-				 	/*
-				 	$.ajax({
-
-				 		url: HOST + API_PATH + UPLOAD_FILE,
-				 		// dataType: 'text',
-				 		cache: false,
-		                contentType: false,
-		                processData: false,
-		                data: form_data,
-		                type: 'post',
-
-						beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-						complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-						success: function(data) {
-							console.log(data);
-							showToast('File uploaded', 'center', 'long')
-						},
-						error: function(data) {
-							console.log(data);
-							showToast('Error', 'center', 'long')
-						}
-					});*/
-				//	plotTemperature(this.result,false); Should be to execute eent into database.
+					//	plotTemperature(this.result,false); Should be to execute eent into database.
 			 	};
 
 			 	reader.readAsText(file);
@@ -614,7 +634,6 @@ function readEventFromFile(filename){
 				alert("FileSystem Error");
 				alert(e);
 		 	});
-
 
         });
     });
@@ -934,8 +953,7 @@ function showDataInConfirm(fields,target){
 }
 
 function recordNewNest(){
-	var connected = $('#connected').val();
-	
+	// var connected = $('#connected').val();	
 	// var disabled = $('#NestData').find(':input:disabled').removeAttr('disabled');
 	// var content=$('#NestData').serialize();
 	// disabled.attr('disabled','disabled');
@@ -950,8 +968,13 @@ function recordNewNest(){
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_NEST;
 	console.log('requestData',requestData)
-	if (connected=="online"){
-		var data = {}
+
+	var networkState = navigator.connection.type;
+
+    if (networkState !== Connection.NONE) {
+    	// ONLINE CAPTURING
+        console.log('Current State', networkState)
+        var data = {}
 		$.ajax({
 			type: "POST",
 			data: requestData,
@@ -967,10 +990,13 @@ function recordNewNest(){
 				alert("Seems like Something went wrong. " + data.message);
 			}
 		});
-	} else {
-		openFile("newNest");
-		saveEventToFile(url);
-	}
+    }else{
+    	// OFFLINE CAPTURING
+    	console.log('Current State', networkState)
+    	// openFile("newNest");
+		saveEventToFileNest(requestData);
+    }
+    
 }
 
 function recordNewNestUnsuccessful(){
@@ -1051,8 +1077,6 @@ function saveTurtle(){
 		dataType:"json"
 	});
 }
-
-
 
 function setCurrentDate(field){
 	var now = new Date();
