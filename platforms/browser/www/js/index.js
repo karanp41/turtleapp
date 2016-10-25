@@ -18,15 +18,15 @@
  */
 
 function getQueryVariable(variable) {
-  var query = window.location.search.substring(1);
-  var vars = query.split("&");
-  for (var i=0;i<vars.length;i++) {
-    var pair = vars[i].split("=");
-    if (pair[0] == variable) {
-      return pair[1];
-    }
-  } 
-  //alert('Query Variable ' + variable + ' not found');
+    var query = window.location.search.substring(1);
+    var vars = query.split("&");
+    for (var i=0;i<vars.length;i++) {
+        var pair = vars[i].split("=");
+        if (pair[0] == variable) {
+            return pair[1];
+        }
+    } 
+    //alert('Query Variable ' + variable + ' not found');
 }
 
 
@@ -52,7 +52,17 @@ var app = {
         // locate();
         username = localStorage.getItem("turtle_nesting_username");
         document.addEventListener("scanRFID", scanRFID, false);
-        // document.addEventListener("offline", this.onOffline, false);
+
+        document.addEventListener("offline", onOffline, false);
+        function onOffline() {
+            showToast('Connection Lost. You may still able to record data offline and later you may sync when you come online.', 'bottom', 'long')
+        }
+
+        document.addEventListener("online", onOnline, false);
+        function onOnline() {
+            showToast('Connection established. You have some offline data saved in device. Press OK to sync.', 'bottom', 'long')
+        }
+
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
@@ -73,13 +83,3 @@ var app = {
 
 
 app.initialize();
-
-document.addEventListener("offline", onOffline, false);
-onOffline: function () {
-        alert('Gone offline')
-    }
-
-document.addEventListener("online", yourCallbackFunction, false);
-yourCallbackFunction: function () {
-        alert('Gone oinline')
-    }

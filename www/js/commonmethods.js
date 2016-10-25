@@ -24,15 +24,17 @@ function getUrlVars(){
     return vars;
 }
 
-function uploadFileToServer(ServerURI, fileURL){
+function uploadFileToServer(ServerURI, fileURL, nativeURL){
   function win(r) {
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
       console.log("Sent = " + r.bytesSent);
+      removeFile(fileURL)
   }
 
   function fail(error) {
-      alert("An error has occurred: Code = " + error.code);
+      // alert("An error has occurred: Code = " + error.code);
+      showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long')
       console.log("upload error source " + error.source);
       console.log("upload error target " + error.target);
   }
@@ -57,4 +59,30 @@ function uploadFileToServer(ServerURI, fileURL){
       }
   };
   ft.upload(fileURL, uri, win, fail, options);
+}
+
+function removeFile(relativeFilePath) {
+  // var relativeFilePath = "MyDir/file_name.png";
+  var fileName = relativeFilePath.substr(relativeFilePath.lastIndexOf('/')+1)
+  // var fileName = relativeFilePath;
+  window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(fileSystem){
+    console.log(fileSystem)
+      fileSystem.getFile(fileName, {create:false}, function(fileEntry){
+          fileEntry.remove(function(file){
+              console.log(fileName, "File removed!");
+              showToast("Data successfully synced.", 'bottom', 'long');
+              $('#offlineList').listview('refresh');
+              // $.mobile.changePage("index.html");
+              $.mobile.navigate( "#menuPage" );
+          },function(){
+              console.log(fileName, "error deleting the file " + error.code);
+              showToast("Seems like somthing went wrong.", 'bottom', 'long')
+            });
+          },function(){
+              console.log(fileName, "file does not exist");
+              showToast("file does not exist", 'bottom', 'long')
+          });
+      },function(evt){
+          console.log(evt.target.error.code);
+  });
 }

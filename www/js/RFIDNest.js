@@ -380,7 +380,14 @@ function record(){
 }
 
 function scanRFID(){
-	Caenrfid.scanRFID(function(data){rfidRunning=true;scanRFIDSuccess(data.substring(4)+"");navigator.notification.beep(1);},function (err){alert("error"+err)});    
+	Caenrfid.scanRFID(function(data){
+			rfidRunning=true;
+			scanRFIDSuccess(data.substring(4)+"");
+			navigator.notification.beep(1);
+		},
+		function (err){
+			alert("error"+err)
+		});
 }
 
 function stopRFID(){
@@ -425,7 +432,7 @@ function copyToClipboard() {
 function openFile(tagid){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
-		var filename = tagid + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		var filename = tagid + "_TEMP_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
 		  //  console.log("got main dir",dir);
 		  //  alert("got main dir");
 		    dir.getFile(filename + ".csv", {create:true}, function(file) {
@@ -471,14 +478,14 @@ function saveEventToFile(event){
 	});	
 }
 
-
 function saveEventToFileNest(data){
 
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
-		var filename = "Nest_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		var filename = "NEST_" + data.NestID + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
 		    dir.getFile(filename + ".csv", {create:true}, function(file) {
 		        console.log("got the file", file);
+
 		        logOb = file;		        
 	        	if(!logOb) return;
 				logOb.createWriter(function(fileWriter) {
@@ -493,11 +500,9 @@ function saveEventToFileNest(data){
 					        values.push(data[property]);
 					    }
 					}
-					// return;
 					/*var CSV = [
 					    '"1","val1","val2","val3","val4"',
-					    '"2","val1","val2","val3","val4"',
-					    '"3","val1","val2","val3","val4"'
+					    '"2","val1","val2","val3","val4"'
 					  ].join('\n');*/
 					var CSV = [
 					    fields.join(),
@@ -506,10 +511,13 @@ function saveEventToFileNest(data){
 					var contentType = 'text/csv';
 					var csvFile = new Blob([CSV], {type: contentType});
 					fileWriter.write(csvFile);
-					alert("file written" + CSV);
+					// alert("file written" + CSV);
+					showToast("Data Saved Successfully.", 'bottom', 'long')
+					$.mobile.changePage("index.html");
 				},  function fail(e) {
-					alert("FileSystem Error");
-					alert(e);
+					// alert("FileSystem Error");
+					showToast("FileSystem Error", 'bottom', 'long')
+					// alert(e);
 				});
 		    });
 	});	
@@ -525,19 +533,19 @@ function readFromFile(filename){
             logOb = file;
         });
     });
-	 logOb.file(function(file) {
+	logOb.file(function(file) {
 		 var reader = new FileReader();
 
-		 reader.onloadend = function(e) {
-	//			 alert("inside"+this.result);
-			 plotTemperature(this.result,false);
-		 };
+		reader.onloadend = function(e) {
+			//	alert("inside"+this.result);
+			plotTemperature(this.result,false);
+		};
 
-		 reader.readAsText(file);
-	 }, function fail(e) {
+		reader.readAsText(file);
+	}, function fail(e) {
 			alert("FileSystem Error");
 			alert(e);
-	 });
+	});
 }
 
 function renameFile(currentName, currentDir, newName, successFunction) {
@@ -612,7 +620,6 @@ function readEventFromFile(filename){
     		var form_data = new FormData();                  
     		form_data.append('file', file_data);
 
-
             console.log("got the file", file);
             logOb = file;
 
@@ -625,7 +632,7 @@ function readEventFromFile(filename){
 				 	console.log(logOb);
 				 	var ServerURI = HOST + API_PATH + UPLOAD_FILE;
 				 	var fileURL = file.localURL;
-				 	uploadFileToServer(ServerURI, fileURL);
+				 	uploadFileToServer(ServerURI, fileURL, logOb.nativeURL);
 					//	plotTemperature(this.result,false); Should be to execute eent into database.
 			 	};
 
@@ -640,6 +647,33 @@ function readEventFromFile(filename){
 	 
 }
 
+function syncAllNestData(type) {
+	if (type=='nest') {		
+		window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+		    function (fileSystem) { 
+		      	var reader = fileSystem.createReader();
+		      	var list="";
+		      	reader.readEntries(function (entries) {
+		      		console.log(entries)
+		        	for (i=0; i<entries.length; i++) {
+		        		if (typeof entries[i] == 'undefined'){
+		        			continue;
+		        		}
+		        		// if (entries[i].name.search("NEST")>-1){
+		        			readEventFromFile(entries[i].name)
+		        		// }
+		        	}
+		        	
+		        },
+		        function (err) {
+		          	alert(err);
+		        });
+		      	//alert(list);
+		    }, function (err) {
+		      	alert(err);
+		    });
+	}
+}
 
 function listOfflineTemps(){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
@@ -673,13 +707,11 @@ function listOfflineTemps(){
 		      //alert(list);
 		    }, function (err) {
 		      alert(err);
-		    }
-		  );
+		    });
 }
 
 function listOfflineEvents(){
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-		    function (fileSystem) {
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (fileSystem) {
 		      var reader = fileSystem.createReader();
 		      var list="";
 		      reader.readEntries(
@@ -709,8 +741,7 @@ function listOfflineEvents(){
 		      //alert(list);
 		    }, function (err) {
 		      alert(err);
-		    }
-		  );
+		});
 }
 
 function readTemp(){
@@ -805,8 +836,6 @@ function plotTemperature(data,write){
             }
         });
 	});
-	
-
 }
 
 function showTemp(){
@@ -927,10 +956,10 @@ function confirm(func){
 
 function showDataInConfirm(fields,target){
 	console.log(fields,target)
-	$( target ).empty();
+	// $( target ).empty();
 
 	var HTML = '';
-	HTML += '<table data-role="table" data-mode="columntoggle" class="ui-responsive ui-shadow" id="myTable"><thead><tr><th>Field Name</th><th data-priority="1">Value</th></tr></thead><tbody>';
+	HTML += '<table data-role="table" class="ui-responsive ui-shadow" id="myTable"><thead><tr><th>Field Name</th><th>Value</th></tr></thead><tbody>';
 
 	    jQuery.each( fields, function( i, field ) {
 	    	if (typeof $("label[for='"+field.name+"']").html() != "undefined"){
@@ -949,7 +978,8 @@ function showDataInConfirm(fields,target){
 	    });
 
     HTML += '</tbody></table>';
-    $( target ).append(HTML);
+    $( target ).html(HTML);
+    
 }
 
 function recordNewNest(){
@@ -983,11 +1013,13 @@ function recordNewNest(){
 			url: url,
 			success: function(data) {
 				console.log(data)				
-				alert("Nest data recorded");
+				// alert("Nest data recorded");
+				showToast("Nest data recorded", 'bottom', 'long')
 				$.mobile.changePage("index.html");
 			},
 			error: function(data) {
-				alert("Seems like Something went wrong. " + data.message);
+				// alert("Seems like Something went wrong. " + data.message);
+				showToast("Seems like Something went wrong.", 'bottom', 'long')
 			}
 		});
     }else{
@@ -1511,6 +1543,7 @@ function login(username,password){
 				showToast('Successfully Logged In', 'bottom', 'long')
 				localStorage.setItem("group_id", data.data.Group.id);
 				localStorage.setItem("user_id", data.data.User.id);
+				localStorage.setItem("nestFields", JSON.stringify(data.data.onloadInfo));
 				$.mobile.navigate( "#menuPage" );
 			}else if(data.code=="201"){
 				showToast('Username or password is incorrect.', 'bottom', 'long')
@@ -1527,104 +1560,112 @@ function login(username,password){
 
 function getRecordNestInformation(){
 	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
-	var url= HOST + API_PATH + GET_RECORD_NEST_INFORMATION;
-	var data = {}
-	$.ajax({
-		type: "POST",
-		data: data,
-		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-		url: url,
-		success: function(data) {
-			if (data.code=="200"){
-				console.log(data);
-
-				var Specie = data.data.Specie;
-				$.each(Specie, function (i, item) {
-				    $('#Specie').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				var AlterationTime = data.data.AlterationTime;
-				$.each(AlterationTime, function (i, item) {
-				    $('#AlterationTime').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				// var leftLandMarkAlt = data.data.NestLandmark;
-				// $.each(leftLandMarkAlt, function (i, item) {
-				//     $('#leftLandMarkAlt').append($('<option>', { 
-				//         value: i,
-				//         text : item 
-				//     }));
-				// });
-
-				var leftLandMarkAlt = data.data.NestLandmark;
-				$.each(leftLandMarkAlt, function (i, item) {
-				    $('#leftLandMarkAlt').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				    $('#rightLandMarkAlt').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				    $('#leftLandMark').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				    $('#rightLandMark').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				var NestLocationAlt = data.data.RelocatedNestLocation;
-				$.each(NestLocationAlt, function (i, item) {
-				    $('#nestLocAlt').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				var NestLocation = data.data.NestLocation;
-				$.each(NestLocation, function (i, item) {
-				    $('#nestLoc').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				var RelocatedNestCover = data.data.RelocatedNestCover;
-				$.each(RelocatedNestCover, function (i, item) {
-				    $('#gridcoverAlt').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-
-				var NestCover = data.data.NestCover;
-				$.each(NestCover, function (i, item) {
-				    $('#gridCover').append($('<option>', { 
-				        value: i,
-				        text : item 
-				    }));
-				});
-				
-			}else if(data.code=="201"){
-				alert("Seems like something went wrong.");
-
-			}else{
-				alert("Seems like something went wrong.");
-			}
-		},
-		dataType:"json"
+	var networkState = navigator.connection.type;
+	if (networkState !== Connection.NONE) {
+    	// ONLINE APPENDING DATA TO FIELDS
+        var url= HOST + API_PATH + GET_RECORD_NEST_INFORMATION;
+		var data = {}
+		$.ajax({
+			type: "POST",
+			data: data,
+			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			url: url,
+			success: function(data) {
+				if (data.code=="200"){
+					console.log(data);
+					setNestDataField(data.data)
+				}else if(data.code=="201"){
+					alert("Seems like something went wrong.");
+				}else{
+					alert("Seems like something went wrong.");
+				}
+			},
+			dataType:"json"
 		});
+    }else{
+    	// OFFLINE APPENDING DATA TO FIELDS
+    	var nestFields = JSON.parse(localStorage.getItem("nestFields"))
+    	console.log(nestFields)
+    	setNestDataField(nestFields)
+    }
+
+
+
+	
 }
+
+function setNestDataField(nestData){
+	var Specie = nestData.Specie;
+	$.each(Specie, function (i, item) {
+	    $('#Specie').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var AlterationTime = nestData.AlterationTime;
+	$.each(AlterationTime, function (i, item) {
+	    $('#AlterationTime').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var leftLandMarkAlt = nestData.NestLandmark;
+	$.each(leftLandMarkAlt, function (i, item) {
+	    $('#leftLandMarkAlt').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	    $('#rightLandMarkAlt').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	    $('#leftLandMark').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	    $('#rightLandMark').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var NestLocationAlt = nestData.RelocatedNestLocation;
+	$.each(NestLocationAlt, function (i, item) {
+	    $('#nestLocAlt').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var NestLocation = nestData.NestLocation;
+	$.each(NestLocation, function (i, item) {
+	    $('#nestLoc').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var RelocatedNestCover = nestData.RelocatedNestCover;
+	$.each(RelocatedNestCover, function (i, item) {
+	    $('#gridcoverAlt').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+
+	var NestCover = nestData.NestCover;
+	$.each(NestCover, function (i, item) {
+	    $('#gridCover').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
+	});
+}
+
+
 
 /********* GET ALL PREDATION INFORMATION NEEDED ON PREDATION CREATION PAGE ******/
 

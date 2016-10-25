@@ -1,9 +1,12 @@
 <div data-role="page" id="offlineListPage">
 	<div data-role="header">
-		<h1>NestList</h1>				
+		<a href="index.html" class="ui-btn ui-corner-all ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+		<h1>NestList</h1>
+		<a onClick="syncAllNestData('nest')" class="ui-btn ui-corner-all ui-shadow ui-icon-recycle ui-btn-icon-left">Sync All</a>
 	</div><!-- /header -->
 
 	<div role="main" id="offlineListPage" class="ui-content">
+
 		<ul id="offlineList" data-role="listview"  data-filter="true">			
 		</ul>
 	</div><!-- /content -->

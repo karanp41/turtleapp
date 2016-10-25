@@ -1,10 +1,10 @@
 <div data-role="page" id="recordNestPage">
 	<div data-role="header" data-position="fixed">
 		<h3>Record New Nest</h3>
-		<select id="connected" data-role="flipswitch">
+		<!-- <select id="connected" data-role="flipswitch">
      	 	<option value="online">online</option>
       		<option value="offline">offline</option>
-    	</select>
+    	</select> -->
 		<a href="index.html" class="ui-btn-left ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Home</a> 
 	</div>
 	<!-- /header -->
@@ -160,8 +160,8 @@
 						name="nestingDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="nestingDate"></input>
 				</div>
 				<div class="ui-field-contain">
-					<label for="nestingTime">Nesting time:</label> <input type="text"
-						type="time" name="nestingTime" data-role="number" data-inline="true" placeholder="HHMM" id="nestingTime"></input>
+					<label for="nestingTime">Nesting time:</label> <!-- <input type="text"
+						type="time" name="nestingTime" data-role="number" data-inline="true" placeholder="HHMM" id="nestingTime"></input> --><input type="time" name="nestingTime" data-inline="true" id="nestingTime"></input>
 				</div>
 				<div class="ui-field-contain">
 					<label for="certain">How many days uncertain?:</label>
@@ -310,7 +310,7 @@
 
 
 		</form>
-		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
+		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="#popupConfirm" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
 		<a href="#popupConfirm2" id="loginButton2" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Unsuccessful</a>
 		
 	</div>
@@ -318,11 +318,11 @@
 	<div data-role="footer" data-position="fixed"></div>
 	<!-- /footer -->
 
-	<div data-role="popup" id="popupConfirm" data-theme="a"
-		class="ui-corner-all">
+	<div data-role="popup" id="popupConfirm" data-theme="a" class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 		<form class="summary-popup-form">				
-			<h3>Preview of Nest Data</h3><hr>
+			<h3>Preview of Nest Data</h3>
+			<hr>
 			<div id="summary"></div>
 			<button id="successfulButton" class="ui-btn"
 				onClick="recordNewNest();">RECORD NOW</button>
@@ -331,8 +331,7 @@
 		</form>
 	</div>
 	
-	<div data-role="popup" id="popupConfirm2" data-theme="a"
-		class="ui-corner-all">
+	<div data-role="popup" id="popupConfirm2" data-theme="a" class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 		<form class="summary-popup-form">
 			<h3>Preview of Nest Data</h3>				
