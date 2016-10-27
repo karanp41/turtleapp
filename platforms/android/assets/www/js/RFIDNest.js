@@ -110,7 +110,7 @@ function editNest(edNestID){
 			$('#nestLoc').val(data[0].nestLoc).selectmenu("refresh");
 			$('#turtleId').val(data[0].turtleId);
 			
-			$('#successfulButton').html("Save").button("refresh");
+			// $('#successfulButton').html("Save").button("refresh");
 			$('#unsuccessfulButton').attr("display", "none").button("refresh");
 		}	
 	});
@@ -485,7 +485,6 @@ function saveEventToFileNest(data){
 		var filename = "NEST_" + data.NestID + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
 		    dir.getFile(filename + ".csv", {create:true}, function(file) {
 		        console.log("got the file", file);
-
 		        logOb = file;		        
 	        	if(!logOb) return;
 				logOb.createWriter(function(fileWriter) {
@@ -494,16 +493,15 @@ function saveEventToFileNest(data){
 					var values = [];
 					for (var property in data) {
 					    if (data.hasOwnProperty(property)) {
-					        // fields += '"'+property+'",';
 					        fields.push(property);
-					        // values += '"'+data[property]+'",';
 					        values.push(data[property]);
 					    }
 					}
-					/*var CSV = [
-					    '"1","val1","val2","val3","val4"',
-					    '"2","val1","val2","val3","val4"'
-					  ].join('\n');*/
+					// SAMPLE CSV
+					// var CSV = [
+					//     '"1","val1","val2","val3","val4"',
+					//     '"2","val1","val2","val3","val4"'
+					//   ].join('\n');
 					var CSV = [
 					    fields.join(),
 					    values.join()
@@ -511,9 +509,19 @@ function saveEventToFileNest(data){
 					var contentType = 'text/csv';
 					var csvFile = new Blob([CSV], {type: contentType});
 					fileWriter.write(csvFile);
+
+					if (localStorage.getItem('offlineRecordedNestNames')) {
+						var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+					}else{
+						var offlineRecordedNestNames = [];
+					}
+					offlineRecordedNestNames.push(filename);
+					localStorage.setItem('offlineRecordedNestNames',JSON.stringify(offlineRecordedNestNames));
+
 					// alert("file written" + CSV);
 					showToast("Data Saved Successfully.", 'bottom', 'long')
-					$.mobile.changePage("index.html");
+					// $.mobile.changePage("index.html");
+					$.mobile.navigate( "#menuPage" );
 				},  function fail(e) {
 					// alert("FileSystem Error");
 					showToast("FileSystem Error", 'bottom', 'long')
@@ -522,7 +530,6 @@ function saveEventToFileNest(data){
 		    });
 	});	
 }
-
 
 
 function readFromFile(filename){
@@ -648,31 +655,40 @@ function readEventFromFile(filename){
 }
 
 function syncAllNestData(type) {
-	if (type=='nest') {		
-		window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
-		    function (fileSystem) { 
-		      	var reader = fileSystem.createReader();
-		      	var list="";
-		      	reader.readEntries(function (entries) {
-		      		console.log(entries)
-		        	for (i=0; i<entries.length; i++) {
-		        		if (typeof entries[i] == 'undefined'){
-		        			continue;
-		        		}
-		        		// if (entries[i].name.search("NEST")>-1){
-		        			readEventFromFile(entries[i].name)
-		        		// }
-		        	}
-		        	
-		        },
-		        function (err) {
-		          	alert(err);
-		        });
-		      	//alert(list);
-		    }, function (err) {
-		      	alert(err);
-		    });
-	}
+
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	if (type=='nest') {
+			window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+			    function (fileSystem) {
+			      	var reader = fileSystem.createReader();
+			      	var list="";
+			      	reader.readEntries(function (entries) {
+			      		console.log(entries)
+			        	for (i=0; i<entries.length; i++) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+			        		console.log('offlineRecordedNestNames: ',offlineRecordedNestNames)
+			        		console.log('entries[i].name: ',entries[i].name.slice(0, -4))
+			        		if (offlineRecordedNestNames.indexOf(entries[i].name.slice(0, -4)) >-1){
+			        			readEventFromFile(entries[i].name)
+			        		}
+			        	}		        	
+			        },
+			        function (err) {
+			          	alert(err);
+			        });
+			      	//alert(list);
+			    }, function (err) {
+			      	alert(err);
+			    });
+		}
+    }else{    	
+    	showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long');
+    	return;
+    }	
 }
 
 function listOfflineTemps(){
@@ -697,8 +713,7 @@ function listOfflineTemps(){
 						htmlInset += "</li>";
 		        	}
 		        	$("#fileList").html(htmlInset);
-		        	$("#fileList").listview('refresh');
-		        	
+		        	$("#fileList").listview('refresh');		        	
 		        },
 		        function (err) {
 		          alert(err);
@@ -723,10 +738,11 @@ function listOfflineEvents(){
 		        			continue;
 		        		}
 		        		$("#fileList").html("");
-		        		htmlInset += "<li><a href='#' onclick='readEventFromFile(\""+entries[i].name+"\");'>"+
+		        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='readEventFromFile(\""+entries[i].name+"\");'>"+
 						"<h3>"+entries[i].name+"</h3></a> ";
 		        		if (entries[i].name.search("finished_")==-1){
-		        			htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
+		        			// htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
+		        			htmlInset += "<a href='#' onclick='readEventFromFile(\""+entries[i].name+"\");'>1st link</a> ";
 		        		}
 						htmlInset += "</li>";
 		        	}
@@ -993,6 +1009,11 @@ function recordNewNest(){
 	for (var i = 0, l = data.length; i < l; i++) {
 	    requestData[data[i].name] = data[i].value;
 	}
+
+	// if (!requestData.NestID) {
+	// 	alert('NestID REq');return;
+	// }
+
 	requestData.user_id = localStorage.getItem('user_id')
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
@@ -1073,41 +1094,55 @@ function recordPerdation(){
 	});
 }
 
-function saveTurtle(){
+function saveTurtle(type){
+	// type: nest, individual
+	// $( "#popupConfirmTurtleInfo" ).popup( "close" )
+	if (type=='nest') {
 
-	
-	var data = jQuery('#turtleInfoForm').serializeArray();
-	var requestData = {};
-	for (var i = 0, l = data.length; i < l; i++) {
-	    requestData[data[i].name] = data[i].value;
-	}
-	requestData.user_id = localStorage.getItem('user_id');
+		var data = jQuery('#turtleInfoForm').serializeArray();
+		var requestData = {};
+		for (var i = 0, l = data.length; i < l; i++) {
+		    requestData[data[i].name] = data[i].value;
+		}
+		requestData.user_id = localStorage.getItem('user_id');
 
-	// var url = HOST + API_PATH + "saveTurtle.php?un="+username+"&mac="+ownID+"&"+content;
-	var url = HOST + API_PATH + SAVE_TURTLE;
+		var networkState = navigator.connection.type;
+		if (networkState !== Connection.NONE) {
+	    	// ONLINE SAVING TURTLE
+	    	// var url = HOST + API_PATH + "saveTurtle.php?un="+username+"&mac="+ownID+"&"+content;
+			var url = HOST + API_PATH + SAVE_TURTLE;
+			var promise = ajaxCall(requestData,'POST',url,'json')			
+			promise.success(function (data) {
+			 	if(data.code == '201'){
+		            console.log(data.message)
+		            showToast(data.message, 'center', 'long')
+		        }else if(data.code == '200'){
+		            // $.mobile.changePage( "popupdialogs/confirmTurtleTagPoup.html", { role: "dialog" } );
+		        	console.log(data.message)
+		            // $("#associateTurtlePopup").popup("open");
+		            $.mobile.changePage("popupdialogs/dialogAssociateTurtle.html", {transition: 'slideup', role: 'dialog'});
+		            window.RECENTTURTLEDATA = data.data.Turtle;
+		            console.log(window.RECENTTURTLEDATA)
+		            showToast(data.message, 'center', 'long')
+		        }else{
+		            showToast('Seems like something went wrong', 'center', 'long')
+		        }
+			})
+	    }else{
+	    	// OFFLINE TURTLE SAVING
+	    	
+	    }				
+	}	
+}
 
-	$.ajax({
-		data:requestData,
-		type: "POST",
- 		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-		url: url,
-		success: function(data) {
-			// data = JSON.parse(data);
-			if(data.code == '201'){
-				console.log(data.message)
-				showToast(data.message, 'center', 'long')
-			}else if(data.code == '200'){
-				// $.mobile.changePage( "popupdialogs/confirmTurtleTagPoup.html", { role: "dialog" } );
-				console.log(data.message)
-				showToast(data.message, 'center', 'long')
-				$.mobile.changePage("record-nest.html");
-			}else{
-				showToast('Seems like something went wrong', 'center', 'long')
-			}
-		},
-		dataType:"json"
-	});
+function associateTurtle(){
+	console.log(window.RECENTTURTLEDATA)
+	$.mobile.changePage("../record-nest.html");
+}
+
+function doNotAssociateTurtle(){
+	delete window.RECENTTURTLEDATA;
+	$.mobile.changePage("record-nest.html");
 }
 
 function setCurrentDate(field){
@@ -1590,9 +1625,12 @@ function getRecordNestInformation(){
     	setNestDataField(nestFields)
     }
 
-
-
-	
+    if(window.RECENTTURTLEDATA){    	
+    	$("#turtleTagID").val(window.RECENTTURTLEDATA.tagID);
+    	$("#turtleId").val(window.RECENTTURTLEDATA.id);
+    	$("#turtlesAutoComplete").hide();
+    	console.log(window.RECENTTURTLEDATA)
+    }	
 }
 
 function setNestDataField(nestData){
@@ -1665,6 +1703,9 @@ function setNestDataField(nestData){
 	});
 }
 
+function remindLaterOfflineNotification() {
+	setTimeout(function(){ $("#offlineNotificationPopup").popup("open"); }, 60000);
+}
 
 
 /********* GET ALL PREDATION INFORMATION NEEDED ON PREDATION CREATION PAGE ******/

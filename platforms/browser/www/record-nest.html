@@ -22,7 +22,7 @@
 			<div class="ui-field-contain">
 				<label for="Specie">Species:</label> 
 				<select name="species" id="Specie">
-					<option value="0">Select Specie</option>					
+					<option value="0">Select Species</option>					
 				</select>
 			</div>
 			<hr />
@@ -285,7 +285,7 @@
 				</div-->
 				<div class="ui-field-contain">
 					<label for="numberOfBodyPits"># of hole/body pits:</label> 
-					<input name="numberOfBodyPits" type="text"
+					<input name="numberOfBodyPits" type="number"
 						id="numberOfBodyPits"></input>
 				</div>
 
@@ -324,8 +324,7 @@
 			<h3>Preview of Nest Data</h3>
 			<hr>
 			<div id="summary"></div>
-			<button id="successfulButton" class="ui-btn"
-				onClick="recordNewNest();">RECORD NOW</button>
+			<button id="successfulButton" class="ui-btn" onClick="recordNewNest();">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
 				data-icon="delete">No, Need Corrections </a>
 		</form>

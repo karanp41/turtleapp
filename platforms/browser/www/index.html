@@ -69,16 +69,26 @@
 			<div data-role="popup" id="popupLogin" data-theme="a"
 				class="ui-corner-all">
 			</div>
+
+			<div data-role="popup" id="offlineNotificationPopup" data-position-to="window" data-transition="slideup">
+				<div data-role="header" data-theme="a">
+			    	<h1>Offline Notification</h1>
+			    </div>
+			    <div role="main" class="ui-content">
+			        <p>You have some offline data to get synced with server. Press 'Sync Now' to continue or 'Remind Later'</p>
+			        <a href="offlineMenu.html" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-recycle">Sync Now</a>
+					<a onClick="remindLaterOfflineNotification()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-clock ui-btn-b" data-rel="back" data-transition="flow">Remind Me Later</a>
+					
+			    </div>
+			</div>
 		</div><!-- /page -->
 
 
 
 		<div data-role="page" id="loginPage">
-
 		  	<div data-role="header">
 		    	<h1>Turtle Nesting Safe</h1>
 		  	</div>
-
 		  	<div data-role="main" class="ui-content">
 			    <form>        
 					<div class="login-form-wrapper">					            
@@ -96,11 +106,6 @@
 					</div>				    
 				</form>
 		  	</div>
-
-		  	<!-- <div data-role="footer">
-		    	<h1>Footer Text</h1>
-		  	</div> -->
-
 		</div>
 			
         <script type="text/javascript" src="cordova.js"></script>

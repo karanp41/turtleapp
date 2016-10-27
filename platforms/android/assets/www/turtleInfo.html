@@ -1,6 +1,6 @@
 <div id="turtleInfo" data-role="page">
 	<div data-role="header" data-position="fixed">
-		<h3>TurtleInfo</h3>
+		<h3>Add Turtle Info</h3>
 	</div>
 	<!-- /header -->
 	<div role="main" class="ui-content">
@@ -107,15 +107,26 @@
 
 		</form>
 	</div>
+
 	<div data-role="popup" id="popupConfirmTurtleInfo" data-theme="a" class="ui-corner-all">
-		<form class="summary-popup-form">
+		<div class="summary-popup-form">
 			<h3>Summary of the data below. Submit?</h3>
 			<div id="summary"></div>
 			<button id="successfulButton" class="ui-btn"
-				onClick="saveTurtle();">Yes</button>
-			<a href="#" data-rel="back" data-role="button" data-theme="a"
-					data-icon="delete">No</a>
-		</form>
+				onClick="saveTurtle('nest');">Yes</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a" data-icon="delete">No</a>
+		</div>
+	</div>
+
+	<div data-role="popup" id="associateTurtlePopup" data-position-to="window" data-transition="fade">
+		<div data-role="header" data-theme="a">
+	    	<h1>Associate Turtle</h1>
+	    </div>
+	    <div role="main" class="ui-content">
+	        <p>Do you want to associate this turtle with the nest you're recording now?</p>
+	        <a onClick="associateTurtle()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-check">Yes, Associate</a>
+			<a onClick="doNotAssociateTurtle()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-forbidden ui-btn-b" data-rel="back" data-transition="flow">No, Just save it</a>
+	    </div>
 	</div>
 
 </div>

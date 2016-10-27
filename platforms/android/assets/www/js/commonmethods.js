@@ -53,7 +53,8 @@ function uploadFileToServer(ServerURI, fileURL, nativeURL){
   var ft = new FileTransfer();
   ft.onprogress = function(progressEvent) {
       if (progressEvent.lengthComputable) {
-        loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+        var loadValue = loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+        console.log(loadValue)
       } else {
         loadingStatus.increment();
       }
@@ -72,7 +73,14 @@ function removeFile(relativeFilePath) {
               console.log(fileName, "File removed!");
               showToast("Data successfully synced.", 'bottom', 'long');
               $('#offlineList').listview('refresh');
-              // $.mobile.changePage("index.html");
+              
+              var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+              var index = offlineRecordedNestNames.indexOf(fileName.slice(0, -4));
+              if (index > -1) {
+                  offlineRecordedNestNames.splice(index, 1);
+              }
+              localStorage.setItem('offlineRecordedNestNames',JSON.stringify(offlineRecordedNestNames));
+              
               $.mobile.navigate( "#menuPage" );
           },function(){
               console.log(fileName, "error deleting the file " + error.code);
@@ -85,4 +93,20 @@ function removeFile(relativeFilePath) {
       },function(evt){
           console.log(evt.target.error.code);
   });
+}
+
+
+function ajaxCall(requestData,type,serverUrl,dataType) {
+  return $.ajax({
+        data:requestData,
+        type: type,
+        beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+        complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+        url: serverUrl,
+        async: false,
+        success: function(data) {
+          return data;
+        },
+        dataType:dataType
+      });
 }

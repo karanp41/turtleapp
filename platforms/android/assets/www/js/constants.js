@@ -70,3 +70,5 @@ var SAVE_UNCOVER 	= 'saveUncover';
 
 var NEST_PREDATION 	= 'nestPredation';
 var UPLOAD_FILE 	= 'UploadCSV';
+// var UPLOAD_FILE 	= 'uploadOfflineNests';
+

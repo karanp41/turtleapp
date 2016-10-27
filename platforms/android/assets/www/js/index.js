@@ -52,15 +52,22 @@ var app = {
         // locate();
         username = localStorage.getItem("turtle_nesting_username");
         document.addEventListener("scanRFID", scanRFID, false);
-
         document.addEventListener("offline", onOffline, false);
+
         function onOffline() {
             showToast('Connection Lost. You may still able to record data offline and later you may sync when you come online.', 'bottom', 'long')
         }
 
         document.addEventListener("online", onOnline, false);
-        function onOnline() {
-            showToast('Connection established. You have some offline data saved in device. Press OK to sync.', 'bottom', 'long')
+        function onOnline() {                        
+            // $("#offlineNotificationPopup").popup("open");
+            var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+            if(offlineRecordedNestNames.length > 0){
+                showToast('Connection established. You have some offline data saved in device. Press \'Sync Now\' to upload.', 'bottom', 'long')
+                $.mobile.changePage("popupdialogs/dialog.html", {transition: 'slideup', role: 'dialog'});
+            }else{
+                showToast('Connection established.', 'bottom', 'long')
+            }   
         }
 
     },
