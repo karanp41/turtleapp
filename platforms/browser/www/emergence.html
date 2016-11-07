@@ -1,87 +1,87 @@
 <div id="emergPage" data-role="page">
-			<div data-role="header"  data-position="fixed" >		
-				<h3>Emergence</h3>
-				<a href="#" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Login</a>
+		<div data-role="header"  data-position="fixed" >		
+			<a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-b ui-corner-all ui-shadow">Home</a>
+			<h3>Emergence</h3>
 		</div><!-- /header -->
 		<div role="main" class="ui-content">
 			<p id="message" class="message"></p>
-		<form id="EmergData">
-			<div>
-				<label for="rfid">NEST tag</label>
-				<input readonly type="text" id="rfid" name="rfid" ></input>
-				<input type="button" onClick="scanOnce()" value="Read TAG"></input>
+			<form id="EmergData">
+				<div>
+					<label for="rfid">NEST tag</label>
+					<input readonly type="text" id="rfid" name="rfid" ></input>
+					<input type="button" onClick="scanOnce()" value="Read TAG"></input>
+				</div>
+				<div>
+					<label for="nestID">NEST ID</label>
+					<input type="text" readonly name="nestID" id="nestID" placeholder=""></input>
+				</div>
+				<div class="ui-field-contain">
+				<label for="locationEmerg">Nest location:</label>
+						<p id="locationEmerg" class="message"></p>
+				</div>
+				<div class="ui-field-contain">
+					<label for="emergeDate">Emergence date:</label>
+					<!-- <input type="text" data-role="date" data-inline="true" name="emergeDate" id="emergeDate" ></input> -->
+					<input type="date" name="emergeDate" id="emergeDate" ></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="dead"># dead hatchling in nest:</label>
+					<input type="number" name="dead" id="dead" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="alive"># alive hatchlings in nest:</label>
+					<input type="number" name="alive" id="alive" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="tracks"># tracks:</label>
+					<input type="number" name="tracks" id="tracks" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="toSea"># reached sea:</label>
+					<input type="number" name="toSea" id="toSea" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="deadInTransit"># dead in transit:</label>
+					<input type="number" name="deadInTransit" id="deadInTransit" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="cause">Cause of death:</label>
+					<input type="text" name="cause" id="cause" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="incubation"># removed for incubation:</label>
+					<input type="number" name="incubation" id="incubation" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="empty">Nest is empty:</label>
+					<input type="checkbox" name="empty" value="1" id="empty" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="comment">Comment:</label>
+					<textarea type="textarea" name="comment" id="comment" > </textarea>
+				</div>
+			</form>
+			<div class="ui-grid-b">
+				<!-- <div class="ui-block-b"> -->
+				<a href="#popupConfirmEmerg" id="loginButton" data-rel="popup" data-position-to="popupConfirmEmerg" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
+				<!-- </div> -->
 			</div>
-			<div>
-				<label for="nestID">NEST ID</label>
-				<input type="text" disabled="disabled" name="nestID" id="nestID" placeholder=""></input>
-			</div>
-			<div class="ui-field-contain">
-			<label for="locationEmerg">Nest location:</label>
-					<p id="locationEmerg" class="message"></p>
-			</div>
-			<div class="ui-field-contain">
-				<label for="emergeDate">Emergence date:</label>
-				<input type="text" data-role="date" data-inline="true" name="emergeDate" id="emergeDate" ></input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="dead"># dead hatchling in nest:</label>
-				<input type="number" name="dead" id="dead" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="alive"># alive hatchlings in nest:</label>
-				<input type="number" name="alive" id="alive" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="tracks"># tracks:</label>
-				<input type="number" name="tracks" id="tracks" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="toSea"># reached sea:</label>
-				<input type="number" name="toSea" id="toSea" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="deadInTransit"># dead in transit:</label>
-				<input type="number" name="deadInTransit" id="deadInTransit" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="cause">Cause of death:</label>
-				<input type="text" name="cause" id="cause" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="incubation"># removed for incubation:</label>
-				<input type="number" name="incubation" id="incubation" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="empty">Nest is empty:</label>
-				<input type="checkbox" name="empty" value="1" id="empty" > </input>
-			</div>
-			<div class="ui-field-contain">
-				<label for="comment">Comment:</label>
-				<textarea type="textarea" name="comment" id="comment" > </textarea>
-			</div>
-		</form>
-		<div class="ui-grid-b">
-			<div class="ui-block-b">
-			<a href="#popupConfirmEmerg" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
-			</div>
-		</div>
 		</div><!-- /content -->
-		<div data-role="footer" data-position="fixed">
 
-			</div><!-- /footer -->
+		<div data-role="footer" data-position="fixed">
+		</div><!-- /footer -->
 			
-	<div data-role="popup" id="popupConfirmEmerg" data-theme="a"
-		class="ui-corner-all">
-		<form>
-			<div style="padding: 10px 20px;">
-				<h3>Summary of the data below. Submit?</h3>
+		<div data-role="popup" id="popupConfirmEmerg" data-theme="a" class="ui-corner-all">
+			<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+			<form class="summary-popup-form">
+				<h3>Preview of Emergence Data</h3>
+				<hr>
 				<div id="summary"></div>
 				<button id="successfulButton" class="ui-btn"
 					onClick="recordEmerg();">Yes</button>
 				<a href="#" data-rel="back" data-role="button" data-theme="a"
-					data-icon="delete">No</a>
-			</div>
-		</form>
-	</div>	
-	
+					data-icon="delete">No</a>				
+			</form>
+		</div>	
+		
 		</div><!-- /page -->

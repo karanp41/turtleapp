@@ -6,6 +6,13 @@ $(document).on('pageinit','#recordNestPage', function(){
 	populateTurtlesList();    
 });
 
+$(document).on("pagebeforehide","#recordNestPage",function(){ // When leaving pagetwo
+	console.log("recordNestPage is about to be hidden");
+	if (window.RECENTTURTLEDATA) {
+		delete window.RECENTTURTLEDATA;	
+	}
+});
+
 $(document).on('pageinit','#nestInfoPage', function(){
 	console.log('curTag: '+curTag)
 	populateNestInfo(curTag);
@@ -27,10 +34,9 @@ $(document).on('pageshow','#mainPage', function(){
 //	updateMap();
 });
 
-$(document).on('pageinit','#predationPage', function(){
-	$('#locationPred').html(lat.toFixed(5)+", "+long.toFixed(5));
-	$('#rfid').val(curTag);
-	$('#nestID').val(nestID);
+$(document).on('pageinit','#predationPage', function(){	
+	// $('#rfid').val(curTag);
+	// $('#nestID').val(nestID);
 	fetchPredationData();
 });
 
@@ -57,6 +63,22 @@ $(document).on('pageinit','#nestListPage', function(){
 
 $(document).on('pageinit','#offlineListPage', function(){
 	listOfflineEvents();
+});
+
+$(document).on('pageinit','#offlineTurtlesListPage', function(){	
+	listOfflineTurtles();
+});
+
+$(document).on('pageinit','#offlinePredationListPage', function(){	
+	listOfflinePredations();
+});
+
+$(document).on('pageinit','#offlineEmergenceListPage', function(){	
+	listOfflineEmergence();
+});
+
+$(document).on('pageinit','#offlineUncoverListPage', function(){	
+	listOfflineUncover();
 });
 
 $(document).on('pageinit','#temperature', function(){

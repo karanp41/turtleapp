@@ -24,12 +24,12 @@ function getUrlVars(){
     return vars;
 }
 
-function uploadFileToServer(ServerURI, fileURL, nativeURL){
+function uploadFileToServer(ServerURI, fileURL, nativeURL, type){
   function win(r) {
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
       console.log("Sent = " + r.bytesSent);
-      removeFile(fileURL)
+      removeFile(fileURL, type)
   }
 
   function fail(error) {
@@ -52,6 +52,7 @@ function uploadFileToServer(ServerURI, fileURL, nativeURL){
 
   var ft = new FileTransfer();
   ft.onprogress = function(progressEvent) {
+      showImageLoader()
       if (progressEvent.lengthComputable) {
         var loadValue = loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
         console.log(loadValue)
@@ -62,26 +63,67 @@ function uploadFileToServer(ServerURI, fileURL, nativeURL){
   ft.upload(fileURL, uri, win, fail, options);
 }
 
-function removeFile(relativeFilePath) {
+function removeFile(relativeFilePath, type) {
   // var relativeFilePath = "MyDir/file_name.png";
-  var fileName = relativeFilePath.substr(relativeFilePath.lastIndexOf('/')+1)
-  // var fileName = relativeFilePath;
+  var fileName = relativeFilePath.substr(relativeFilePath.lastIndexOf('/')+1);
+
   window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(fileSystem){
     console.log(fileSystem)
       fileSystem.getFile(fileName, {create:false}, function(fileEntry){
           fileEntry.remove(function(file){
               console.log(fileName, "File removed!");
               showToast("Data successfully synced.", 'bottom', 'long');
-              $('#offlineList').listview('refresh');
+              // $('#offlineList').listview('refresh');              
               
-              var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
-              var index = offlineRecordedNestNames.indexOf(fileName.slice(0, -4));
-              if (index > -1) {
-                  offlineRecordedNestNames.splice(index, 1);
-              }
-              localStorage.setItem('offlineRecordedNestNames',JSON.stringify(offlineRecordedNestNames));
+              if (type=='nest') {
+
+                // DELETING NEST FILENAME FROM LOCALSTORAGE
+                var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+                var index = offlineRecordedNestNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedNestNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedNestNames',JSON.stringify(offlineRecordedNestNames));
+              }else if(type=='turtle'){
+
+                // DELETING TURTLE FILENAME FROM LOCALSTORAGE
+                var offlineRecordedTurtleNames = JSON.parse(localStorage.getItem('offlineRecordedTurtleNames'));
+                var index = offlineRecordedTurtleNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedTurtleNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedTurtleNames',JSON.stringify(offlineRecordedTurtleNames));
+              }else if(type=='predation'){
+
+                // DELETING PREDATION FILENAME FROM LOCALSTORAGE
+                var offlineRecordedPredationNames = JSON.parse(localStorage.getItem('offlineRecordedPredationNames'));
+                var index = offlineRecordedPredationNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedPredationNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedPredationNames',JSON.stringify(offlineRecordedPredationNames));
+              }  else if(type=='emergence'){
+
+                // DELETING PREDATION FILENAME FROM LOCALSTORAGE
+                var offlineRecordedEmergenceNames = JSON.parse(localStorage.getItem('offlineRecordedEmergenceNames'));
+                var index = offlineRecordedEmergenceNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedEmergenceNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedEmergenceNames',JSON.stringify(offlineRecordedEmergenceNames));
+              }  else if(type=='uncover'){
+
+                // DELETING PREDATION FILENAME FROM LOCALSTORAGE
+                var offlineRecordedUncoverNames = JSON.parse(localStorage.getItem('offlineRecordedUncoverNames'));
+                var index = offlineRecordedUncoverNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedUncoverNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedUncoverNames',JSON.stringify(offlineRecordedUncoverNames));
+              }              
               
               $.mobile.navigate( "#menuPage" );
+
           },function(){
               console.log(fileName, "error deleting the file " + error.code);
               showToast("Seems like somthing went wrong.", 'bottom', 'long')
@@ -109,4 +151,30 @@ function ajaxCall(requestData,type,serverUrl,dataType) {
         },
         dataType:dataType
       });
+}
+
+function formateDate(date) {
+  var newDate = new Date(date)
+  return newDate.getDate()+'-'+newDate.getMonth()+'-'+newDate.getFullYear()
+}
+
+function showImageLoader(){  
+      $.mobile.loading( 'show', {
+        text: 'Loading temperature',
+        textVisible: true,
+        theme: 'z',
+        html: "<img src=\"img/loader.gif\" style=\"width:100%\" />"
+      });
+}
+
+
+// SCANNING RFID
+function scanOnce(){
+  rfidRunning = 1;
+  Caenrfid.scanSingle(function(data){
+    scanOnceSuccess(data.substring(0)+"");
+  },function (err){
+    console.log("error",err)
+    scanOnceSuccess('3415AF9D60000001DCD65370');
+  });
 }

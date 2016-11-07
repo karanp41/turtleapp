@@ -1,110 +1,111 @@
 <div id="predationPage" data-role="page">
-			<div data-role="header"  data-position="fixed" >		
-				<h3>Predation</h3>
-				<!-- <a href="#" class="ui-btn-right ui-btn ui-btn-b ui-btn-inline ui-mini ui-corner-all">Login</a>-->
-		</div><!-- /header -->
+	<div data-role="header"  data-position="fixed" >
+		<a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-b ui-corner-all ui-shadow">Home</a>		
+		<h3>Predation</h3>
+	</div><!-- /header -->
 		<div role="main" class="ui-content">
 			<p id="message" class="message"></p>
-		<form id="PredationData">
-		<div>
-			<label for="rfid">NEST tag</label>
-			<input readonly type="text" name="rfid" id="rfid" ></input>
-			<input type="button" onClick="scanOnce()" value="Read TAG"></input>
-		</div>
-		<div>
-			<label for="nestID">NEST ID</label>
-			<input type="text" disabled="disabled" name="nestID" id="nestID" placeholder=""></input>
-		</div>
-		<div class="ui-field-contain">
-		<label for="locationPred">Nest location:</label>
-				<p id="locationPred" class="message"></p>
-		</div>
-		<div class="ui-field-contain">
-			<label for="dist">Predation date:</label>
-			<input type="text" data-role="date" data-inline="true"  name="predationDate" id="dist" ></input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="predator">Predator:</label>
-			<select name="predator" id="predator">
-				<option value="0">Select Predator</option>
-			</select>
-		</div>
-		<div class="ui-field-contain">
-				<label for="gridcover">Nest covered with:</label> 
-				<select	name="gridcover" id="gridcover">
-					<option value="0">Select Gridcover</option>
-				</select>
-			</div>
-		<div class="ui-field-contain">
-			<label for="clawedEggs"># clawed eggs:</label>
-			<input type="number" name="clawedEggs" id="clawedEggs" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="fertilized"># fertilized:</label>
-			<input type="number" name="fertilized" id="fertilized" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="unfertilized"># unfertilized:</label>
-			<input type="number" name="unfertilized" id="unfertilized" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="earlyEmbryonic"># early embryonic:</label>
-			<input type="number" name="earlyEmbryonic" id="earlyEmbryonic" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="middleEmbryonic"># middle embryonic:</label>
-			<input type="number" name="middleEmbryonic" id="middleEmbryonic" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="lateEmbryonic"># late embryonic:</label>
-			<input type="number" name="lateEmbryonic" id="lateEmbryonic" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="dead"># dead hatchling in nest:</label>
-			<input type="number" name="dead" id="dead" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="alive"># alive hatchlings in nest:</label>
-			<input type="number" name="alive" id="alive" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="deadOutside"># dead hatchling outside nest:</label>
-			<input type="number" name="deadOutside" id="deadOutside" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="aliveOutside"># alive hatchlings outside nest:</label>
-			<input type="number" name="aliveOutside" id="aliveOutside" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="empty">Nest is empty:</label>
-			<input type="checkbox" value="1" name="empty" id="empty" > </input>
-		</div>
-		<div class="ui-field-contain">
-			<label for="comment">Comment:</label>
-			<textarea type="text" name="comment" id="comment" > </textarea>
-		</div>
-		<div class="ui-grid-b">
-			<div class="ui-block-b">
-			<a href="#popupConfirmPred" id="loginButton" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
-			</div>
-		</div>
-	</form>
+			<form id="PredationData">
+				<div>
+					<label for="rfid">NEST tag</label>
+					<input readonly type="text" name="rfid" id="rfid" ></input>
+					<input type="button" onClick="scanOnce()" value="Read TAG"></input>
+				</div>
+				<div>
+					<label for="nestID">NEST ID</label>
+					<input type="text" readonly name="nestID" id="nestID" placeholder=""></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="locationPred">Nest location:</label>
+					<p id="locationPred" class="message"></p>
+				</div>
+				<div class="ui-field-contain">
+					<label for="dist">Predation date:</label>
+					<input type="date" name="predationDate" id="dist" ></input>
+					<!-- <input type="text" data-role="date" data-inline="true"  name="predationDate" id="dist" ></input> -->
+				</div>
+				<div class="ui-field-contain">
+					<label for="predator">Predator:</label>
+					<select name="predator" id="predator">
+						<option value="0">Select Predator</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+						<label for="gridcover">Nest covered with:</label> 
+						<select	name="gridcover" id="gridcover">
+							<option value="0">Select Gridcover</option>
+						</select>
+					</div>
+				<div class="ui-field-contain">
+					<label for="clawedEggs"># clawed eggs:</label>
+					<input type="number" name="clawedEggs" id="clawedEggs" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="fertilized"># fertilized:</label>
+					<input type="number" name="fertilized" id="fertilized" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="unfertilized"># unfertilized:</label>
+					<input type="number" name="unfertilized" id="unfertilized" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="earlyEmbryonic"># early embryonic:</label>
+					<input type="number" name="earlyEmbryonic" id="earlyEmbryonic" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="middleEmbryonic"># middle embryonic:</label>
+					<input type="number" name="middleEmbryonic" id="middleEmbryonic" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="lateEmbryonic"># late embryonic:</label>
+					<input type="number" name="lateEmbryonic" id="lateEmbryonic" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="dead"># dead hatchling in nest:</label>
+					<input type="number" name="dead" id="dead" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="alive"># alive hatchlings in nest:</label>
+					<input type="number" name="alive" id="alive" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="deadOutside"># dead hatchling outside nest:</label>
+					<input type="number" name="deadOutside" id="deadOutside" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="aliveOutside"># alive hatchlings outside nest:</label>
+					<input type="number" name="aliveOutside" id="aliveOutside" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="empty">Nest is empty:</label>
+					<input type="checkbox" value="1" name="empty" id="empty" > </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="comment">Comment:</label>
+					<textarea type="text" name="comment" id="comment" > </textarea>
+				</div>
+				<div class="ui-grid-b">
+					<!-- <div class="ui-block-b"> -->
+					<a href="#popupConfirmPred" id="loginButton" data-rel="popup" data-position-to="#popupConfirmPred" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
+					<!-- </div> -->
+				</div>
+			</form>
 		</div><!-- /content -->
 		<div data-role="footer" data-position="fixed">
 
 			</div><!-- /footer -->
 			
-	<div data-role="popup" id="popupConfirmPred" data-theme="a"
-		class="ui-corner-all">
-		<form>
-			<div style="padding: 10px 20px;">
-				<h3>Summary of the data below. Submit?</h3>
-				<div id="summary"></div>
-				<button id="successfulButton" class="ui-btn"
-					onClick="recordPerdation();">Yes</button>
-				<a href="#" data-rel="back" data-role="button" data-theme="a"
-					data-icon="delete">No</a>
-			</div>
+	<div data-role="popup" id="popupConfirmPred" data-theme="a"	class="ui-corner-all">
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<form class="summary-popup-form">
+			<h3>Preview of Predation Data</h3>
+			<hr>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn"
+				onClick="recordPerdation();">Yes</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">No</a>
+			
 		</form>
 	</div>	
 			

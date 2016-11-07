@@ -69,6 +69,11 @@ var SAVE_EMERGENCE 	= 'saveEmergences';
 var SAVE_UNCOVER 	= 'saveUncover';
 
 var NEST_PREDATION 	= 'nestPredation';
+
 var UPLOAD_FILE 	= 'UploadCSV';
-// var UPLOAD_FILE 	= 'uploadOfflineNests';
+var UPLOAD_NEST 	= 'uploadOfflineNests';
+var UPLOAD_TURTLE 	= 'uploadOfflineTurtles';
+var UPLOAD_PREDATION= 'uploadOfflinePredation';
+var UPLOAD_EMERGENCE= 'uploadOfflineEmergence';
+var UPLOAD_UNCOVER	= 'uploadOfflineUncover';
 
