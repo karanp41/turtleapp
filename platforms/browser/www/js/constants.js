@@ -40,7 +40,7 @@ var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMa
 /**********     CONFIG CONSTANT    ********/
 
 var options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
-var POS_OPTIONS = {maximumAge:600, timeout:5000, enableHighAccuracy: true};
+var POS_OPTIONS = {maximumAge:0, timeout:10000, enableHighAccuracy: true};
 
 
 

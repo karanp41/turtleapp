@@ -71,55 +71,6 @@ function findNest(tag){
 }
 
 
-function editNest(edNestID){
-	//	alert("editing "+edNestID);
-	$.mobile.changePage("record-nest.html");
-	$.ajax({
-		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-		dataType:"json",
-		url: HOST + API_PATH + "findNests.php?un="+username+"&dbid="+edNestID,
-		success: function(data) {
-			
-			var eventTime = (new Date(data[0].timestamp)).toDateString();
-			var nestingDate = (new Date(data[0].nestingDate)).toDateString();
-			$('#dbid').val(data[0].id);
-			$('#rfid').val(data[0].rfid);
-			$('#nestID').val(data[0].NestID);
-			$('#species').val(data[0].specie).selectmenu("refresh");
-			$('#gridcover').val(data[0].gridCover).selectmenu("refresh");
-			$('#alt_lat').val(data[0].alt_lat);
-			$('#alt_long').val(data[0].alt_long);
-			$('#alt_loc').val(data[0].alt_lat + "," + data[0].alt_long);
-			$('#lat').val(data[0].origLat);
-			$('#long').val(data[0].origLong);
-			$('#loc').val(data[0].origLat + 	"," + data[0].origLong);
-			$('#alt_date').val(data[0].alternationTime);
-			$('#alt_drySand').val(data[0].alt_drySand);
-			$('#alt_wetSand').val(data[0].alt_wetSand);
-			$('#alt_diaEggChamb').val(data[0].origLong);
-			$('#alt_dmgEggs').val(data[0].alt_dmgEggs);
-			$('#alt_totEggs').val(data[0].alt_totEggs);
-			$('#nestingDate').attr("disabled");
-			$('#certain').val(data[0].certain);
-			$('#wetZone').val(data[0].wetZone);
-			$('#drySandZone').val(data[0].drySandZone);
-			$('#vegetation').val(data[0].vegetation);
-			$('#dist').val(data[0].distanceFromSea);
-			$('#leftLandMark').val(data[0].leftLandMark).selectmenu("refresh");
-			$('#leftMarkNum').val(data[0].leftMarkNum);
-			$('#leftMarkDist').val(data[0].leftMarkDist);
-			$('#rightLandMark').val(data[0].rightLandMark).selectmenu("refresh");
-			$('#rightMarkNum').val(data[0].rightMarkNum);
-			$('#rightMarkDist').val(data[0].rightMarkDist);
-			$('#nestLoc').val(data[0].nestLoc).selectmenu("refresh");
-			$('#turtleId').val(data[0].turtleId);
-			
-			// $('#successfulButton').html("Save").button("refresh");
-			$('#unsuccessfulButton').attr("display", "none").button("refresh");
-		}	
-	});
-}
 
 
 function updateMap(){
@@ -185,29 +136,38 @@ function updateMapFind(rfid){
 
 
 function populateNestList(){
-	var data = {user_id:localStorage.getItem('user_id')}
-	$.ajax({
-		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-		url: HOST + API_PATH + LIST_NESTS,
-		data:data,
-		type: "POST",
-		success: function(data) {
-			$.each( data.data, function( key, val ) {
-				$('#nestList').append("<li>"+
-					//	"<a href='#' onClick='processTag(\""+val.rfid+"\");'><b>Nest ID: "+val.NestID+"</b><br />Nestingdate: "+val.nestingDate+"</a></li>");
-					"<a href='#' onClick='processTagDbId(\""+val.Nest.id+"\");'><b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+formateDate(val.Nest.nestingDate)+"</a></li>");
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	var data = {user_id:localStorage.getItem('user_id')}
+		$.ajax({
+			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			url: HOST + API_PATH + LIST_NESTS,
+			data:data,
+			type: "POST",
+			success: function(data) {
+				$.each( data.data, function( key, val ) {
+					$('#nestList').append("<li>"+
+						//	"<a href='#' onClick='processTag(\""+val.rfid+"\");'><b>Nest ID: "+val.NestID+"</b><br />Nestingdate: "+val.nestingDate+"</a></li>");
+						"<a href='#' onClick='processTagDbId(\""+val.Nest.id+"\");'><b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+formateDate(val.Nest.nestingDate)+"</a></li>");
+					
+				});
 				
-			});
-			
-			function refreshList(){
-			  	$('#nestList').listview("refresh");
-			}
-			setTimeout(refreshList, 500);
-		},
-		dataType:"json"
+				function refreshList(){
+				  	$('#nestList').listview("refresh");
+				}
+				setTimeout(refreshList, 500);
+			},
+			dataType:"json"
 		});
-	
+		$('#offlineList').prev( "form" ).hide();
+    }else{
+    	showToast("Showing the local listing of nests recorded by you.", 'bottom', 'long');
+    	$('#nestList').prev( "form" ).hide();
+    	listOfflineEvents()
+    	return;
+    }
+		
 }
 
 function populateTurtlesList(){
@@ -237,7 +197,6 @@ function populateTurtlesList(){
 	
 }
 
-
 function populateTurtlesListView(){
 	var data = {user_id:localStorage.getItem('user_id')}
 	$.ajax({
@@ -260,7 +219,6 @@ function populateTurtlesListView(){
 	});
 	
 }
-
 
 function onLocationFound(position) {
 	var latlng = L.latLng(position.coords.latitude , position.coords.longitude);
@@ -289,8 +247,6 @@ function onLocationFound(position) {
 	}
 	
 }
-
-
 
 function locate(){
 	id = getQueryVariable("id");
@@ -777,8 +733,7 @@ function listOfflineEvents(){
 						}
 		        	}
 		        	$("#offlineList").html(htmlInset);
-		        	$("#offlineList").listview('refresh');
-		        	
+		        	$("#offlineList").listview('refresh');		        	
 		        },
 		        function (err) {
 		          alert(err);
@@ -1197,7 +1152,9 @@ function showDataInConfirm(fields,target){
     
 }
 
-function recordNewNest(){
+function recordNewNest(type){
+	// type: 1.update, 2.new
+
 	// var connected = $('#connected').val();	
 	// var disabled = $('#NestData').find(':input:disabled').removeAttr('disabled');
 	// var content=$('#NestData').serialize();
@@ -1232,10 +1189,17 @@ function recordNewNest(){
 			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
 			url: url,
 			success: function(data) {
-				console.log(data)				
+				console.log(JSON.parse(data))
 				// alert("Nest data recorded");
-				showToast("Nest data recorded", 'bottom', 'long')
-				$.mobile.changePage("index.html");
+				// 
+				
+				if (type=='update') {
+					showToast("Nest data update Successfully", 'bottom', 'long')
+					$.mobile.changePage("nestList.html");
+				}else{
+					showToast("Nest data recorded", 'bottom', 'long')
+					$.mobile.changePage("index.html");
+				}
 			},
 			error: function(data) {
 				// alert("Seems like Something went wrong. " + data.message);
@@ -2126,13 +2090,14 @@ function processTag(tag){
 function processTagDbId(id){
 	console.log('id: '+id)
 	window.curTag = id;
+	window.currentNestId = id;
 	if(rfidRunning == true){
 		//alert("Stopping RFID");
 		stopRFID();
 	} else{
 		//alert("RFID not running");
 	}
-	curDbId= id;
+	// curDbId= id;
 	$("body").pagecontainer("change", "nestInfo.html", {reloadPage: true});
 }
 
@@ -2148,6 +2113,7 @@ function populateNestInfo(curTag){
 		data:requestData,
 		type: "POST",
 		success: function(data) {
+			window.currentNestData = data;
 			// window.curTag = data.data.Nest.rfid;
 
 			var eventTime = (new Date(data.data.Nest.timestamp)).toDateString();
@@ -2235,6 +2201,114 @@ function populateNestInfo(curTag){
 	//		var curhtml = $("#nestInfo").html();
 	//		$("#nestInfo").html(curhtml+key+": " + value +"<br/>");
 	//	});
+}
+
+
+function editNest(edNestID){
+	//	alert("editing "+edNestID);
+	console.log(edNestID)
+	$.mobile.changePage("edit-nest.html");
+	$.ajax({
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+		dataType:"json",
+		url: HOST + API_PATH + "findNests.php?un="+username+"&dbid="+edNestID,
+		success: function(data) {
+			
+			var eventTime = (new Date(data[0].timestamp)).toDateString();
+			var nestingDate = (new Date(data[0].nestingDate)).toDateString();
+			$('#dbid').val(data[0].id);
+			$('#rfid').val(data[0].rfid);
+			$('#nestID').val(data[0].NestID);
+			$('#species').val(data[0].specie).selectmenu("refresh");
+			$('#gridcover').val(data[0].gridCover).selectmenu("refresh");
+			$('#alt_lat').val(data[0].alt_lat);
+			$('#alt_long').val(data[0].alt_long);
+			$('#alt_loc').val(data[0].alt_lat + "," + data[0].alt_long);
+			$('#lat').val(data[0].origLat);
+			$('#long').val(data[0].origLong);
+			$('#loc').val(data[0].origLat + 	"," + data[0].origLong);
+			$('#alt_date').val(data[0].alternationTime);
+			$('#alt_drySand').val(data[0].alt_drySand);
+			$('#alt_wetSand').val(data[0].alt_wetSand);
+			$('#alt_diaEggChamb').val(data[0].origLong);
+			$('#alt_dmgEggs').val(data[0].alt_dmgEggs);
+			$('#alt_totEggs').val(data[0].alt_totEggs);
+			$('#nestingDate').attr("disabled");
+			$('#certain').val(data[0].certain);
+			$('#wetZone').val(data[0].wetZone);
+			$('#drySandZone').val(data[0].drySandZone);
+			$('#vegetation').val(data[0].vegetation);
+			$('#dist').val(data[0].distanceFromSea);
+			$('#leftLandMark').val(data[0].leftLandMark).selectmenu("refresh");
+			$('#leftMarkNum').val(data[0].leftMarkNum);
+			$('#leftMarkDist').val(data[0].leftMarkDist);
+			$('#rightLandMark').val(data[0].rightLandMark).selectmenu("refresh");
+			$('#rightMarkNum').val(data[0].rightMarkNum);
+			$('#rightMarkDist').val(data[0].rightMarkDist);
+			$('#nestLoc').val(data[0].nestLoc).selectmenu("refresh");
+			$('#turtleId').val(data[0].turtleId);
+			
+			// $('#successfulButton').html("Save").button("refresh");
+			$('#unsuccessfulButton').attr("display", "none").button("refresh");
+		}	
+	});
+}
+
+function setNestFieldsValue(){
+	var nestData = window.currentNestData.data.Nest
+	var eventTime = (new Date(nestData.timestamp)).toDateString();
+	var nestingDate = (new Date(nestData.nestingDate)).toDateString();
+	$('#dbid').val(nestData.id);
+	$('#rfid').val(nestData.rfid);
+	$('#nestID').val(nestData.NestID);
+	$('#Specie').val(nestData.species).selectmenu("refresh");
+	// $('#species').val(nestData.species);
+	$('#gridCover').val(nestData.gridCover).selectmenu("refresh");
+	// $('#gridcover').val(nestData.gridCover);
+	$('#alt_lat').val(nestData.alt_lat);
+	$('#alt_long').val(nestData.alt_long);
+	$('#alt_loc').val(nestData.alt_lat + "," + nestData.alt_long);
+	$('#lat').val(nestData.origLat);
+	$('#long').val(nestData.origLong);
+	$('#loc').val(nestData.origLat + 	"," + nestData.origLong);
+	$('#alt_date').val(nestData.alternationTime);
+	$('#alt_drySand').val(nestData.alt_drySand);
+	$('#alt_wetSand').val(nestData.alt_wetSand);
+	$('#alt_diaEggChamb').val(nestData.origLong);
+	$('#alt_dmgEggs').val(nestData.alt_dmgEggs);
+	$('#alt_totEggs').val(nestData.alt_totEggs);
+	$('#nestingDate').attr("disabled");
+	$('#certain').val(nestData.certain).selectmenu("refresh");
+	$('#wetZone').val(nestData.wetZone);
+	$('#drySandZone').val(nestData.drySand);
+	$('#vegetation').val(nestData.vegetation);
+	$('#distSea').val(nestData.distanceFromSea);
+	$('#leftLandMark').val(nestData.leftLandMark).selectmenu("refresh");
+	// $('#leftLandMark').val(nestData.leftLandMark);
+	$('#leftMarkNum').val(nestData.leftMarkNum);
+	// $('#leftMarkDist').val(nestData.leftMarkDist);
+	$('#rightLandMark').val(nestData.rightLandMark).selectmenu("refresh");
+	$('#rightLandMark').val(nestData.rightLandMark);
+	$('#rightMarkNum').val(nestData.rightMarkNum);
+	$('#rightMarkDist').val(nestData.rightMarkDist);
+	$('#nestLoc').val(nestData.nestLoc).selectmenu("refresh");
+	// $('#nestLoc').val(nestData.nestLoc);
+	$('#turtleId').val(nestData.turtleId);
+	$('#turtleTagID').val(nestData.turleTagId);
+	
+	$('#nestingTime').val(nestData.nestingTime);
+	$('#tideZone').val(nestData.tideZone);
+	$('#tideZone').val(nestData.distanceFromSea);
+	$('#heightOfWetSand').val(nestData.heightOfWetSand);
+	$('#heightOfDrySand').val(nestData.heightOfDrySand);
+	$('#dmgEggs').val(nestData.dmgEggs);
+	$('#totEggs').val(nestData.totEggs);
+	$('#diaEggChamb').val(nestData.diameterEggChamber);
+	$('#numberOfBodyPits').val(nestData.numberOfBodyPits);
+	$('#comment').val(nestData.comment);
+	$('#devices').val(nestData.devices);
+	$('#primaryId').val(nestData.id);
 }
 
 $(document).on('popupafteropen','#popupConfirm', function () {

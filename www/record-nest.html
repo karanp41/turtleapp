@@ -2,10 +2,6 @@
 	<div data-role="header" data-position="fixed">
 		<a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
 		<h3>Record New Nest</h3>
-		<!-- <select id="connected" data-role="flipswitch">
-     	 	<option value="online">online</option>
-      		<option value="offline">offline</option>
-    	</select> -->
 	</div>
 	<!-- /header -->
 	<div role="main" class="ui-content">
@@ -46,114 +42,8 @@
 				</ul>
 				<a href="turtleInfo.html"  data-role="button" data-theme="a" data-icon="up" id="turtleId">+</a>
 			</div>
-			
-			
-			<div data-role="collapsible" data-collapsed="true" class="ui-accordion">
-				<h3>Relocated nest (position B)</h3>
-				<div class="ui-field-contain">
-					<label for="alt_loc">Altered location:</label> 
-					<input type="button" value="click for current position" 
-					onClick="altGetCurLoc();" name="alt_loc" id="alt_loc"></input>
-				</div>
-				<div class="ui-field-contain">
-					<label for="alt_date">Alteration date:</label> <input type="text"
-						name="alterationTime" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="alt_date"></input>
-				</div>
-				
-				<div class="ui-field-contain">
-				<label for="AlterationTime">Alteration time:</label> <select
-					name="altTimeOptions" id="AlterationTime">
-					<option value="0">Select Alteration Time</option>
-				</select>
-				</div>
-				
-				<div class="ui-field-contain">
-					<label for="wetZoneAlt">Dist. wet zone (m):</label> <input
-						type="number" id="wetZoneAlt" name="alt_wetZone"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-					<label for="tideZoneAlt">Dist. high tide zone (m):</label> <input
-						type="number" id="tideZoneAlt" name="alt_tideZone"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-					<label for="drySandZoneAlt">Dist. dry zone (m):</label> <input
-						type="number" id="drySandZoneAlt" 
-						onblur="$('#distanceSeaAlt').val(Number($('#tidezoneAlt').val())+Number($('#wetZoneAlt').val())+Number($('#drySandZoneAlt').val()));" 
-						name="alt_dryZone"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-					<label for="distanceSeaAlt">Dist. from sea (m):</label> <input
-						type="number" id="distanceSeaAlt" name="alt_distSea"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-					<label for="vegetation">Dist. (m) to vegetation:</label> <input
-						type="number" id="vegetation" name="alt_vegetation"> </input>
-				</div>
-				
-				
-				
-				<div class="ui-field-contain">
-				<label for="leftLandMarkAlt">Left landmark:</label> <select
-					name="altLeftLandmark" id="leftLandMarkAlt">
-					<option value="0">Select left LandMark</option>
-				</select>
-				</div>
-				<div class="ui-field-contain">
-					<label for="leftMarkNumAlt">Left landmark #:</label> <input
-						type="number" id="leftMarkNumAlt" name="altLeftLandmarkNum"> </input>
-				</div>
-				<div class="ui-field-contain">
-					<label for="leftMarkDistAlt">Left landmark distance (m):</label> <input
-						type="number" id="leftMarkDistAlt" name="altLeftLandmarkDist"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-				<label for="rightLandMarkAlt">Right Landmark:</label> <select
-					name="altRightLandmark" id="rightLandMarkAlt">
-					<option  value="0">Select Right LandMark</option>
-				</select>
-				</div>
-				<div class="ui-field-contain">
-					<label for="rightMarkNumAlt">Right landmark #:</label> <input
-						type="number" id="rightMarkNumAlt" name="altRightLandmarkNum"> </input>
-				</div>
-				<div class="ui-field-contain">
-					<label for="rightMarkNumAlt">Right landmark distance (m):</label> <input
-						type="number" id="rightMarkDistAlt" name="altRightLandmarkDist"> </input>
-				</div>
-				
-				<div class="ui-field-contain">
-				<label for="nestLocAlt">Nest area:</label> <select
-					name="alt_nestLoc" id="nestLocAlt">
-					<option value="0">Select Nest Area</option>
-				</select>
-				</div>
-				
-				<div class="ui-field-contain">
-				<label for="gridcoverAlt">Nest covered with:</label> <select
-					name="gridCoverAlt" id="gridcoverAlt">
-					<option value="0">Select Nest cover</option>
-				</select>
-			</div>
-				
-			<div class="ui-field-contain">
-				<label for="commentAlt">Comment relocated nest:</label> <textarea 
-					name="commentAlt" type="textarea" id="commentAlt"></textarea >
-			</div>
-			
-			<div class="ui-field-contain">
-					<label for="devicesAlt">Devices:</label> <input type="text"
-						id="devicesAlt" name="devicesAlt"></input>
-			</div>
-			
-			</div>
-
-
-			<div data-role="collapsible" data-collapsed="false"  class="ui-accordion">
+	
+			<!-- <div data-role="collapsible" data-collapsed="false"  class="ui-accordion"> -->
 				<h3>Original nest (Position A)</h3>
 				<div class="ui-field-contain">
 					<label for="nestingDate">Nesting date:</label> <input type="text"
@@ -283,6 +173,7 @@
 							for="checkbox-h-2e">New Nest</label>
 					</fieldset>
 				</div-->
+
 				<div class="ui-field-contain">
 					<label for="numberOfBodyPits"># of hole/body pits:</label> 
 					<input name="numberOfBodyPits" type="number"
@@ -306,7 +197,7 @@
 						id="devices" name="devices"></input>
 				</div>
 
-			</div>
+			<!-- </div> -->
 
 
 		</form>
@@ -347,6 +238,4 @@
 	</div>
 
 </div>
-
-
 <!-- /page -->

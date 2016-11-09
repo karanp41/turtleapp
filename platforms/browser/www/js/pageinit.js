@@ -14,8 +14,16 @@ $(document).on("pagebeforehide","#recordNestPage",function(){ // When leaving pa
 });
 
 $(document).on('pageinit','#nestInfoPage', function(){
-	console.log('curTag: '+curTag)
-	populateNestInfo(curTag);
+	console.log('currentNestId: '+currentNestId)
+	populateNestInfo(currentNestId);
+});
+
+$(document).on('pageinit','#editNestPage', function(){
+	console.log('currentNestData: ', window.currentNestData)
+	console.log('currentNestId: '+currentNestId)
+	getRecordNestInformation()
+	setTimeout(function() {setNestFieldsValue()}, 100);
+	
 });
 
 $(document).on('pageinit','#mainPage', function(){
