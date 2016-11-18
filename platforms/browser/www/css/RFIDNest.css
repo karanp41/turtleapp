@@ -50,3 +50,23 @@ input.not-ok-button{
     padding: 0px 12px;
     border-radius: 6px;
 }
+
+
+
+
+.temp-interval .ui-bar{
+    height:25px;
+    font-size: 11px;
+    border: none;
+}
+.temp-interval .ui-btn {
+    padding: 2px 1em 0 44px;
+}
+.value-label{
+    padding: 10px 5px 2px 5px;
+    text-align: center;
+    margin: 0 !important;
+}
+#daysOperating-0{
+    display: none;
+}

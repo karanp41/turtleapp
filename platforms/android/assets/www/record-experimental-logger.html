@@ -1,0 +1,154 @@
+<div data-role="page" id="experimentalTempRecord">
+	<div data-role="header" data-position="fixed">
+		<a data-rel="back" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-carat-l ui-btn-icon-left">Back</a>
+		<h3>Experiment Logger</h3>
+		<a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+	</div>
+	<!-- /header -->
+	<div role="main" class="ui-content">
+		<p id="message" class="message"></p>
+		<form id="inNestLogger">
+			<button type="reset" value="Reset">Reset page</button>
+
+			<div class="ui-field-contain">
+				<label for="loggerid">Temp Logger Id:</label>
+				<input name=loggerid  type="text" id="loggerid"></input>
+				<button onClick="readTemp();">Read Temperature sensor(s)</button>
+			</div>
+		
+			<div class="ui-field-contain">
+				<label for="startDate">Start Device date:</label> 
+				<!-- <input type="text" name="startDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="startDate"></input> -->
+				<input type="date" name="startDate" id="startDate"></input>
+			</div>			
+
+			<div class="ui-field-contain">
+				<label for="startTime">Start Device Time:</label>
+				<input type="time" name="startTime" id="startTime"></input>
+			</div>
+
+			<fieldset data-role="controlgroup">
+				<legend>Device Type:</legend>
+		        <label for="withProbe">With Probe</label>
+		        <input type="radio" name="deviceType" id="withProbe" value="0" checked="checked">
+		        <label for="withoutProbe">Standard (Without Probe)</label>
+		        <input type="radio" name="deviceType" id="withoutProbe" value="1">
+		    </fieldset>
+
+		    <div class="ui-field-contain temp-interval">
+			    <div class="ui-grid-b">
+			    	<div class="ui-block-a">
+						<div class="ui-bar ui-bar-a">Minutes</div>
+						<label><input type="radio" name="interval" value="2">2</label>
+						<label><input type="radio" name="interval" value="4">4</label>
+						<label><input type="radio" name="interval" value="5">5</label>
+						<label><input type="radio" name="interval" value="6">6</label>
+						<label><input type="radio" name="interval" value="8">8</label>
+						<label><input type="radio" name="interval" value="10">10</label>
+						<label><input type="radio" name="interval" value="12">12</label>
+						<label><input type="radio" name="interval" value="15">15</label>
+						<label><input type="radio" name="interval" value="16">16</label>
+						<label><input type="radio" name="interval" value="18">18</label>
+						<label><input type="radio" name="interval" value="20">20</label>
+						<label><input type="radio" name="interval" value="25">25</label>
+						<label><input type="radio" name="interval" value="30">30</label>
+						<label><input type="radio" name="interval" value="60">60</label>
+					</div>
+					<div class="ui-block-b">
+						<div class="ui-bar ui-bar-a">Interval/hr</div>
+						<label class="value-label">30</label>
+						<label class="value-label">15</label>
+						<label class="value-label">12</label>
+						<label class="value-label">10</label>
+						<label class="value-label">7.5</label>
+						<label class="value-label">6</label>
+						<label class="value-label">5</label>
+						<label class="value-label">4</label>
+						<label class="value-label">3.8</label>
+						<label class="value-label">3.3</label>
+						<label class="value-label">3</label>
+						<label class="value-label">2.4</label>
+						<label class="value-label">2</label>
+						<label class="value-label">1</label>
+					</div>
+					<div class="ui-block-c" id="daysOperating-0">
+						<div class="ui-bar ui-bar-a">Days Operating</div>
+						<label class="value-label">5.6</label>
+						<label class="value-label">11.1</label>
+						<label class="value-label">13.9</label>
+						<label class="value-label">16.7</label>
+						<label class="value-label">22.2</label>
+						<label class="value-label">27.8</label>
+						<label class="value-label">33.3</label>
+						<label class="value-label">41.7</label>
+						<label class="value-label">44.4</label>
+						<label class="value-label">50.0</label>
+						<label class="value-label">55.6</label>
+						<label class="value-label">69.4</label>
+						<label class="value-label">83.3</label>
+						<label class="value-label">166.7</label>
+					</div>
+					<div class="ui-block-c" id="daysOperating-1">
+						<div class="ui-bar ui-bar-a">Days Operating</div>
+						<label class="value-label">11</label>
+						<label class="value-label">22</label>
+						<label class="value-label">28</label>
+						<label class="value-label">33</label>
+						<label class="value-label">44</label>
+						<label class="value-label">56</label>
+						<label class="value-label">67</label>
+						<label class="value-label">83</label>
+						<label class="value-label">89</label>
+						<label class="value-label">100</label>
+						<label class="value-label">111</label>
+						<label class="value-label">139</label>
+						<label class="value-label">167</label>
+						<label class="value-label">333</label>
+					</div>
+				</div>
+			</div>
+
+			<!-- <div class="ui-field-contain">
+				<label for="interval">Interval</label> 
+				<input name="interval" type="text" id="interval"></input>
+			</div> -->
+
+			<div class="ui-field-contain">
+				<label for="depth">Depth in cm</label> <input
+					name="depth" type="number" id="depth"></input>
+			</div>
+
+			<div class="ui-field-contain">
+				<label for="comment">Comments </label> <textarea
+					name="comment" type="textarea" id="comment"></textarea>
+			</div>
+
+			<hr />
+		
+			<input type="hidden" name="latitude"  id="lat" />
+			<input type="hidden" name="longitude" id="long" />
+			<input type="hidden" name="tempRecordType" value="1" />
+			<!-- <input type="submit" class="ui-btn ui-btn-b ui-corner-all" value="Set & Start Recording" /> -->
+			<a href="#popupConfirmLogger" id="loginButton" data-rel="popup" data-position-to="#popupConfirmLogger" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Set & Start Recording</a>
+		</form>
+
+		
+		
+		
+	</div>
+
+	<div data-role="footer" data-position="fixed"></div>
+
+	<div data-role="popup" id="popupConfirmLogger" data-theme="a" class="ui-corner-all">
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<div class="summary-popup-form">				
+			<h3>Preview of Logger Data</h3>
+			<hr>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn" onClick="recordNestLogger();">RECORD NOW</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">No, Need Corrections </a>
+		</div>
+	</div>
+
+</div>

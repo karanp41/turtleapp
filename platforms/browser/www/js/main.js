@@ -130,7 +130,7 @@ function updateMapFind(rfid){
 
 		},
 		dataType:"json"
-		});
+	});
 	map.invalidateSize();
 }
 
@@ -160,12 +160,59 @@ function populateNestList(){
 			},
 			dataType:"json"
 		});
+		$('#offlineList').prev( "form" ).hide();
     }else{
     	showToast("Showing the local listing of nests recorded by you.", 'bottom', 'long');
-    	listOfflineEvents()
-    	return;
+    	$('#nestList').prev( "form" ).hide();
+    	readOfflineRecords('offlineRecordedNestNames','offlineList','carat-r','openNestDetailOffline')
     }
 		
+}
+
+function openNestDetailOffline(filename){
+	window.currentOfflineNest = filename;
+	$("body").pagecontainer("change", "nestInfo.html", {reloadPage: true});
+}
+
+function nestDetailOffline(filename){	
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + filename, function(fileEntry) {
+	    fileEntry.file(function(file) {
+	        var reader = new FileReader();
+	        reader.onloadend = function(e) {
+	            // console.log("Text is: "+this.result);
+	            var jsonText = CSV2JSON(this.result);
+	            var data = JSON.parse(jsonText)[0];
+	            window.currentNestData = data;
+
+				var eventTime = (new Date(data.timestamp)).toDateString();
+				var nestingDate = (new Date(data.nestingDate)).toDateString();
+				
+				var htmlInfo = "<div data-role='collapsible' ><h3>Nest: "+data.NestID+"</h3><p><div class='ui-grid-a'>";
+				$.each(data,function (key,val){
+					console.log(key,' : ',val)
+					if (key == "rfid"){
+						// window.curTag = val;
+					}
+					htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').replace(/_/g, " ").trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
+					if (val==null) {
+						htmlInfo = htmlInfo + " - </div></div>";
+					}else{
+						htmlInfo = htmlInfo + val+"</div></div>";
+					}
+					
+				});
+				nestID = data.NestID;
+				htmlInfo = htmlInfo + "</div><!-- /grid-a --></p></div>";				
+					
+				$("#nestInfo").html(htmlInfo);
+				$('div[data-role=collapsible]').collapsible();
+	        }
+	        reader.readAsText(file);
+	    });
+	}, function (e) {
+	    console.log("FileSystem Error");
+	    console.dir(e);
+	}); 
 }
 
 function populateTurtlesList(){
@@ -272,28 +319,27 @@ function locateGSM(){
 	//	}, 500);
 }
 
-
-function onGotLocation(position){
-	//	alert(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
-	$("#loc").val(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
-	$("#loc").button("refresh");
-	lat = position.coords.latitude;
-	long = position.coords.longitude;
-	$("#lat").val(position.coords.latitude);
-	$("#long").val(position.coords.longitude);
-	$("#accurazy").val(position.coords.accurazy);
-	accurazy = position.coords.accurazy;
-}
-
 function getCurLoc(){
 	if (watchID!=null)
 	navigator.geolocation.clearWatch(watchID);
 	options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
-	watchID = navigator.geolocation.watchPosition(onGotLocation, function(){/*alert("no location found");*/}, options);
-	//	navigator.geolocation.getCurrentPosition(onGotLocation, function(){alert("no location found");}, options);
+	watchID = navigator.geolocation.watchPosition(onGotLocation, function(){ console.log("no location found"); }, options);
 }
 
-function altGetCurLoc(){	
+function onGotLocation(position){
+	//	alert(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
+	console.log(position)
+	$("#lat").val(position.coords.latitude);
+	$("#long").val(position.coords.longitude);
+	$("#loc").val(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
+	$("#loc").button("refresh");
+	lat = position.coords.latitude;
+	long = position.coords.longitude;
+	$("#accurazy").val(position.coords.accurazy);
+	accurazy = position.coords.accurazy;
+}
+
+function altGetCurLoc(){
 
     // navigator.geolocation.getCurrentPosition(altGetCurLocSuccess, onError);
     navigator.geolocation.watchPosition(altGetCurLocSuccess, onError, POS_OPTIONS);
@@ -356,71 +402,27 @@ function stopRFID(){
 	Caenrfid.stopRFID(function(data){alert("rfid stopped");},function (err){alert("error"+err)});	
 }
 
-function saveToFile(data){
-	window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
-        console.log("got main dir",dir);
-        dir.getFile("log.txt", {create:true}, function(file) {
-            console.log("got the file", file);
-            logOb = file;
-            writeLog(data);          
-        });
-    });
-}
-
-function writeLog(str) {
-	
-    if(!logOb) return;
-    var log = str + " [" + (new Date()) + "]\n";
-    console.log("going to log "+log);
-    alert(logOb);
-    logOb.createWriter(function(fileWriter) {
-        
-        fileWriter.seek(fileWriter.length);
-        
-        var blob = new Blob([log], {type:'text/plain'});
-        fileWriter.write(blob);
-        console.log("ok, in theory i worked");
-    }, fail);
-}
-
 function copyToClipboard() {
 	var data= $('#tempData').val();
 	cordova.plugins.clipboard.copy(data);
 	alert("TempData copied: "+data );
 }
 
-function openFile(tagid){
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
-		var fileDate = new Date();
-		var filename = tagid + "_TEMP_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
-		  //  console.log("got main dir",dir);
-		  //  alert("got main dir");
-		    dir.getFile(filename + ".csv", {create:true}, function(file) {
-		        console.log("got the file", file);
-		        logOb = file;
-		        if (tagid!="newNest")
-		        	saveToFile();
-		    });
-		});
-}
-
 function saveToFile(){
-	var data = $('#tempData').val();
-	
-	 if(!logOb) return;
-	 //var log = data + " [" + (new Date()) + "]\n";
-	 var log = data;
+	var data = $('#tempData').val();	
+	if(!logOb) return;
+	//var log = data + " [" + (new Date()) + "]\n";
+	var log = data;
 	// console.log("going to log "+log);
-	 logOb.createWriter(function(fileWriter) {
+	logOb.createWriter(function(fileWriter) {
 		 //fileWriter.seek(fileWriter.length);
-
-		 var blob = new Blob([log], {type:'text/plain'});
-		 fileWriter.write(blob);
-		 alert("file written");
-	 },  function fail(e) {
-			alert("FileSystem Error");
-			alert(e);
-	 });
+		var blob = new Blob([log], {type:'text/plain'});
+		fileWriter.write(blob);
+		alert("file written");
+	},  function fail(e) {
+		alert("FileSystem Error");
+		alert(e);
+	});
 }
 
 function saveEventToFile(event){
@@ -438,7 +440,7 @@ function saveEventToFile(event){
 	});	
 }
 
-function saveEventToFileNest(data){
+function saveEventToFileNest(data, fileNameToUpdate){
 
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
@@ -465,7 +467,7 @@ function saveEventToFileNest(data){
 					var CSV = [
 					    fields.join(),
 					    values.join()
-					  ];
+					];
 
 					// APPENDING TURTLE DATA
 					if(window.RECENTTURTLEDATA){
@@ -497,14 +499,23 @@ function saveEventToFileNest(data){
 					offlineRecordedNestNames.push(filename);
 					localStorage.setItem('offlineRecordedNestNames',JSON.stringify(offlineRecordedNestNames));
 
-					// alert("file written" + CSV);
+
+					// DELETING EXISTING FILE UPDATING A NEST
+					if (fileNameToUpdate) {
+						window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+					        console.log("got main dir" + fileNameToUpdate,dir);
+					        dir.getFile(fileNameToUpdate, {create:false}, function(file) {
+					        	removeFile(file.nativeURL, 'nest')
+					        });
+					    });
+					}
+
+
 					showToast("Data Saved Successfully.", 'bottom', 'long')
-					// $.mobile.changePage("index.html");
 					$.mobile.navigate( "#menuPage" );
 				},  function fail(e) {
-					// alert("FileSystem Error");
 					showToast("FileSystem Error", 'bottom', 'long')
-					// alert(e);
+					console.log(e);
 				});
 		    });
 	});	
@@ -630,7 +641,6 @@ function readEventFromFile(filename){
 
         });
     });
-	 
 }
 
 function syncAllNestData(type) {
@@ -673,10 +683,9 @@ function syncAllNestData(type) {
 function listOfflineTemps(){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
 		    function (fileSystem) {
-		      var reader = fileSystem.createReader();
-		      var list="";
-		      reader.readEntries(
-		        function (entries) {
+		      	var reader = fileSystem.createReader();
+		      	var list="";
+		      	reader.readEntries(function (entries) {
 		        	var i;
 		        	var htmlInset = ""; 
 		        	for (i=0; i<entries.length; i++) {
@@ -696,11 +705,9 @@ function listOfflineTemps(){
 		        },
 		        function (err) {
 		          alert(err);
-		        }
-		      );
-		      //alert(list);
+		        });
 		    }, function (err) {
-		      alert(err);
+		    	alert(err);
 		    });
 }
 
@@ -1006,6 +1013,47 @@ function plotTemperature(data,write){
 	});
 }
 
+function openFile(tagid){
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+		var fileDate = new Date();
+		var filename = tagid + "_TEMP_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		  	//  console.log("got main dir",dir);
+		  	//  alert("got main dir");
+		    dir.getFile(filename + ".csv", {create:true}, function(file) {
+		        console.log("got the file", file);
+		        logOb = file;
+		        if (tagid!="newNest")
+		        	saveToFile();
+		    });
+		});
+}
+
+function saveToFile(data){
+	window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
+        console.log("got main dir",dir);
+        dir.getFile("log.txt", {create:true}, function(file) {
+            console.log("got the file", file);
+            logOb = file;
+            writeLog(data);          
+        });
+    });
+}
+
+function writeLog(str) {	
+    if(!logOb) return;
+    var log = str + " [" + (new Date()) + "]\n";
+    console.log("going to log "+log);
+    alert(logOb);
+    logOb.createWriter(function(fileWriter) {
+        
+        fileWriter.seek(fileWriter.length);
+        
+        var blob = new Blob([log], {type:'text/plain'});
+        fileWriter.write(blob);
+        console.log("ok, in theory i worked");
+    }, fail);
+}
+
 function showTemp(){
 
 	var prevYear = [["2016-04-10 21:23:59",23.0],["2016-04-10 21:25:51",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:35:11",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:38:55",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:42:39",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:46:23",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:50:07",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:34:15",23.0],["2016-04-10 21:53:51",22.0],["2016-04-10 21:33:19",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:57:35",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 22:01:19",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 22:05:03",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 22:08:47",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 22:12:31",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 22:16:15",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 22:19:59",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 22:23:43",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 22:27:27",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 22:31:11",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 22:34:55",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 22:38:39",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 21:46:23",21.0],["2016-04-10 22:42:23",21.0],["2016-04-10 21:45:27",21.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 22:46:07",22.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 22:49:51",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 22:53:35",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 21:50:07",22.0]];
@@ -1086,7 +1134,11 @@ function showTemp(){
 
 function restartTemp(){
 	var tempInt = $("#tempint").val();
-	Caenrfid.restartTemp(function(data){alert(data);},function (err){alert("error"+err)},[tempInt]);
+	Caenrfid.restartTemp(function(data){
+		alert(data);
+	},function (err){
+		alert("error"+err)
+	},[tempInt]);
 }
 
 function scanRFIDSuccess(rfid){
@@ -1150,13 +1202,8 @@ function showDataInConfirm(fields,target){
     
 }
 
-function recordNewNest(type){
+function recordNewNest(type, successStatus){
 	// type: 1.update, 2.new
-
-	// var connected = $('#connected').val();	
-	// var disabled = $('#NestData').find(':input:disabled').removeAttr('disabled');
-	// var content=$('#NestData').serialize();
-	// disabled.attr('disabled','disabled');
 
 	var data = jQuery('#NestData').serializeArray();
 	var requestData = {};
@@ -1164,10 +1211,48 @@ function recordNewNest(type){
 	    requestData[data[i].name] = data[i].value;
 	}
 
-	// if (!requestData.NestID) {
-	// 	alert('NestID REq');return;
-	// }
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.nestingDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future nesting date", 'bottom', 'long');return;
+	}
+	if (requestData.wetZone > 1000||requestData.wetZone < 0) {
+		showToast("Enter valid wet zone distance", 'bottom', 'long');return;
+	}
+	if (requestData.tideZone > 1000||requestData.tideZone < 0) {
+		showToast("Enter valid tide zone distance", 'bottom', 'long');return;
+	}
+	if (requestData.drySand > 1000||requestData.drySand < 0) {
+		showToast("Enter valid dry sand distance", 'bottom', 'long');return;
+	}
+	if (requestData.vegetation > 1000||requestData.vegetation < 0) {
+		showToast("Enter valid vegetation distance", 'bottom', 'long');return;
+	}
+	if (requestData.leftMarkDist > 1000||requestData.leftMarkDist < 0) {
+		showToast("Enter valid left mark distance", 'bottom', 'long');return;
+	}
+	if (requestData.rightMarkDist > 1000||requestData.rightMarkDist < 0) {
+		showToast("Enter valid right mark distance", 'bottom', 'long');return;
+	}
+	if (requestData.heightOfWetSand > 1000||requestData.heightOfWetSand < 0) {
+		showToast("Enter valid height of wet sand", 'bottom', 'long');return;
+	}
+	if (requestData.heightOfDrySand > 1000||requestData.heightOfDrySand < 0) {
+		showToast("Enter valid height of dry sand", 'bottom', 'long');return;
+	}
+	if (requestData.dmgEggs < 0) {
+		showToast("Enter valid damaged eggs count", 'bottom', 'long');return;
+	}
+	if (requestData.totEggs < 0) {
+		showToast("Enter valid total eggs count", 'bottom', 'long');return;
+	}
 
+
+	if (successStatus) {
+		requestData.success = successStatus
+	}	
 	requestData.user_id = localStorage.getItem('user_id')
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
@@ -1188,9 +1273,6 @@ function recordNewNest(type){
 			url: url,
 			success: function(data) {
 				console.log(JSON.parse(data))
-				// alert("Nest data recorded");
-				// 
-				
 				if (type=='update') {
 					showToast("Nest data update Successfully", 'bottom', 'long')
 					$.mobile.changePage("nestList.html");
@@ -1206,9 +1288,14 @@ function recordNewNest(type){
 		});
     }else{
     	// OFFLINE CAPTURING
-    	console.log('Current State', networkState)
-    	// openFile("newNest");
-		saveEventToFileNest(requestData);
+    	if (type=='update') {
+    		// FOR UPDATING NEST DATA OFFLINE
+    		saveEventToFileNest(requestData,window.currentOfflineNest);
+		}else{
+			// FOR SAVING NEW NEST DATA OFFLINE
+			saveEventToFileNest(requestData,false);
+		}
+		
     }
     
 }
@@ -1239,11 +1326,50 @@ function recordPerdation(){
 	}
 	requestData.user_id = localStorage.getItem('user_id')
 
+	
 	if (!requestData.rfid) {
-		console.log('RFID is required. You must have to read the nest before recording predation.')
 		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
 		return;
 	}
+
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.predationDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future nesting date", 'bottom', 'long');return;
+	}
+	if (requestData.clawedEggs > 1000||requestData.clawedEggs < 0) {
+		showToast("Enter valid clawed Eggs", 'bottom', 'long');return;
+	}
+	if (requestData.fertilized > 1000||requestData.fertilized < 0) {
+		showToast("Enter valid fertilized count", 'bottom', 'long');return;
+	}
+	if (requestData.unfertilized > 1000||requestData.unfertilized < 0) {
+		showToast("Enter valid unfertilized count", 'bottom', 'long');return;
+	}
+	if (requestData.earlyEmbryonic > 1000||requestData.earlyEmbryonic < 0) {
+		showToast("Enter valid early Embryonic count", 'bottom', 'long');return;
+	}
+	if (requestData.middleEmbryonic > 1000||requestData.middleEmbryonic < 0) {
+		showToast("Enter valid middle Embryonic count", 'bottom', 'long');return;
+	}
+	if (requestData.lateEmbryonic > 1000||requestData.lateEmbryonic < 0) {
+		showToast("Enter valid late Embryonic count", 'bottom', 'long');return;
+	}
+	if (requestData.dead > 1000||requestData.dead < 0) {
+		showToast("Enter valid dead count", 'bottom', 'long');return;
+	}
+	if (requestData.alive > 1000||requestData.alive < 0) {
+		showToast("Enter valid alive count", 'bottom', 'long');return;
+	}
+	if (requestData.deadOutside > 1000||requestData.deadOutside < 0) {
+		showToast("Enter valid dead Outside count", 'bottom', 'long');return;
+	}
+	if (requestData.aliveOutside > 1000||requestData.aliveOutside < 0) {
+		showToast("Enter valid alive Outside count", 'bottom', 'long');return;
+	}
+
 
 	var networkState = navigator.connection.type;
 	if (networkState !== Connection.NONE) {
@@ -1322,9 +1448,24 @@ function saveTurtle(type){
 	requestData.user_id = localStorage.getItem('user_id');
 
 	if (!requestData.tagID) {
-		console.log('Tag ID is required.')
 		showToast('Tag ID is required.', 'center', 'long');
 		return;
+	}
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.replacedDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future replaced date", 'bottom', 'long');return;
+	}
+	var someday = new Date();
+	var d2 = new Date(requestData.taggingDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future tagging date", 'bottom', 'long');return;
+	}
+	if (requestData.wetZone > 1000||requestData.wetZone < 0) {
+		showToast("Enter valid wet zone distance", 'bottom', 'long');return;
 	}
 
 	var networkState = navigator.connection.type;
@@ -1614,10 +1755,37 @@ function recordEmerg(){
 	requestData.user_id = localStorage.getItem('user_id')
 
 	if (!requestData.rfid) {
-		console.log('RFID is required. You must have to read the nest before recording predation.')
 		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
 		return;
 	}
+
+	// OTHER VALIDATIONS
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.emergeDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future nesting date", 'bottom', 'long');return;
+	}
+	if (requestData.dead > 1000||requestData.dead < 0) {
+		showToast("Enter valid dead count", 'bottom', 'long');return;
+	}
+	if (requestData.alive > 1000||requestData.alive < 0) {
+		showToast("Enter valid alive count", 'bottom', 'long');return;
+	}
+	if (requestData.tracks > 1000||requestData.tracks < 0) {
+		showToast("Enter valid tracks count", 'bottom', 'long');return;
+	}
+	if (requestData.toSea > 1000||requestData.toSea < 0) {
+		showToast("Enter valid Sea reached turtle count", 'bottom', 'long');return;
+	}
+	if (requestData.deadInTransit > 1000||requestData.deadInTransit < 0) {
+		showToast("Enter valid dead In Transit count", 'bottom', 'long');return;
+	}
+	if (requestData.incubation > 1000||requestData.incubation < 0) {
+		showToast("Enter valid incubation count", 'bottom', 'long');return;
+	}
+
 
 	var networkState = navigator.connection.type;
 	if (networkState !== Connection.NONE) {
@@ -1765,9 +1933,36 @@ function recordUncover(){
 	requestData.user_id = localStorage.getItem('user_id');
 
 	if (!requestData.rfid) {
-		console.log('RFID is required. You must have to read the nest before recording predation.')
-		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
+		showToast('RFID is required. You have to read nest before recording this data.', 'center', 'long');
 		return;
+	}
+
+	
+	// OTHER VALIDATIONS
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.emergeDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday > today){
+		showToast("You can't add future nesting date", 'bottom', 'long');return;
+	}
+	if (requestData.dead > 1000||requestData.dead < 0) {
+		showToast("Enter valid dead count", 'bottom', 'long');return;
+	}
+	if (requestData.alive > 1000||requestData.alive < 0) {
+		showToast("Enter valid alive count", 'bottom', 'long');return;
+	}
+	if (requestData.tracks > 1000||requestData.tracks < 0) {
+		showToast("Enter valid tracks count", 'bottom', 'long');return;
+	}
+	if (requestData.toSea > 1000||requestData.toSea < 0) {
+		showToast("Enter valid Sea reached turtle count", 'bottom', 'long');return;
+	}
+	if (requestData.deadInTransit > 1000||requestData.deadInTransit < 0) {
+		showToast("Enter valid dead In Transit count", 'bottom', 'long');return;
+	}
+	if (requestData.incubation > 1000||requestData.incubation < 0) {
+		showToast("Enter valid incubation count", 'bottom', 'long');return;
 	}
 
 	var networkState = navigator.connection.type;
@@ -2254,7 +2449,13 @@ function editNest(edNestID){
 }
 
 function setNestFieldsValue(){
-	var nestData = window.currentNestData.data.Nest
+	var networkState = navigator.connection.type;
+	if (networkState !== Connection.NONE) {
+		var nestData = window.currentNestData.data.Nest
+	}else{
+		var nestData = window.currentNestData
+	}
+	
 	var eventTime = (new Date(nestData.timestamp)).toDateString();
 	var nestingDate = (new Date(nestData.nestingDate)).toDateString();
 	$('#dbid').val(nestData.id);
@@ -2331,6 +2532,10 @@ $(document).on('popupafteropen','#popupConfirmEmerg', function () {
 
 $(document).on('popupafteropen','#popupConfirmUncover', function () {
 	showDataInConfirm($('#UncoverData').serializeArray(),"#summary");
+});
+
+$(document).on('popupafteropen','#popupConfirmLogger', function () {
+	showDataInConfirm($('#inNestLogger').serializeArray(),"#summary");
 });
 
 
@@ -2551,6 +2756,71 @@ function gotoRecordNestAndReset() {
 function remindLaterOfflineNotification() {
 	setTimeout(function(){ $("#offlineNotificationPopup").popup("open"); }, 60000);
 }
+
+
+
+function recordNestLogger(){
+	// type: 1.update, 2.new
+
+	var data = jQuery('#inNestLogger').serializeArray();
+	var requestData = {};
+	for (var i = 0, l = data.length; i < l; i++) {
+	    requestData[data[i].name] = data[i].value;
+	}
+
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.nestingDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday < today){
+		showToast("You can't add previous start recording date", 'bottom', 'long');return;
+	}
+	if (requestData.depth > 1000||requestData.depth < 0) {
+		showToast("Enter valid depth", 'bottom', 'long');return;
+	}
+	requestData.user_id = localStorage.getItem('user_id')
+
+	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
+	var url = HOST + API_PATH + SAVE_TEMP_INFO;
+	console.log('requestData',requestData)
+
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	// ONLINE CAPTURING
+        var data = {}
+		$.ajax({
+			type: "POST",
+			data: requestData,
+			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			url: url,
+			success: function(data) {
+				console.log(JSON.parse(data))
+				if (requestData.tempRecordType=='0') {
+					showToast("In-Nest Logger data recorded successfully", 'bottom', 'long')
+				}else{
+					showToast("Experimental Logger data recorded successfully", 'bottom', 'long')
+				}
+				$.mobile.changePage("index.html");
+			},
+			error: function(data) {
+				showToast("Seems like Something went wrong.", 'bottom', 'long')
+			}
+		});
+    }else{
+    	// OFFLINE CAPTURING
+    	if (requestData.tempRecordType=='0') {
+    		// FOR IN_NEST LOGGER DATA OFFLINE
+    		// saveEventToFileNest(requestData,window.currentOfflineNest);
+		}else{
+			// FOR EXPERIMENT LOGGER DATA OFFLINE
+			// saveEventToFileNest(requestData,false);
+		}
+		
+    }
+    
+}
+
 
 $(document).on("pagecontainerbeforechange", function(e, data) {
 	// console.log(data)

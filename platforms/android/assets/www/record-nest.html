@@ -46,8 +46,9 @@
 			<!-- <div data-role="collapsible" data-collapsed="false"  class="ui-accordion"> -->
 				<h3>Original nest (Position A)</h3>
 				<div class="ui-field-contain">
-					<label for="nestingDate">Nesting date:</label> <input type="text"
-						name="nestingDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="nestingDate"></input>
+					<label for="nestingDate">Nesting date:</label> 
+					<input type="date" name="nestingDate" id="nestingDate"></input>
+					<!-- <input type="text" name="nestingDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="nestingDate"></input> -->
 				</div>
 				<div class="ui-field-contain">
 					<label for="nestingTime">Nesting time:</label> <!-- <input type="text"
@@ -133,11 +134,11 @@
 				<hr />
 
 				<div class="ui-field-contain">
-					<label for="heightOfWetSand">Height dry sand (cm):</label> <input
+					<label for="heightOfWetSand">Height wet sand (cm):</label> <input
 						name="heightOfWetSand" type="number" id="heightOfWetSand"></input>
 				</div>
 				<div class="ui-field-contain">
-					<label for="heightOfDrySand">Height wet sand (cm):</label> <input
+					<label for="heightOfDrySand">Height dry sand (cm):</label> <input
 						type="number" name="heightOfDrySand" id="heightOfDrySand"></input>
 				</div>
 				<div class="ui-field-contain">
@@ -211,30 +212,30 @@
 
 	<div data-role="popup" id="popupConfirm" data-theme="a" class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-		<form class="summary-popup-form">				
+		<div class="summary-popup-form">				
 			<h3>Preview of Nest Data</h3>
 			<hr>
 			<div id="summary"></div>
-			<button id="successfulButton" class="ui-btn" onClick="recordNewNest();">RECORD NOW</button>
+			<button id="successfulButton" class="ui-btn" onClick="recordNewNest('new','1');">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
 				data-icon="delete">No, Need Corrections </a>
-		</form>
+		</div>
 	</div>
 	
 	<div data-role="popup" id="popupConfirm2" data-theme="a" class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
-		<form class="summary-popup-form">
+		<div class="summary-popup-form">
 			<h3>Preview of Nest Data</h3>
 			<div id="popupBasic" class="red-banner">
-			  <p><b>NOTE:</b> You opting this because not sure where nest is, but it is likely here</p>
+			  	<p><b>NOTE:</b> You opting this because not sure where nest is, but it is likely here</p>
 			</div>
 			<hr>
 			<div id="summary2"></div>
-			<button class="ui-btn" id="unsuccessfulButton"
-				onClick="recordNewNestUnsuccessful();">RECORD NOW</button>
+			<!-- <button class="ui-btn" id="unsuccessfulButton" onClick="recordNewNestUnsuccessful();">RECORD NOW</button> -->
+			<button class="ui-btn" id="unsuccessfulButton" onClick="recordNewNest('new','0');">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
 				data-icon="delete">No, Need Corrections </a>		
-		</form>
+		</div>
 	</div>
 
 </div>

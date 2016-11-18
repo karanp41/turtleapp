@@ -13,17 +13,10 @@ $(document).on("pagebeforehide","#recordNestPage",function(){ // When leaving pa
 	}
 });
 
-$(document).on('pageinit','#nestInfoPage', function(){
-	console.log('currentNestId: '+currentNestId)
-	populateNestInfo(currentNestId);
-});
-
 $(document).on('pageinit','#editNestPage', function(){
 	console.log('currentNestData: ', window.currentNestData)
-	console.log('currentNestId: '+currentNestId)
-	getRecordNestInformation()
+	getRecordNestInformation()	
 	setTimeout(function() {setNestFieldsValue()}, 100);
-	
 });
 
 $(document).on('pageinit','#mainPage', function(){
@@ -69,6 +62,16 @@ $(document).on('pageinit','#nestListPage', function(){
 	populateNestList();
 });
 
+$(document).on('pageinit','#nestInfoPage', function(){
+	var networkState = navigator.connection.type;
+	if (networkState !== Connection.NONE) {
+		console.log('currentNestId: '+currentNestId)
+		populateNestInfo(currentNestId);
+	}else{
+		nestDetailOffline(window.currentOfflineNest);
+	}
+});
+
 $(document).on('pageinit','#offlineListPage', function(){
 	listOfflineEvents();
 });
@@ -89,6 +92,10 @@ $(document).on('pageinit','#offlineUncoverListPage', function(){
 	listOfflineUncover();
 });
 
+$(document).on('pageinit','#offlineLoggerListPage', function(){	
+	listOfflineLogger();
+});
+
 $(document).on('pageinit','#temperature', function(){
 	listOfflineTemps();
 });
@@ -99,6 +106,21 @@ $(document).on('pageinit','#turtles', function(){
 
 $(document).on('pageinit','#menuPage', function(){
 	console.log('here');
+});
+
+$(document).on('pageinit','#inNestTempRecord', function(){	
+	$("[name=deviceType]").click(function(){		
+        $('.ui-block-c').hide();
+        $("#daysOperating-"+$(this).val()).show('slow');
+    });
+	getCurLoc();
+});
+$(document).on('pageinit','#experimentalTempRecord', function(){	
+	$("[name=deviceType]").click(function(){		
+        $('.ui-block-c').hide();
+        $("#daysOperating-"+$(this).val()).show('slow');
+    });
+	getCurLoc();
 });
 
 

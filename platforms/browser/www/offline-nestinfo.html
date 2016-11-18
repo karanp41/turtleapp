@@ -1,0 +1,24 @@
+<div id="nestInfoPage" data-role="page">
+	<div data-role="header"  data-position="fixed" >		
+			<h3>Nest Info</h3>
+			<a href="edit-nest.html" class="ui-btn ui-btn-right ui-btn-b ui-icon-edit ui-corner-all ui-btn-icon-left">EDIT</a>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<div id="nestInfo"  class="nestInfo">
+			Loading info about nest....			
+		</div>
+		<div>
+			<a data-role="button" onClick="findNest(curTag)">Find nest</a>
+			<br/>
+		</div>
+		<ul data-role="listview" data-divider-theme="a">
+			<li data-role="list-divider">Events</li>
+			<li><a type="button" href="predation.html" class="nests" >Predation</a> </li>
+			<li><a type="button" href="emergence.html" class="nests" >Emergence</a> </li>
+			<li><a type="button" href="uncoverControl.html" class="nests" >Uncover for Control</a> </li>		
+			<li><a type="button" href="relocate-nest.html" class="nests" >Relocate Nest</a></li>			
+		</ul>
+	</div><!-- /content -->
+	<div data-role="footer" data-position="fixed">
+	</div><!-- /footer -->
+</div><!-- /page -->

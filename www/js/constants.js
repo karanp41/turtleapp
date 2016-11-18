@@ -77,3 +77,4 @@ var UPLOAD_PREDATION= 'uploadOfflinePredation';
 var UPLOAD_EMERGENCE= 'uploadOfflineEmergence';
 var UPLOAD_UNCOVER	= 'uploadOfflineUncover';
 
+var SAVE_TEMP_INFO	= 'saveTempInfo';
