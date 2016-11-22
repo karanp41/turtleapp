@@ -32,7 +32,7 @@ var logOb = null;
 
 /**********     OTHER CONSTANT    ********/
 
-var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMark', 'certain', 'Specie']
+var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMark', 'certain', 'Specie', 'altTimeOptions', 'altLeftLandmark', 'altRightLandmark', 'alt_nestLoc', 'gridCoverAlt']
 
 
 
@@ -62,8 +62,9 @@ var FIND_NESTS 		= 'findNests';
 var FIND_NESTS_BY_RFID = 'NestByRFID';
 
 var LIST_TURTLES 	= 'listTurtles';
-var SAVE_TURTLE 	= 'saveTurtle';
+var LIST_NEST_EVENTS= 'nestEvents';
 
+var SAVE_TURTLE 	= 'saveTurtle';
 var SAVE_PREDATIONS = 'savePredations';
 var SAVE_EMERGENCE 	= 'saveEmergences';
 var SAVE_UNCOVER 	= 'saveUncover';
@@ -76,5 +77,6 @@ var UPLOAD_TURTLE 	= 'uploadOfflineTurtles';
 var UPLOAD_PREDATION= 'uploadOfflinePredation';
 var UPLOAD_EMERGENCE= 'uploadOfflineEmergence';
 var UPLOAD_UNCOVER	= 'uploadOfflineUncover';
+var UPLOAD_LOGGER	= 'saveOfflineTempInfo';
 
 var SAVE_TEMP_INFO	= 'saveTempInfo';

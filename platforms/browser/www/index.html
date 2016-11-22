@@ -46,24 +46,25 @@
 					<p id="message" class="message"></p>
 					<p id="id" hidden="hidden" class="message"></p>
 					<div class="ui-field-contain">
-					<ul id="menu" data-role="listview">
+						<ul id="menu" data-role="listview">
 
-						<li data-role="list-divider" data-theme="b" >Record</li>
-						<li><a href="record-nest.html">Nest information</a></li>
-						<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
-						<li><a href="turtles.html">Turtles</a></li>
-						<li><a href="predation.html">Predation</a></li>
-						<li><a href="emergence.html">Emergence</a></li>
-						<li><a href="uncoverControl.html">Uncover for Control</a></li>
-						<li><a href="temp-logger-menu.html">Temperature</a></li>
+							<li data-role="list-divider" data-theme="b" >Record</li>
+							<li><a href="record-nest.html">Nest information</a></li>
+							<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
+							<li><a href="turtles.html">Turtles</a></li>
+							<li><a href="predation.html">Predation</a></li>
+							<li><a href="emergence.html">Emergence</a></li>
+							<li><a href="uncoverControl.html">Uncover for Control</a></li>
+							<li><a href="temp-logger-menu.html">Temperature</a></li>
 
-						<li data-role="list-divider" data-theme="b">View</li>
-						<li><a href="index-old.html">Map/discovery view</a></li> 
-						<li><a href="nestList.html">NestList</a></li>
+							<li data-role="list-divider" data-theme="b">View</li>
+							<li><a href="index-old.html">Map/discovery view</a></li> 
+							<li><a href="nestList.html">NestList</a></li>
 
-						<li data-role="list-divider" data-theme="b">Offline</li>
-						<li><a href="offlineMenu.html">Offline events</a></li>
-					</ul>
+							<li data-role="list-divider" data-theme="b">Offline</li>
+							<li><a href="offlineMenu.html">Offline events</a></li>
+							<!-- <li><a href="select-user.html">user</a></li> -->
+						</ul>
 					</div>
 				</div>
 			
@@ -80,8 +81,7 @@
 			    <div role="main" class="ui-content">
 			        <p>You have some offline data to get synced with server. Press 'Sync Now' to continue or 'Remind Later'</p>
 			        <a href="offlineMenu.html" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-recycle">Sync Now</a>
-					<a onClick="remindLaterOfflineNotification()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-clock ui-btn-b" data-rel="back" data-transition="flow">Remind Me Later</a>
-					
+					<a onClick="remindLaterOfflineNotification()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-clock ui-btn-b" data-rel="back" data-transition="flow">Remind Me Later</a>					
 			    </div>
 			</div>
 
@@ -104,7 +104,7 @@
 		  	</div>
 		  	<div data-role="main" class="ui-content">
 			    <form>        
-					<div class="login-form-wrapper">					            
+					<div class="login-form-wrapper">
 						<h3>Please sign in</h3>
 						<label for="un" class="ui-hidden-accessible">Username:</label>
 						<input type="text" name="user" id="un" value=""

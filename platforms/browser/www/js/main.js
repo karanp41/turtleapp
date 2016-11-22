@@ -379,7 +379,6 @@ function onErrorGSM(msg){
 	$("#location").html("couldn't get your position at all.");
 }
 
-
 function record(){
 	var success = $("#success").is(':checked') ? 1 : 0;
 	alert(success);
@@ -520,7 +519,6 @@ function saveEventToFileNest(data, fileNameToUpdate){
 		    });
 	});	
 }
-
 
 function readFromFile(filename){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
@@ -919,6 +917,48 @@ function listOfflineUncover(){
 		});
 }
 
+function listOfflineLogger(){
+
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (fileSystem) {
+		    var reader = fileSystem.createReader();
+		    var list="";
+		    reader.readEntries(
+		        function (entries) {
+		        	var i;
+		        	var htmlInset = "";
+		        	var offlineRecordedLoggerNames = JSON.parse(localStorage.getItem('offlineRecordedLoggerNames'));		        	
+
+		        	for (i=0; i<entries.length; i++) {
+		        		
+			            var index = offlineRecordedLoggerNames.indexOf(entries[i].name.slice(0, -4));
+			            if (index > -1) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		$("#fileList").html("");
+			        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='syncLoggerData(\""+entries[i].name+"\");'>"+
+							"<h3>"+entries[i].name+"</h3></a> ";
+			        		if (entries[i].name.search("finished_")==-1){
+			        			// htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
+			        			htmlInset += "<a href='#' onclick='syncLoggerData(\""+entries[i].name+"\");'>1st link</a> ";
+			        		}
+							htmlInset += "</li>";
+			            }
+		        		
+		        	}
+		        	$("#offlineListLogger").html(htmlInset);
+		        	$("#offlineListLogger").listview('refresh');
+		        	
+		        },
+		        function (err) {
+		          alert(err);
+		        }
+		    );
+	    }, function (err) {
+	    	alert(err);
+		});
+}
+
 function readTemp(){
 	$.mobile.loading( 'show', {
 		text: 'Loading temperature',
@@ -1274,7 +1314,10 @@ function recordNewNest(type, successStatus){
 			success: function(data) {
 				console.log(JSON.parse(data))
 				if (type=='update') {
-					showToast("Nest data update Successfully", 'bottom', 'long')
+					showToast("Nest data update successfully", 'bottom', 'long')
+					$.mobile.changePage("nestList.html");
+				}else if (type=='relocate') {
+					showToast("Nest relocated successfully", 'bottom', 'long')
 					$.mobile.changePage("nestList.html");
 				}else{
 					showToast("Nest data recorded", 'bottom', 'long')
@@ -1291,6 +1334,9 @@ function recordNewNest(type, successStatus){
     	if (type=='update') {
     		// FOR UPDATING NEST DATA OFFLINE
     		saveEventToFileNest(requestData,window.currentOfflineNest);
+		}else if (type=='relocate') {
+    		// FOR SAVING RELOCATE NEST DATA OFFLINE
+    		saveRelocateOffline(requestData);
 		}else{
 			// FOR SAVING NEW NEST DATA OFFLINE
 			saveEventToFileNest(requestData,false);
@@ -1625,7 +1671,6 @@ function doNotAssociateTurtle(){
 	delete window.RECENTTURTLEDATA;
 	$.mobile.changePage("record-nest.html");
 }
-
 
 function syncPredationData(filename){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
@@ -2179,6 +2224,7 @@ function scanOnceSuccess(rfid){
 				// curTag = data[0].rfid;
 				$('#locationPred').html(data.data[0].Nest.origLat+", "+data.data[0].Nest.origLong);
 				$('#nestID').val(data.data[0].Nest.NestID);
+				$('#nestId').val(data.data[0].Nest.NestID);
 				// var htmlInfo = htmlInfo + "</div><!-- /grid-a --></p></div>";				
 			}
 		});
@@ -2333,20 +2379,27 @@ function populateNestInfo(curTag){
 			//	$("#nestInfo").html(htmlInfo);
 				if (data.data.Nest.adoptId != ""){
 			//		$("#linkaAdoptAnestButton").button( "disable" );
-				}		
+				}
 			$("#nestInfo").html(htmlInfo );
 			$('div[data-role=collapsible]').collapsible();
 			htmlInfo="";
+
+
 			$.ajax({
 				beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 				complete: function() { $.mobile.loading('hide'); }, //Hide spinner
 				// url: HOST + API_PATH + "nestPredation.php?un="+username+"&rfid="+window.curTag+"&dbid="+curDbId,
-				url: HOST + API_PATH + NEST_PREDATION,
+				// url: HOST + API_PATH + NEST_PREDATION,
+				url: HOST + API_PATH + LIST_NEST_EVENTS,
 				data:{rfid:data.data.Nest.rfid},
 				type:'POST',
 				success: function(data) {
+
+					window.currentNestEventsData = data.data;
+
+					/*
 					htmlInfo = $("#nestInfo").html();
-					if (data.length>0){
+					if (data.length > 0){
 						var eventTime = (new Date(nestData.timestamp)).toDateString();
 						var nestingDate = (new Date(nestData.nestingDate)).toDateString();
 
@@ -2365,12 +2418,13 @@ function populateNestInfo(curTag){
 						});
 						htmlInfo = htmlInfo + "</div>";
 					}
-					// $("#nestInfo").html(htmlInfo);
+					$("#nestInfo").html(htmlInfo);
 					$('div[data-role=collapsible]').collapsible();
-					//$( "#predation" ).collapsibleset( "refresh" );
+					$( "#predation" ).collapsibleset( "refresh" );
 					if (nestData.adoptId != ""){
 						$("#linkaAdoptAnestButton").button( "disable" );
 					}
+					*/
 				},
 				dataType:"json"
 				});
@@ -2465,18 +2519,12 @@ function setNestFieldsValue(){
 	// $('#species').val(nestData.species);
 	$('#gridCover').val(nestData.gridCover).selectmenu("refresh");
 	// $('#gridcover').val(nestData.gridCover);
-	$('#alt_lat').val(nestData.alt_lat);
-	$('#alt_long').val(nestData.alt_long);
+
 	$('#alt_loc').val(nestData.alt_lat + "," + nestData.alt_long);
 	$('#lat').val(nestData.origLat);
 	$('#long').val(nestData.origLong);
 	$('#loc').val(nestData.origLat + 	"," + nestData.origLong);
-	$('#alt_date').val(nestData.alternationTime);
-	$('#alt_drySand').val(nestData.alt_drySand);
-	$('#alt_wetSand').val(nestData.alt_wetSand);
-	$('#alt_diaEggChamb').val(nestData.origLong);
-	$('#alt_dmgEggs').val(nestData.alt_dmgEggs);
-	$('#alt_totEggs').val(nestData.alt_totEggs);
+	
 	$('#nestingDate').attr("disabled");
 	$('#certain').val(nestData.certain).selectmenu("refresh");
 	$('#wetZone').val(nestData.wetZone);
@@ -2508,6 +2556,23 @@ function setNestFieldsValue(){
 	$('#comment').val(nestData.comment);
 	$('#devices').val(nestData.devices);
 	$('#primaryId').val(nestData.id);
+
+	// RELLOCATED FIELDS
+	$('#alterationTime').val(nestData.alterationTime);
+	$('#altTimeOptions').val(nestData.altTimeOptions).selectmenu("refresh");
+	$('#alt_wetZone').val(nestData.alt_wetZone);
+	$('#alt_tideZone').val(nestData.alt_tideZone);
+	$('#alt_dryZone').val(nestData.alt_dryZone);
+	$('#alt_distSea').val(nestData.alt_distSea);
+	$('#alt_vegetation').val(nestData.alt_vegetation);
+	$('#altLeftLandmark').val(nestData.altLeftLandmark).selectmenu("refresh");
+	$('#altLeftLandmarkNum').val(nestData.altLeftLandmarkNum);
+	$('#altLeftLandmarkDist').val(nestData.altLeftLandmarkDist);
+	$('#altRightLandmark').val(nestData.altRightLandmark).selectmenu("refresh");
+	$('#altRightLandmarkNum').val(nestData.altRightLandmarkNum);
+	$('#altRightLandmarkDist').val(nestData.altRightLandmarkDist);
+	$('#alt_nestLoc').val(nestData.alt_nestLoc).selectmenu("refresh");
+	$('#gridCoverAlt').val(nestData.gridCoverAlt).selectmenu("refresh");
 }
 
 $(document).on('popupafteropen','#popupConfirm', function () {
@@ -2538,6 +2603,10 @@ $(document).on('popupafteropen','#popupConfirmLogger', function () {
 	showDataInConfirm($('#inNestLogger').serializeArray(),"#summary");
 });
 
+$(document).on('popupafteropen','#popupConfirmRelocate', function () {
+	showDataInConfirm($('#NestData').serializeArray(),"#summary");
+});
+
 
 function nestListClick() {
 	processTag($(this).attr('hex'));
@@ -2549,8 +2618,22 @@ $("#taglist li").not('.emptyMessage').on("click",nestListClick);
 
 function login(username,password){
 	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
+
+	watchID = navigator.geolocation.watchPosition(
+		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password) }, 
+		function(){ loginStepTwo(0,0,username,password) }, 
+		options
+	);
+
+	
+}
+
+function loginStepTwo(latitude,longitude,username,password) {
 	var url= HOST + API_PATH + LOGIN;
-	var data = { username: username, password: password }
+	var data = {	username: username, 
+					password: password, 
+					latitude: latitude, 
+					longitude: longitude }
 	$.ajax({
 		type: "POST",
 		data: data,
@@ -2636,15 +2719,19 @@ function setNestDataField(nestData){
 	        value: i,
 	        text : item 
 	    }));
+	    $('#altTimeOptions').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
 	});
 
 	var leftLandMarkAlt = nestData.NestLandmark;
 	$.each(leftLandMarkAlt, function (i, item) {
-	    $('#leftLandMarkAlt').append($('<option>', { 
+	    $('#altLeftLandmark').append($('<option>', { 
 	        value: i,
 	        text : item 
 	    }));
-	    $('#rightLandMarkAlt').append($('<option>', { 
+	    $('#altRightLandmark').append($('<option>', { 
 	        value: i,
 	        text : item 
 	    }));
@@ -2672,11 +2759,15 @@ function setNestDataField(nestData){
 	        value: i,
 	        text : item 
 	    }));
+	    $('#alt_nestLoc').append($('<option>', { 
+	        value: i,
+	        text : item 
+	    }));
 	});
 
 	var RelocatedNestCover = nestData.RelocatedNestCover;
 	$.each(RelocatedNestCover, function (i, item) {
-	    $('#gridcoverAlt').append($('<option>', { 
+	    $('#gridCoverAlt').append($('<option>', { 
 	        value: i,
 	        text : item 
 	    }));
@@ -2758,6 +2849,7 @@ function remindLaterOfflineNotification() {
 }
 
 
+// NEST LOGGER EVENTS & METHODS STARTS
 
 function recordNestLogger(){
 	// type: 1.update, 2.new
@@ -2809,18 +2901,290 @@ function recordNestLogger(){
 		});
     }else{
     	// OFFLINE CAPTURING
-    	if (requestData.tempRecordType=='0') {
-    		// FOR IN_NEST LOGGER DATA OFFLINE
-    		// saveEventToFileNest(requestData,window.currentOfflineNest);
-		}else{
-			// FOR EXPERIMENT LOGGER DATA OFFLINE
-			// saveEventToFileNest(requestData,false);
-		}
-		
+    	saveLoggerOffline(requestData);
     }
     
 }
 
+function saveLoggerOffline(data){
+	
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+		var fileDate = new Date();
+		var filename = "TEMP_" + data.loggerid + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		    dir.getFile(filename + ".csv", {create:true}, function(file) {
+		        console.log("got the file", file);
+		        logOb = file;		        
+	        	if(!logOb) return;
+				logOb.createWriter(function(fileWriter) {
+					console.log(data);
+					var fields = [];
+					var values = [];
+					for (var property in data) {
+					    if (data.hasOwnProperty(property)) {
+					        fields.push(property);
+					        values.push(data[property]);
+					    }
+					}
+
+					var CSV = [
+					    fields.join(),
+					    values.join()
+					  ].join('\n');
+					var contentType = 'text/csv';
+					var csvFile = new Blob([CSV], {type: contentType});
+					fileWriter.write(csvFile);
+
+					if (localStorage.getItem('offlineRecordedLoggerNames')) {
+						var offlineRecordedLoggerNames = JSON.parse(localStorage.getItem('offlineRecordedLoggerNames'));
+					}else{
+						var offlineRecordedLoggerNames = [];
+					}
+					offlineRecordedLoggerNames.push(filename);
+					localStorage.setItem('offlineRecordedLoggerNames',JSON.stringify(offlineRecordedLoggerNames));
+					$.mobile.changePage("index.html");
+					showToast("Logger data recorded successfully.", 'bottom', 'long')
+
+				},  function fail(e) {					
+					showToast("FileSystem Error", 'bottom', 'long')
+					console.log(e);
+				});
+		    });
+	});
+}
+
+function syncLoggerData(filename){
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+        console.log("got main dir" + filename,dir);
+        dir.getFile(filename, {create:false}, function(file) {
+
+        	var file_data = file;   
+    		var form_data = new FormData();                  
+    		form_data.append('file', file_data);
+
+            console.log("got the file", file);
+            logOb = file;
+
+            logOb.file(function(file) {
+			 var reader = new FileReader();
+
+			 	reader.onloadend = function(e) {
+				 	console.log(this.result);
+				 	console.log(file);
+				 	console.log(logOb);
+				 	var ServerURI = HOST + API_PATH + UPLOAD_LOGGER;
+				 	var fileURL = file.localURL;
+				 	uploadFileToServer(ServerURI, fileURL, logOb.nativeURL, 'logger');
+			 	};
+
+			 	reader.readAsText(file);
+		 	}, function fail(e) {
+				alert("FileSystem Error");
+				alert(e);
+		 	});
+
+        });
+    });
+}
+
+function syncAllLoggerData(type){
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	if (type=='logger') {
+			window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+			    function (fileSystem) {
+			      	var reader = fileSystem.createReader();
+			      	var list="";
+			      	reader.readEntries(function (entries) {
+			      		console.log(entries)
+			        	for (i=0; i<entries.length; i++) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		var offlineRecordedLoggerNames = JSON.parse(localStorage.getItem('offlineRecordedLoggerNames'));
+			        		if (offlineRecordedLoggerNames.indexOf(entries[i].name.slice(0, -4)) >-1){
+			        			syncLoggerData(entries[i].name, type)
+			        		}
+			        	}		        	
+			        },
+			        function (err) {
+			          	alert(err);
+			        });
+			    }, function (err) {
+			      	alert(err);
+			    });
+		}
+    }else{    	
+    	showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long');
+    	return;
+    }	
+}
+
+// NEST LOGGER EVENTS & METHODS ENDS
+
+
+
+// RELOCATE NEST EVENTS & METHODS STARTS
+
+function saveRelocateOffline(data){
+	
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+		var fileDate = new Date();
+		var filename = "RELOCATE_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		    dir.getFile(filename + ".csv", {create:true}, function(file) {
+		        console.log("got the file", file);
+		        logOb = file;		        
+	        	if(!logOb) return;
+				logOb.createWriter(function(fileWriter) {
+					console.log(data);
+					var fields = [];
+					var values = [];
+					for (var property in data) {
+					    if (data.hasOwnProperty(property)) {
+					        fields.push(property);
+					        values.push(data[property]);
+					    }
+					}
+
+					var CSV = [
+					    fields.join(),
+					    values.join()
+					  ].join('\n');
+					var contentType = 'text/csv';
+					var csvFile = new Blob([CSV], {type: contentType});
+					fileWriter.write(csvFile);
+
+					if (localStorage.getItem('offlineRecordedRelocateNames')) {
+						var offlineRecordedRelocateNames = JSON.parse(localStorage.getItem('offlineRecordedRelocateNames'));
+					}else{
+						var offlineRecordedRelocateNames = [];
+					}
+					offlineRecordedRelocateNames.push(filename);
+					localStorage.setItem('offlineRecordedRelocateNames',JSON.stringify(offlineRecordedRelocateNames));
+					$.mobile.changePage("nestList.html");
+					showToast("Data Saved Successfully.", 'bottom', 'long')
+
+				},  function fail(e) {					
+					showToast("FileSystem Error", 'bottom', 'long')
+					console.log(e);
+				});
+		    });
+	});
+}
+
+function listOfflineRelocatedNests(){
+
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (fileSystem) {
+		    var reader = fileSystem.createReader();
+		    var list="";
+		    reader.readEntries(
+		        function (entries) {
+		        	var i;
+		        	var htmlInset = "";
+		        	var offlineRecordedRelocateNames = JSON.parse(localStorage.getItem('offlineRecordedRelocateNames'));		        	
+
+		        	for (i=0; i<entries.length; i++) {
+		        		
+			            var index = offlineRecordedRelocateNames.indexOf(entries[i].name.slice(0, -4));
+			            if (index > -1) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		$("#fileList").html("");
+			        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='syncRelocateData(\""+entries[i].name+"\");'>"+
+							"<h3>"+entries[i].name+"</h3></a> ";
+			        		if (entries[i].name.search("finished_")==-1){
+			        			// htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
+			        			htmlInset += "<a href='#' onclick='syncRelocateData(\""+entries[i].name+"\");'>1st link</a> ";
+			        		}
+							htmlInset += "</li>";
+			            }
+		        		
+		        	}
+		        	$("#offlineListRelocate").html(htmlInset);
+		        	$("#offlineListRelocate").listview('refresh');		        	
+		        },
+		        function (err) {
+		          alert(err);
+		        }
+		    );
+	    }, function (err) {
+	    	alert(err);
+		});
+}
+
+function syncRelocateData(filename){
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+        console.log("got main dir" + filename,dir);
+        dir.getFile(filename, {create:false}, function(file) {
+
+        	var file_data = file;   
+    		var form_data = new FormData();                  
+    		form_data.append('file', file_data);
+
+            console.log("got the file", file);
+            logOb = file;
+
+            logOb.file(function(file) {
+			 var reader = new FileReader();
+
+			 	reader.onloadend = function(e) {
+				 	console.log(this.result);
+				 	console.log(file);
+				 	console.log(logOb);
+				 	var ServerURI = HOST + API_PATH + UPLOAD_NEST;
+				 	var fileURL = file.localURL;
+				 	uploadFileToServer(ServerURI, fileURL, logOb.nativeURL, 'relocate');
+			 	};
+
+			 	reader.readAsText(file);
+		 	}, function fail(e) {
+				alert("FileSystem Error");
+				alert(e);
+		 	});
+
+        });
+    });
+}
+
+function syncAllRelocateData(type){
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	if (type=='relocate') {
+			window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+			    function (fileSystem) {
+			      	var reader = fileSystem.createReader();
+			      	var list="";
+			      	reader.readEntries(function (entries) {
+			      		console.log(entries)
+			        	for (i=0; i<entries.length; i++) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		var offlineRecordedRelocateNames = JSON.parse(localStorage.getItem('offlineRecordedRelocateNames'));
+			        		if (offlineRecordedRelocateNames.indexOf(entries[i].name.slice(0, -4)) >-1){
+			        			syncLoggerData(entries[i].name, type)
+			        		}
+			        	}		        	
+			        },
+			        function (err) {
+			          	alert(err);
+			        });
+			    }, function (err) {
+			      	alert(err);
+			    });
+		}
+    }else{    	
+    	showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long');
+    	return;
+    }	
+}
+
+// RELOCATE NEST EVENTS & METHODS ENDS
+
+
+
+
+// LOGIN SESSION CHECK
 
 $(document).on("pagecontainerbeforechange", function(e, data) {
 	// console.log(data)

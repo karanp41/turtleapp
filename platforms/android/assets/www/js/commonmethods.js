@@ -104,7 +104,7 @@ function removeFile(relativeFilePath, type) {
                 localStorage.setItem('offlineRecordedPredationNames',JSON.stringify(offlineRecordedPredationNames));
               }  else if(type=='emergence'){
 
-                // DELETING PREDATION FILENAME FROM LOCALSTORAGE
+                // DELETING EMERGENCE FILENAME FROM LOCALSTORAGE
                 var offlineRecordedEmergenceNames = JSON.parse(localStorage.getItem('offlineRecordedEmergenceNames'));
                 var index = offlineRecordedEmergenceNames.indexOf(fileName.slice(0, -4));
                 if (index > -1) {
@@ -113,14 +113,32 @@ function removeFile(relativeFilePath, type) {
                 localStorage.setItem('offlineRecordedEmergenceNames',JSON.stringify(offlineRecordedEmergenceNames));
               }  else if(type=='uncover'){
 
-                // DELETING PREDATION FILENAME FROM LOCALSTORAGE
+                // DELETING UNCOVER FILENAME FROM LOCALSTORAGE
                 var offlineRecordedUncoverNames = JSON.parse(localStorage.getItem('offlineRecordedUncoverNames'));
                 var index = offlineRecordedUncoverNames.indexOf(fileName.slice(0, -4));
                 if (index > -1) {
                     offlineRecordedUncoverNames.splice(index, 1);
                 }
                 localStorage.setItem('offlineRecordedUncoverNames',JSON.stringify(offlineRecordedUncoverNames));
-              }              
+              }  else if(type=='logger'){
+
+                // DELETING UNCOVER FILENAME FROM LOCALSTORAGE
+                var offlineRecordedLoggerNames = JSON.parse(localStorage.getItem('offlineRecordedLoggerNames'));
+                var index = offlineRecordedLoggerNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedLoggerNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedLoggerNames',JSON.stringify(offlineRecordedLoggerNames));
+              }  else if(type=='relocate'){
+
+                // DELETING UNCOVER FILENAME FROM LOCALSTORAGE
+                var offlineRecordedRelocateNames = JSON.parse(localStorage.getItem('offlineRecordedRelocateNames'));
+                var index = offlineRecordedRelocateNames.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    offlineRecordedRelocateNames.splice(index, 1);
+                }
+                localStorage.setItem('offlineRecordedRelocateNames',JSON.stringify(offlineRecordedRelocateNames));
+              }
               
               $.mobile.navigate( "#menuPage" );
 

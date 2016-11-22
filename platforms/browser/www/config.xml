@@ -13,4 +13,5 @@
     <content src="index.html" />
     <access origin="*" />
     <access launch-external="yes" origin="*" />
+    <preference name="orientation" value="portrait" />
 </widget>

@@ -70,23 +70,23 @@
 				</div>
 				<div class="ui-field-contain">
 					<label for="wetZone">Dist. wet zone (m):</label> <input type="number"
-						id="wetZone" name="wetZone"> </input>
+						id="wetZone" name="wetZone" onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"> </input>
 				</div>
 
 				<div class="ui-field-contain">
 					<label for="tideZone">Dist. high tide zone (m):</label> <input
-						type="number" id="tideZone" name="tideZone"> </input>
+						type="number" id="tideZone" name="tideZone" onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"> </input>
 				</div>
 
 				<div class="ui-field-contain">
-					<label for="drySandZone">Dist. dry zone (m):</label> <input
-						type="number" id="drySandZone" name="drySand"
-						onblur="$('#distSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySandZone').val()));"
+					<label for="drySand">Dist. dry zone (m):</label> <input
+						type="number" id="drySand" name="drySand"
+						onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"
 						> </input>
 				</div>
 				<div class="ui-field-contain">
-					<label for="distSea">Distance from sea (m):</label> <input name="distanceFromSea"
-						type="number" id="distSea"></input>
+					<label for="distanceFromSea">Distance from sea (m):</label> <input name="distanceFromSea"
+						type="number" id="distanceFromSea"></input>
 				</div>
 
 				<div class="ui-field-contain">
@@ -120,7 +120,7 @@
 						type="number" id="rightMarkNum" name="rightMarkNum"> </input>
 				</div>
 				<div class="ui-field-contain">
-					<label for="rightMarkNum">Right landmark distance (m):</label> <input
+					<label for="rightMarkDist">Right landmark distance (m):</label> <input
 						type="number" id="rightMarkDist" name="rightMarkDist"> </input>
 				</div>
 

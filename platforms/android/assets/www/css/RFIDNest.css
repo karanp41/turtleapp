@@ -70,3 +70,6 @@ input.not-ok-button{
 #daysOperating-0{
     display: none;
 }
+.ui-footer-fixed {
+    bottom: -2px;
+}

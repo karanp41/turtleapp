@@ -6,6 +6,12 @@ $(document).on('pageinit','#recordNestPage', function(){
 	populateTurtlesList();    
 });
 
+$(document).on('pageinit','#relocateNestPage', function(){
+	getCurLoc();
+	getRecordNestInformation();
+	setTimeout(function() {setNestFieldsValue()}, 100);
+});
+
 $(document).on("pagebeforehide","#recordNestPage",function(){ // When leaving pagetwo
 	console.log("recordNestPage is about to be hidden");
 	if (window.RECENTTURTLEDATA) {
@@ -72,6 +78,12 @@ $(document).on('pageinit','#nestInfoPage', function(){
 	}
 });
 
+$(document).on("pagebeforehide","#nestInfoPage",function(){
+	if (window.currentNestEventsData) {
+		delete window.currentNestEventsData;	
+	}
+});
+
 $(document).on('pageinit','#offlineListPage', function(){
 	listOfflineEvents();
 });
@@ -94,6 +106,10 @@ $(document).on('pageinit','#offlineUncoverListPage', function(){
 
 $(document).on('pageinit','#offlineLoggerListPage', function(){	
 	listOfflineLogger();
+});
+
+$(document).on('pageinit','#offlineRelocatedListPage', function(){	
+	listOfflineRelocatedNests();
 });
 
 $(document).on('pageinit','#temperature', function(){
