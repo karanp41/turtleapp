@@ -34,6 +34,8 @@ var logOb = null;
 
 var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMark', 'certain', 'Specie', 'altTimeOptions', 'altLeftLandmark', 'altRightLandmark', 'alt_nestLoc', 'gridCoverAlt']
 
+var DYNAMIC_RADIO_FIELDS_ARRAY = ['deviceType']
+
 
 
 

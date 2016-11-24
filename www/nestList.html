@@ -2,22 +2,23 @@
 
 	<div data-role="header">
 		<h1>NestList</h1>				
-	</div><!-- /header -->
+	</div>
 
 	<div role="main" id="frontPage" class="ui-content">
-		<select >
+		<select onchange="filterByHatchlingDays(this);">
 		    <option value="">Days to hatch</option>
 		    <option value="5">5</option>
-		    <option value="4">Option C</option>
-		    <option value="3">Option D</option>
-		    <option value="2">Option E</option>
-		    <option value="1">Option F</option>
-		    <option value="0">Option G</option>
-		    <option value="-1">Option H</option>
-		    <option value="-2">Option I</option>
-		    <option value="-3">Option J</option>
-		    <option value="-4">Option J</option>
-		    <option value="-5">Option J</option>
+		    <option value="4">4</option>
+		    <option value="3">3</option>
+		    <option value="2">2</option>
+		    <option value="1">1</option>
+		    <option value="0">0</option>
+		    <option value="-1">-1</option>
+		    <option value="-2">-2</option>
+		    <option value="-3">-3</option>
+		    <option value="-4">-4</option>
+		    <option value="-5">-5</option>
+		    <option value="">Default Records</option>
 		</select>
 		<ul id="nestList" data-role="listview" data-filter="true">
 		</ul>

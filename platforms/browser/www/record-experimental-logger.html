@@ -29,13 +29,15 @@
 
 			<fieldset data-role="controlgroup">
 				<legend>Device Type:</legend>
+				<label for="deviceType">Device Type:</label>
 		        <label for="withProbe">With Probe</label>
-		        <input type="radio" name="deviceType" id="withProbe" value="0" checked="checked">
+		        <input type="radio" name="deviceType" id="withProbe" value="0" checked="checked" data-preview-name="With Probe">
 		        <label for="withoutProbe">Standard (Without Probe)</label>
-		        <input type="radio" name="deviceType" id="withoutProbe" value="1">
+		        <input type="radio" name="deviceType" id="withoutProbe" value="1" data-preview-name="Without Probe">
 		    </fieldset>
 
 		    <div class="ui-field-contain temp-interval">
+		    	<label for="interval">Interval:</label>
 			    <div class="ui-grid-b">
 			    	<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a">Minutes</div>

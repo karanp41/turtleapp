@@ -135,10 +135,17 @@ function updateMapFind(rfid){
 }
 
 
-function populateNestList(){
+function populateNestList(filter){
 	var networkState = navigator.connection.type;
     if (networkState !== Connection.NONE) {
     	var data = {user_id:localStorage.getItem('team_id')}
+    	if (filter) {
+    		data.hatching_counter = filter;
+    		currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
+    		if ( typeof currentBeachDetails == "object") {
+    			data.beach_id = currentBeachDetails.Beach.id
+    		}    		
+    	}
 		$.ajax({
 			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -146,6 +153,7 @@ function populateNestList(){
 			data:data,
 			type: "POST",
 			success: function(data) {
+				$('#nestList').html('');
 				$.each( data.data, function( key, val ) {
 					$('#nestList').append("<li>"+
 						//	"<a href='#' onClick='processTag(\""+val.rfid+"\");'><b>Nest ID: "+val.NestID+"</b><br />Nestingdate: "+val.nestingDate+"</a></li>");
@@ -213,6 +221,11 @@ function nestDetailOffline(filename){
 	    console.log("FileSystem Error");
 	    console.dir(e);
 	}); 
+}
+
+function filterByHatchlingDays(element) {
+	console.log(element.value)
+	populateNestList(element.value)
 }
 
 function populateTurtlesList(){
@@ -1231,8 +1244,12 @@ function showDataInConfirm(fields,target){
 	    			}else{
 	    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $("#"+field.name+" option[value='"+field.value+"']").text() + "</td></tr>" ;
 	    			}		    		
-		    	}else{	    		
-		    		HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
+		    	}else{
+		    		if ( jQuery.inArray( field.name, DYNAMIC_RADIO_FIELDS_ARRAY)>=0 ) {
+		    			HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $('input:radio[name="'+field.name+'"]:checked').attr( "data-preview-name" ) +  "</td></tr>" ;
+		    		}else{
+		    			HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
+		    		}		    		
 		    	}	    	
 	    	}
 	    });
@@ -3177,6 +3194,7 @@ function loginStepTwo(latitude,longitude,username,password) {
 				localStorage.setItem("user_id", data.data.User.id);
 				localStorage.setItem("nestFields", JSON.stringify(data.data.onloadInfo));
 				localStorage.setItem("teamDetails", JSON.stringify(data.data.team));
+				localStorage.setItem("currentBeachDetails", JSON.stringify(data.data.beach));
 				$.mobile.navigate( "#menuPage" );
 			}else if(data.code=="201"){
 				showToast('Username or password is incorrect.', 'bottom', 'long')
