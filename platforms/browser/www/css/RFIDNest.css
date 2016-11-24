@@ -73,3 +73,17 @@ input.not-ok-button{
 .ui-footer-fixed {
     bottom: -2px;
 }
+.current-user{
+    background: #dedede;
+    padding: 5px 0 5px 0px;
+    margin: 0px 0 17px 0;
+    width: 100%;
+    text-align: center;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    text-transform: none;
+}
+.current-user b{
+    text-transform: capitalize;
+}

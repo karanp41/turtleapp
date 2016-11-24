@@ -138,7 +138,7 @@ function updateMapFind(rfid){
 function populateNestList(){
 	var networkState = navigator.connection.type;
     if (networkState !== Connection.NONE) {
-    	var data = {user_id:localStorage.getItem('user_id')}
+    	var data = {user_id:localStorage.getItem('team_id')}
 		$.ajax({
 			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -216,7 +216,7 @@ function nestDetailOffline(filename){
 }
 
 function populateTurtlesList(){
-	var data = {user_id:localStorage.getItem('user_id')}
+	var data = {user_id:localStorage.getItem('team_id')}
 	$.ajax({
 		//		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 		//		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -243,7 +243,7 @@ function populateTurtlesList(){
 }
 
 function populateTurtlesListView(){
-	var data = {user_id:localStorage.getItem('user_id')}
+	var data = {user_id:localStorage.getItem('team_id')}
 	$.ajax({
 		//		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 		//		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -1293,7 +1293,7 @@ function recordNewNest(type, successStatus){
 	if (successStatus) {
 		requestData.success = successStatus
 	}	
-	requestData.user_id = localStorage.getItem('user_id')
+	requestData.user_id = localStorage.getItem('team_id')
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_NEST;
@@ -1370,7 +1370,7 @@ function recordPerdation(){
 	for (var i = 0, l = data.length; i < l; i++) {
 	    requestData[data[i].name] = data[i].value;
 	}
-	requestData.user_id = localStorage.getItem('user_id')
+	requestData.user_id = localStorage.getItem('team_id')
 
 	
 	if (!requestData.rfid) {
@@ -1491,7 +1491,7 @@ function saveTurtle(type){
 	for (var i = 0, l = data.length; i < l; i++) {
 	    requestData[data[i].name] = data[i].value;
 	}
-	requestData.user_id = localStorage.getItem('user_id');
+	requestData.user_id = localStorage.getItem('team_id');
 
 	if (!requestData.tagID) {
 		showToast('Tag ID is required.', 'center', 'long');
@@ -1797,7 +1797,7 @@ function recordEmerg(){
 	for (var i = 0, l = data.length; i < l; i++) {
 	    requestData[data[i].name] = data[i].value;
 	}
-	requestData.user_id = localStorage.getItem('user_id')
+	requestData.user_id = localStorage.getItem('team_id')
 
 	if (!requestData.rfid) {
 		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
@@ -1975,7 +1975,7 @@ function recordUncover(){
 	for (var i = 0, l = data.length; i < l; i++) {
 	    requestData[data[i].name] = data[i].value;
 	}
-	requestData.user_id = localStorage.getItem('user_id');
+	requestData.user_id = localStorage.getItem('team_id');
 
 	if (!requestData.rfid) {
 		showToast('RFID is required. You have to read nest before recording this data.', 'center', 'long');
@@ -2616,51 +2616,7 @@ $("#taglist li").not('.emptyMessage').on("click",nestListClick);
 
 
 
-function login(username,password){
-	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
 
-	watchID = navigator.geolocation.watchPosition(
-		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password) }, 
-		function(){ loginStepTwo(0,0,username,password) }, 
-		options
-	);
-
-	
-}
-
-function loginStepTwo(latitude,longitude,username,password) {
-	var url= HOST + API_PATH + LOGIN;
-	var data = {	username: username, 
-					password: password, 
-					latitude: latitude, 
-					longitude: longitude }
-	$.ajax({
-		type: "POST",
-		data: data,
-		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-		url: url,
-		success: function(data) {
-			console.log(data)
-			$.mobile.loading('hide'); 
-			
-			if (data.code=="200"){				
-				console.log(data);
-				showToast('Successfully Logged In', 'bottom', 'long')
-				localStorage.setItem("group_id", data.data.Group.id);
-				localStorage.setItem("user_id", data.data.User.id);
-				localStorage.setItem("nestFields", JSON.stringify(data.data.onloadInfo));
-				$.mobile.navigate( "#menuPage" );
-			}else if(data.code=="201"){
-				showToast('Username or password is incorrect.', 'bottom', 'long')
-				$('button').button( "disable" );
-			}else{
-				showToast('Seems like something went wrong.', 'bottom', 'long')
-			}
-		},
-		dataType:"json"
-		});
-}
 
 /********* GET ALL RECORD NEST INFORMATION NEEDED ON NEST RECORD CREATION PAGE ******/
 
@@ -2669,7 +2625,7 @@ function getRecordNestInformation(){
 	if (networkState !== Connection.NONE) {
     	// ONLINE APPENDING DATA TO FIELDS
         var url= HOST + API_PATH + GET_RECORD_NEST_INFORMATION;
-		var data = {user_id:localStorage.getItem('user_id')}
+		var data = {user_id:localStorage.getItem('team_id')}
 		$.ajax({
 			type: "POST",
 			data: data,
@@ -2789,7 +2745,7 @@ function fetchPredationData(){
 	var networkState = navigator.connection.type;
 	if (networkState !== Connection.NONE) {
 		var url= HOST + API_PATH + GET_RECORD_NEST_INFORMATION;
-		var data = {user_id:localStorage.getItem('user_id')}
+		var data = {user_id:localStorage.getItem('team_id')}
 		$.ajax({
 			type: "POST",
 			data: data,
@@ -2870,7 +2826,7 @@ function recordNestLogger(){
 	if (requestData.depth > 1000||requestData.depth < 0) {
 		showToast("Enter valid depth", 'bottom', 'long');return;
 	}
-	requestData.user_id = localStorage.getItem('user_id')
+	requestData.user_id = localStorage.getItem('team_id')
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_TEMP_INFO;
@@ -3184,13 +3140,100 @@ function syncAllRelocateData(type){
 
 
 
+// LOGIN SUPER USER
+
+function login(username,password){
+	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
+
+	watchID = navigator.geolocation.watchPosition(
+		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password) }, 
+		function(){ loginStepTwo(0,0,username,password) }, 
+		options
+	);
+
+	
+}
+
+function loginStepTwo(latitude,longitude,username,password) {
+	var url= HOST + API_PATH + LOGIN;
+	var data = {	username: username, 
+					password: password, 
+					latitude: latitude, 
+					longitude: longitude }
+	$.ajax({
+		type: "POST",
+		data: data,
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+		url: url,
+		success: function(data) {
+			console.log(data)
+			$.mobile.loading('hide'); 
+			
+			if (data.code=="200"){				
+				console.log(data);
+				showToast('Successfully Logged In', 'bottom', 'long')
+				localStorage.setItem("group_id", data.data.Group.id);
+				localStorage.setItem("user_id", data.data.User.id);
+				localStorage.setItem("nestFields", JSON.stringify(data.data.onloadInfo));
+				localStorage.setItem("teamDetails", JSON.stringify(data.data.team));
+				$.mobile.navigate( "#menuPage" );
+			}else if(data.code=="201"){
+				showToast('Username or password is incorrect.', 'bottom', 'long')
+				$('button').button( "disable" );
+			}else{
+				showToast('Seems like something went wrong.', 'bottom', 'long')
+			}
+		},
+		dataType:"json"
+		});
+}
+
+
+// SETTING TEAM NAME DATA ON USER SELECTION DROPDOWN
+
+function setTeamData() {
+	console.log(JSON.parse(localStorage.getItem("teamDetails")))
+	teamData = JSON.parse(localStorage.getItem("teamDetails"))
+	$.each(teamData, function (i, item) {
+	    $('#teamNames').append($('<option>', { 
+	        value: item.User.id,
+	        text : item.User.first_name + ' ' + item.User.last_name
+	    }));
+	});
+}
+
+
+// SELECTING TEAM NAME 
+
+function setTeamName() {
+	var team_id = $('#teamNames').val()
+	if (!team_id||team_id<=0) {
+		showToast('You have to select user first.', 'bottom', 'long')
+	}
+	localStorage.setItem("team_id", team_id);
+	$.mobile.navigate( "#menuPage" );
+}
+
+
+// CHANGE TEAM NAME 
+
+function changeUser() {
+	localStorage.removeItem('team_id');
+	$.mobile.navigate( "#menuPage" );
+}
+
+
+
 // LOGIN SESSION CHECK
 
 $(document).on("pagecontainerbeforechange", function(e, data) {
 	// console.log(data)
-	// console.log(localStorage.getItem("group_id"),localStorage.getItem("user_id"));
-	if (localStorage.getItem("group_id")&&localStorage.getItem("user_id")) {
+	console.log(localStorage.getItem("team_id"),localStorage.getItem("user_id"));
+	if (localStorage.getItem("team_id")&&localStorage.getItem("user_id")) {		
 		// data.toPage = $("#menuPage");
+	}else if (localStorage.getItem("user_id")) {
+		data.toPage = $("#selectUser");
 	}else{
 		data.toPage = $("#loginPage");
 	}

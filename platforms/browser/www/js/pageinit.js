@@ -131,12 +131,17 @@ $(document).on('pageinit','#inNestTempRecord', function(){
     });
 	getCurLoc();
 });
+
 $(document).on('pageinit','#experimentalTempRecord', function(){	
 	$("[name=deviceType]").click(function(){		
         $('.ui-block-c').hide();
         $("#daysOperating-"+$(this).val()).show('slow');
     });
 	getCurLoc();
+});
+
+$(document).on('pageinit','#selectUser', function(){
+	setTeamData()
 });
 
 
