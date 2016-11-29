@@ -87,3 +87,38 @@ input.not-ok-button{
 .current-user b{
     text-transform: capitalize;
 }
+.dismissible_poup{
+    position: absolute;
+    top: 50px;
+    background: rgba(0, 0, 0, 0.67);
+    color: #272727;
+    width: 100%;
+    display: none;
+}
+#summary_turtle {
+    background: rgb(234, 234, 234);
+    width: 80%;
+    margin: 10px auto -8px;
+    padding: 6% 3% 0 6%;
+}
+.summary_button_wrapper{
+    margin: 0 auto -8px;
+    padding: 1% 6% 0 6%;
+}
+#summary_turtle .summary-popup-form tr:nth-child(even) {
+    background: transparent;
+}
+.nestlist li a{
+    font-weight: 100;
+}
+.flag_icon {
+    float: right;
+    display: inline-block;
+    right: 10px;
+    position: relative;
+    bottom: 10px;
+    height: 22px;
+    width: 22px;
+    background-image: url(../img/flag.png);
+    background-size: cover;
+}

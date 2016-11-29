@@ -155,10 +155,14 @@ function populateNestList(filter){
 			success: function(data) {
 				$('#nestList').html('');
 				$.each( data.data, function( key, val ) {
-					$('#nestList').append("<li>"+
+					var html = "<li>"+
 						//	"<a href='#' onClick='processTag(\""+val.rfid+"\");'><b>Nest ID: "+val.NestID+"</b><br />Nestingdate: "+val.nestingDate+"</a></li>");
-						"<a href='#' onClick='processTagDbId(\""+val.Nest.id+"\");'><b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+formateDate(val.Nest.nestingDate)+"</a></li>");
-					
+						"<a href='#' onClick='processTagDbId(\""+val.Nest.id+"\");'><b>Nest ID:</b> "+val.Nest.NestID+"<br /><b>Nestingdate:</b> "+formateDate(val.Nest.nestingDate);
+						if (val.Nest.flagged==1) {
+							html += '<span class="flag_icon"></span>';
+						}
+						html += "</a></li>";
+					$('#nestList').append(html);					
 				});
 				
 				function refreshList(){
@@ -231,8 +235,8 @@ function filterByHatchlingDays(element) {
 function populateTurtlesList(){
 	var data = {user_id:localStorage.getItem('team_id')}
 	$.ajax({
-		//		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		//		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
 		// url: HOST + API_PATH + "listTurtles.php?un="+username,
 		url: HOST + API_PATH + LIST_TURTLES,
 		data:data,
@@ -399,13 +403,13 @@ function record(){
 
 function scanRFID(){
 	Caenrfid.scanRFID(function(data){
-			rfidRunning=true;
-			scanRFIDSuccess(data.substring(4)+"");
-			navigator.notification.beep(1);
-		},
-		function (err){
-			alert("error"+err)
-		});
+		rfidRunning=true;
+		scanRFIDSuccess(data.substring(4)+"");
+		navigator.notification.beep(1);
+	},
+	function (err){
+		alert("error"+err)
+	});
 }
 
 function stopRFID(){
@@ -973,12 +977,7 @@ function listOfflineLogger(){
 }
 
 function readTemp(){
-	$.mobile.loading( 'show', {
-		text: 'Loading temperature',
-		textVisible: true,
-		theme: 'z',
-		html: "<img src=\"img/loader.gif\" />"
-	});
+	showImageLoader()
 	var power = $('#pow').val();
 	Caenrfid.readTemp(function(data){
 		$('#tempData').val(data);
@@ -986,6 +985,32 @@ function readTemp(){
 		listOfflineTemps();
 		$.mobile.loading( 'hide');
 	},function (err){alert("error"+err)},[power]);
+}
+
+function readTempLoggerRFID(){
+	showImageLoader()
+	// var power = $('#pow').val();
+	var power = 10;
+	var logUrl = HOST + API_PATH + WRITE_LOG;
+
+	Caenrfid.readTemp(function(data){
+		var RFID = Object.keys(data)[0]
+		$('#loggerRFID').val(RFID);
+		// plotTemperature(data,true);
+		// listOfflineTemps();
+		// data = {"3415AF9D600000000098962E":"]"};
+		alert(data)
+		alert(JSON.stringify(data));
+		$.mobile.loading( 'hide');
+		showToast("Got the RFID", 'bottom', 'long');
+		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
+		ajaxCall({text:data},'POST',logUrl,'json')
+	},function (err){
+		showToast("Unable to read Logger RFID", 'bottom', 'long');
+		console.log("error: ",err)
+		$.mobile.loading('hide');		
+		ajaxCall({text:JSON.stringify(err)},'POST',logUrl,'json')
+	},[power]);
 }
 
 function plotTemperature(data,write){
@@ -1092,7 +1117,7 @@ function saveToFile(data){
     });
 }
 
-function writeLog(str) {	
+function writeLog(str) {
     if(!logOb) return;
     var log = str + " [" + (new Date()) + "]\n";
     console.log("going to log "+log);
@@ -1183,6 +1208,17 @@ function showTemp(){
 	                        }
 	                    }
 	                });
+}
+
+function setTempLogger(){
+	var tempInt = $("#interval").val();
+	Caenrfid.restartTemp(function(data){
+		alert(data);
+		recordNestLogger()
+	},function (err){
+		alert("error"+err)
+		// recordNestLogger()
+	},[tempInt]);
 }
 
 function restartTemp(){
@@ -1536,7 +1572,7 @@ function saveTurtle(type){
     	// ONLINE SAVING TURTLE
     	// var url = HOST + API_PATH + "saveTurtle.php?un="+username+"&mac="+ownID+"&"+content;
 		var url = HOST + API_PATH + SAVE_TURTLE;
-		var promise = ajaxCall(requestData,'POST',url,'json')			
+		var promise = ajaxCall(requestData,'POST',url,'json')
 		promise.success(function (data) {
 		 	if(data.code == '201'){
 	            console.log(data.message)
@@ -1544,7 +1580,9 @@ function saveTurtle(type){
 	        }else if(data.code == '200'){
 	        	console.log(data.message)
 	        	if (type=='nest') {
-	        		$.mobile.changePage("popupdialogs/dialogAssociateTurtle.html", {transition: 'slideup', role: 'dialog'});
+	        		// $.mobile.changePage("popupdialogs/dialogAssociateTurtle.html", {transition: 'slideup', role: 'dialog'});
+	        		closeTurtleSummary()
+	        		$( "#associateTurtle" ).popup( "open" )
 		            window.RECENTTURTLEDATA = data.data.Turtle;
 		            console.log(window.RECENTTURTLEDATA)
 	        	}
@@ -1681,12 +1719,17 @@ function syncAllTurtleData(type){
 
 function associateTurtle(){
 	console.log(window.RECENTTURTLEDATA)
-	$.mobile.changePage("../record-nest.html");
+	$( "#associateTurtle" ).popup( "close" )
+	$("#turtleTagID").val(window.RECENTTURTLEDATA.tagID);
+	$("#turtleId").val(window.RECENTTURTLEDATA.id);
+	$("#turtlesAutoComplete").hide();
+	// $.mobile.changePage("../record-nest.html");
 }
 
 function doNotAssociateTurtle(){
 	delete window.RECENTTURTLEDATA;
-	$.mobile.changePage("record-nest.html");
+	$( "#associateTurtle" ).popup( "close" )
+	// $.mobile.changePage("record-nest.html");
 }
 
 function syncPredationData(filename){
@@ -2181,7 +2224,6 @@ function populateNests(){
 	});
 }
 
-
 function searchRFID(rfidSearch){
 	// alert('search pressed')
 	
@@ -2193,7 +2235,6 @@ function searchRFID(rfidSearch){
 		alert("error"+err)
 	});    
 }
-
 
 function scanOnceSuccess(rfid){
 	//navigator.notification.beep(2);
@@ -2242,6 +2283,7 @@ function scanOnceSuccess(rfid){
 				$('#locationPred').html(data.data[0].Nest.origLat+", "+data.data[0].Nest.origLong);
 				$('#nestID').val(data.data[0].Nest.NestID);
 				$('#nestId').val(data.data[0].Nest.NestID);
+				$('#NestID').val(data.data[0].Nest.NestID);
 				// var htmlInfo = htmlInfo + "</div><!-- /grid-a --></p></div>";				
 			}
 		});
@@ -3166,9 +3208,7 @@ function login(username,password){
 		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password) }, 
 		function(){ loginStepTwo(0,0,username,password) }, 
 		options
-	);
-
-	
+	);	
 }
 
 function loginStepTwo(latitude,longitude,username,password) {
@@ -3226,8 +3266,14 @@ function setTeamData() {
 
 function setTeamName() {
 	var team_id = $('#teamNames').val()
+	console.log('team_id',team_id)
 	if (!team_id||team_id<=0) {
-		showToast('You have to select user first.', 'bottom', 'long')
+		showToast('You have no user with you. Selecting you as current user.', 'bottom', 'long')
+		// showToast('You have to select user first.', 'bottom', 'long')
+		// return;
+		team_id = localStorage.getItem("user_id")
+	}else{
+
 	}
 	localStorage.setItem("team_id", team_id);
 	$.mobile.navigate( "#menuPage" );
@@ -3259,6 +3305,22 @@ $(document).on("pagecontainerbeforechange", function(e, data) {
   	//   data.toPage = $("#loginPage");
   	// }
 });
+
+function setNestIdOnTurtelForm() {
+	$('#turtleNestId').html($('#NestID').val());
+}
+
+function openTurtleSummary() {
+	showDataInConfirm($('#turtleInfoForm').serializeArray(),"#summary_turtle");	
+	$( "#popupAddTurtle" ).popup( "close" )
+	$('.dismissible_poup').show();
+	var body = $("html, body");
+	body.stop().animate({scrollTop:0}, '500', 'swing');
+}
+function closeTurtleSummary() {
+	$('.dismissible_poup').hide();
+}
+
 
 
 //function linkAdoptANest(){

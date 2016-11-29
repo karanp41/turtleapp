@@ -1,0 +1,110 @@
+<div data-role="page" id="recordNestPage">
+	
+	<div data-role="header" data-position="fixed">
+		<a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+		<h3>Flag A Nest</h3>
+	</div>
+
+	<div role="main" class="ui-content">
+		<p id="message" class="message"></p>
+		<form id="NestData">
+			
+			<div class="ui-field-contain">
+				<label for="rfid">Nest Tag RFID:</label>
+				<!-- <input readonly name=rfid  type="text" id="rfid"></input> -->
+				<input name=rfid  type="text" id="rfid"></input>
+				<input type="button" onClick="scanOnce()" value="Read TAG"></input> 
+			</div>
+			
+			<hr/>
+
+			<input type="hidden" id="rfidHEX" name="rfidHEX"></input>
+			<input type="hidden" name="origLat" 	id="lat" />
+			<input type="hidden" name="origLong" 	id="long" />
+			<input type="hidden" name="accurazy" 	id="accurazy" />
+			<input type="hidden" name="alt_accurazy" id="alt_accurazy"/>
+			<input type="hidden" name="flagged" 	id="flagged" value="1"/>
+			<div class="ui-field-contain">
+				<label for="NestID">Nest ID:</label> 
+				<input name="NestID" type="text" id="NestID"></input>
+			</div>			
+		
+				<div class="ui-field-contain">
+					<label for="nestingDate">Flagging date:</label> 
+					<input type="date" name="nestingDate" id="nestingDate"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="nestingTime">Flagging time:</label>
+					<input type="time" name="nestingTime" data-inline="true" id="nestingTime"></input>
+				</div>
+				
+				<div class="ui-field-contain">
+					<label for="loc">Nest location:</label>
+					<input type="button" value="click for current position" onClick="getCurLoc();" name="loc" id="loc"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="flag_reason">Reason:</label> 
+					<select name="flag_reason" id="flag_reason">
+						<option value="0">Select Reason</option>
+						<option value="Not Filled In">Not Filled In</option>
+						<option value="Exposed">Exposed</option>
+						<option value="Predation">Predation</option>
+						<option value="Flooding">Flooding</option>
+						<option value="Relocate">Relocate</option>
+						<option value="Hatching">Hatching</option>
+						<option value="Device">Device</option>
+						<option value="Needs Cover">Needs Cover</option>
+					</select>
+				</div>				
+
+				<div class="ui-field-contain">
+					<label for="comment">Comment:</label> <textarea
+						name="comment" type="textarea" id="comment"></textarea>
+				</div>
+
+		</form>
+		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="#popupConfirm" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
+		
+	</div>
+	<!-- /content -->
+	<div data-role="footer" data-position="fixed"></div>
+	<!-- /footer -->
+
+		<div data-role="popup" id="popupConfirm" data-theme="a" class="ui-corner-all">
+			<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+			<div class="summary-popup-form">				
+				<h3>Preview of Nest Data</h3>
+				<hr>
+				<div id="summary"></div>
+				<button id="successfulButton" class="ui-btn" onClick="recordNewNest('new','1');">RECORD NOW</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">Wait! Need Corrections </a>
+			</div>
+		</div>
+		
+		<div data-role="popup" id="popupConfirm2" data-theme="a" class="ui-corner-all">
+			<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+			<div class="summary-popup-form">
+				<h3>Preview of Nest Data</h3>
+				<div id="popupBasic" class="red-banner">
+				  	<p><b>NOTE:</b> You opting this because not sure where nest is, but it is likely here</p>
+				</div>
+				<hr>
+				<div id="summary2"></div>
+				<!-- <button class="ui-btn" id="unsuccessfulButton" onClick="recordNewNestUnsuccessful();">RECORD NOW</button> -->
+				<button class="ui-btn" id="unsuccessfulButton" onClick="recordNewNest('new','0');">RECORD NOW</button>
+				<a href="#" data-rel="back" data-role="button" data-theme="a"
+					data-icon="delete">No, Need Corrections </a>		
+			</div>
+		</div>
+
+
+
+		</div>
+	</div>
+
+
+
+
+</div>

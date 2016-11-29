@@ -82,3 +82,4 @@ var UPLOAD_UNCOVER	= 'uploadOfflineUncover';
 var UPLOAD_LOGGER	= 'saveOfflineTempInfo';
 
 var SAVE_TEMP_INFO	= 'saveTempInfo';
+var WRITE_LOG		= 'writeLog';

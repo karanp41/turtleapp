@@ -44,13 +44,14 @@
 			
 				<div role="main" id="frontPage" class="ui-content">
 					<!-- <p id="message" class="message"></p> -->
-					<p class="current-user">Current user <b>Raman Kumar</b></p>
+					<p class="current-user">Current user <b id="user_name">Raman Kumar</b></p>
 					<p id="id" hidden="hidden" class="message"></p>
 					<div class="ui-field-contain">
 						<ul id="menu" data-role="listview">
 
 							<li data-role="list-divider" data-theme="b" >Record</li>
 							<li><a href="record-nest.html">Nest information</a></li>
+							<!-- <li><a href="flag-nest.html">Flag Nest</a></li> -->
 							<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
 							<li><a href="turtles.html">Turtles</a></li>
 							<li><a href="predation.html">Predation</a></li>
@@ -63,7 +64,7 @@
 							<li><a href="nestList.html">NestList</a></li>
 
 							<li data-role="list-divider" data-theme="b">Offline</li>
-							<li><a href="offlineMenu.html">Offline events</a></li>
+							<li><a href="offlineMenu.html">Offline Data</a></li>
 
 							<li data-role="list-divider" data-theme="b">Profile</li>
 							<li><a onclick="changeUser()">Change User</a></li>
@@ -92,7 +93,7 @@
 			<div data-role="footer" data-position="fixed">
 				<div data-role="navbar">
 			      	<ul>
-					    <li><a onclick="changeUser()" data-theme="b" data-icon="action">Change User</a></li>
+					    <li><a href="flag-nest.html" data-theme="b" data-icon="tag">Flag Nest</a></li>
 			        	<li><a href="index.html" data-theme="b" data-icon="home">Home</a></li>
 			        	<li><a href="offlineMenu.html" data-theme="b" data-icon="recycle">Offline Data</a></li>
 			      	</ul>
@@ -114,10 +115,10 @@
 					<div class="ui-field-contain">
 						<label for="teamNames">Username:</label>
 						<select name="teamNames" id="teamNames">
-							<option value="0">SELECT</option>
+							<option value="">SELECT</option>
 						</select>
 					</div>
-					<button class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left" onclick="setTeamName()">Get Me In</button>
+					<button class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left" onclick="setTeamName()">Take Me In</button>
 				</div>
 		  	</div>
 		</div>

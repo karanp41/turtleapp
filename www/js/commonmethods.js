@@ -190,10 +190,12 @@ function showImageLoader(){
 function scanOnce(){
   rfidRunning = 1;
   Caenrfid.scanSingle(function(data){
+    showToast('Got the RFID.', 'bottom', 'long')
     scanOnceSuccess(data.substring(0)+"");
   },function (err){
     console.log("error",err)
-    scanOnceSuccess('3415AF9D60000001DCD65370');
+    showToast('Error while reading RFID. Please check connectivity.', 'bottom', 'long')
+    // scanOnceSuccess('3415AF9D60000001DCD65370');
   });
 }
 

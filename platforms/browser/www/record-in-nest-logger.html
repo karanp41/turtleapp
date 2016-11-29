@@ -11,15 +11,20 @@
 			<button type="reset" value="Reset">Reset page</button>
 
 			<div class="ui-field-contain">
+				<label for="loggerRFID">Temp Logger RFID:</label>
+				<input name="loggerRFID"  type="text" id="loggerRFID"></input>
+				<a onClick="readTempLoggerRFID();" href="#" data-role="button" data-theme="b" >Read Temperature sensor(s)</a>
+			</div>
+			<div class="ui-field-contain">
 				<label for="loggerid">Temp Logger Id:</label>
 				<input name=loggerid  type="text" id="loggerid"></input>
-				<button onClick="readTemp();">Read Temperature sensor(s)</button>
 			</div>
 
 			<div class="ui-field-contain">
 				<label for="rfid">Nest Tag RFID:</label>
 				<input name=rfid  type="text" id="rfid"></input>
-				<input type="button" onClick="scanOnce()" value="Read TAG"></input> 
+				<!-- <input type="button" onClick="scanOnce()" value="Read TAG"></input> -->
+				<a onClick="scanOnce();" href="#" data-role="button" data-theme="b" >Read Nest Tag</a>
 			</div>
 
 			<div class="ui-field-contain">
