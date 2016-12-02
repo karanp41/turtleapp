@@ -18,7 +18,7 @@
 		
 			<div class="ui-field-contain">
 				<label for="startDate">Device set up date and time:</label>
-				<input type="date" name="startDate" id="startDate"></input>
+				<input type="date" name="startDate" id="startDate" readonly></input>
 				<!-- <input type="text" name="startDate" id="startDate" readonly></input> -->
 			</div>			
 
@@ -31,9 +31,9 @@
 				<legend>Device Type:</legend>
 				<label for="deviceType">Device Type:</label>
 		        <label for="withProbe">With Probe</label>
-		        <input type="radio" name="deviceType" id="withProbe" value="0" checked="checked" data-preview-name="With Probe">
+		        <input type="radio" name="deviceType" id="withProbe" value="0" data-preview-name="With Probe">
 		        <label for="withoutProbe">Standard (Without Probe)</label>
-		        <input type="radio" name="deviceType" id="withoutProbe" value="1" data-preview-name="Without Probe">
+		        <input type="radio" name="deviceType" id="withoutProbe" value="1" checked="checked" data-preview-name="Without Probe">
 		    </fieldset>
 
 		    <div class="ui-field-contain temp-interval">
@@ -116,7 +116,7 @@
 			</div> -->
 
 			<div class="ui-field-contain">
-				<label for="depth">Depth in cm</label> <input
+				<label for="depth">Depth of device (cm)</label> <input
 					name="depth" type="number" id="depth"></input>
 			</div>
 
@@ -138,13 +138,8 @@
 			<!-- <input type="submit" class="ui-btn ui-btn-b ui-corner-all" value="Set & Start Recording" /> -->
 			<a href="#popupConfirmLogger" id="loginButton" data-rel="popup" data-position-to="#popupConfirmLogger" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Set & Start Recording</a>
 		</form>
-
-		
-		
 		
 	</div>
-
-	<div data-role="footer" data-position="fixed"></div>
 
 	<div data-role="popup" id="popupConfirmLogger" data-theme="a" class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -152,7 +147,8 @@
 			<h3>Preview of Logger Data</h3>
 			<hr>
 			<div id="summary"></div>
-			<button id="successfulButton" class="ui-btn" onClick="recordNestLogger();">RECORD NOW</button>
+			<!-- <button id="successfulButton" class="ui-btn" onClick="recordNestLogger();">RECORD NOW</button> -->
+			<button id="successfulButton" class="ui-btn" onClick="setTempLogger();">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
 				data-icon="delete">Wait! Need Corrections </a>
 		</div>

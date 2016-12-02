@@ -157,6 +157,10 @@ $(document).on('pageinit','#selectUser', function(){
 	setTeamData()
 });
 
+$(document).on('pageinit','#offlineReadLoggerListPage', function(){
+	listOfflineReadLoggers()
+});
+
 
 /*
 $(document).on('pagebeforeshow', "#recordNestPage", function (event, data) {

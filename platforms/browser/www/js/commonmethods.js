@@ -138,6 +138,15 @@ function removeFile(relativeFilePath, type) {
                     offlineRecordedRelocateNames.splice(index, 1);
                 }
                 localStorage.setItem('offlineRecordedRelocateNames',JSON.stringify(offlineRecordedRelocateNames));
+              }  else if(type=='readlogger'){
+
+                // DELETING READ LOGGER DATA FILENAME FROM LOCALSTORAGE
+                var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));
+                var index = tempLoggerData.indexOf(fileName.slice(0, -4));
+                if (index > -1) {
+                    tempLoggerData.splice(index, 1);
+                }
+                localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
               }
               
               

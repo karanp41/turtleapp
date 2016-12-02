@@ -126,6 +126,12 @@ input.not-ok-button{
     background-image: url(../img/flag.png);
     background-size: cover;
 }
-#depthOfProbeContainer{
+#depthOfProbeContainer, #endSeason, #tempData{
     display: none;
+}
+#tempData {
+    border: 2px solid #9a9a9a;
+    background: #eee;
+    box-shadow: none;
+    resize: none;
 }

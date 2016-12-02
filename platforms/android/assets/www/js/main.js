@@ -696,6 +696,49 @@ function readFromFile(filename){
 	});
 }
 
+function listOfflineReadLoggers(){
+
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function (fileSystem) {
+		    var reader = fileSystem.createReader();
+		    var list="";
+		    reader.readEntries(
+		        function (entries) {
+		        	var i;
+		        	var htmlInset = "";
+		        	var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));		        	
+
+		        	for (i=0; i<entries.length; i++) {
+		        		
+			            var index = tempLoggerData.indexOf(entries[i].name.slice(0, -4));
+			            if (index > -1) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		$("#fileList").html("");
+			        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='syncReadLoggerData(\""+entries[i].name+"\");'>"+
+							"<h3>"+entries[i].name+"</h3></a> ";
+			        		if (entries[i].name.search("finished_")==-1){
+			        			// htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
+			        			htmlInset += "<a href='#' onclick='syncReadLoggerData(\""+entries[i].name+"\");'>1st link</a> ";
+			        		}
+							htmlInset += "</li>";
+			            }
+		        		
+		        	}
+		        	$("#offlineListReadLogger").html(htmlInset);
+		        	$("#offlineListReadLogger").listview('refresh');
+		        	
+		        },
+		        function (err) {
+		          alert(err);
+		        }
+		    );
+	      //alert(list);
+	    }, function (err) {
+	    	alert(err);
+		});
+}
+
 function listOfflineTemps(){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
 		    function (fileSystem) {
@@ -978,20 +1021,27 @@ function listOfflineLogger(){
 }
 
 function readTempLoggers(){
-	// showImageLoader()
+	showImageLoader()
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 	// var power = $('#pow').val();
-	var power = 500;
+	var power = 450;
+	// showTemp()
 	Caenrfid.readTemp(function(data){
-		$('#tempData').val(data);
-		// plotTemperature(data,true);
+		// $('#tempData').val(data);
+		$('#endSeason').show();		
+		plotTemperature(data,true);
 		ajaxCall({text:data},'POST',logUrl,'json')
+		showToast("Got recorded data successfully", 'bottom', 'long');
 		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
 		// listOfflineTemps();
 		$.mobile.loading( 'hide');
 	},function (err){
-		alert("error"+err);
+		// alert("error"+err);
+		// plotTemperature(DUMMY_TEMPDATA_JSON,true);
+		showToast("Error reading Temperature Logger", 'bottom', 'long');
 		console.log("error: ",err)
+		ajaxCall({text:data},'POST',logUrl,'json')
+		$.mobile.loading( 'hide');
 	},[power]);
 }
 
@@ -1011,11 +1061,11 @@ function readTemp(){
 function readTempLoggerRFID(){
 	showImageLoader()
 	// var power = $('#pow').val();
-	var power = 20;
+	var power = 450;
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 
 	Caenrfid.readTemp(function(data){
-		navigator.notification.beep(2);
+		navigator.notification.beep(1);
 		// alert(data)
 
 		//var RFID = Object.keys(data)[0];		
@@ -1031,8 +1081,8 @@ function readTempLoggerRFID(){
 		$.mobile.loading( 'hide');
 		showToast("Got the RFID", 'bottom', 'long');
 		
-		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
-		ajaxCall({text:RFID},'POST',logUrl,'json')
+		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
+		// ajaxCall({text:RFID},'POST',logUrl,'json')
 
 	},function (err){
 		showToast("Unable to read Logger RFID", 'bottom', 'long');
@@ -1043,16 +1093,24 @@ function readTempLoggerRFID(){
 }
 
 function plotTemperature(data,write){
-	
+	$('#endSeason').show();
+
 	jsonData = $.parseJSON(data);
 	$.each(jsonData,function (key,value){
-		if (write)
-			openFile(key);
+	// $.each(data,function (key,value){
+		$('#tempData').show();
+		$('#tempData').val('RFID: '+key);
+		// if (write)
+		// 	openFile(key);
+
+		saveReadLoggerData(key,data)
+		// saveReadLoggerData('07E04FB1001D8B90BEAFA005',data)
+
 		var data2 = eval(value);
 		$("#chartdiv").html("");
 		var plot1 = $.jqplot("chartdiv", [data2], {
             seriesColors: ["rgba(78, 135, 194, 0.7)"],
-            title: 'Temperature plot:'+key,
+            title: 'Temperature plot: '+key,
             highlighter: {
                 show: true,
                 sizeAdjust: 1,
@@ -1120,6 +1178,107 @@ function plotTemperature(data,write){
 	});
 }
 
+function saveReadLoggerData(rfid, data){
+	
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+		var fileDate = new Date();
+		var filename = rfid + "_TEMP_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		    dir.getFile(filename + ".txt", {create:true}, function(file) {
+		        console.log("got the file", file);
+		        logOb = file;		        
+	        	if(!logOb) return;
+				logOb.createWriter(function(fileWriter) {
+	
+					var blob = new Blob([data], {type:'text/plain'});
+					// var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
+		 			fileWriter.write(blob);
+
+					if (localStorage.getItem('tempLoggerData')) {
+						var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));
+					}else{
+						var tempLoggerData = [];
+					}					
+					tempLoggerData.push(filename);
+					localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
+					showToast("Data Saved Successfully.", 'bottom', 'long')
+
+				},  function fail(e) {					
+					showToast("FileSystem Error", 'bottom', 'long')
+					console.log(e);
+				});
+		    });
+	});
+}
+
+function syncReadLoggerData(filename){
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+        console.log("got main dir" + filename,dir);
+        dir.getFile(filename, {create:false}, function(file) {
+
+        	var file_data = file;
+    		var form_data = new FormData();                  
+    		form_data.append('file', file_data);
+
+            console.log("got the file", file);
+            logOb = file;
+
+            logOb.file(function(file) {
+			 var reader = new FileReader();
+
+			 	reader.onloadend = function(e) {
+				 	console.log(this.result);
+				 	console.log(file);
+				 	console.log(logOb);
+				 	var ServerURI = HOST + API_PATH + UPLOAD_READ_LOGGER;
+				 	// var ServerURI = HOST + API_PATH + UPLOAD_FILE;
+				 	var fileURL = file.localURL;
+				 	uploadFileToServer(ServerURI, fileURL, logOb.nativeURL, 'readlogger');
+			 	};
+
+			 	reader.readAsText(file);
+		 	}, function fail(e) {
+				alert("FileSystem Error");
+				console.log(e);
+		 	});
+
+        });
+    });
+}
+
+function syncAllReadLoggerData(type){
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	if (type=='readlogger') {
+			window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
+			    function (fileSystem) {
+			      	var reader = fileSystem.createReader();
+			      	var list="";
+			      	reader.readEntries(function (entries) {
+			      		console.log(entries)
+			        	for (i=0; i<entries.length; i++) {
+			        		if (typeof entries[i] == 'undefined'){
+			        			continue;
+			        		}
+			        		var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));
+			        		if (tempLoggerData.indexOf(entries[i].name.slice(0, -4)) >-1){
+			        			syncReadLoggerData(entries[i].name, type)
+			        		}
+			        	}		        	
+			        },
+			        function (err) {
+			          	alert(err);
+			        });
+			    }, function (err) {
+			      	alert(err);
+			    });
+		}
+    }else{    	
+    	showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long');
+    	return;
+    }
+}
+
+
 function openFile(tagid){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
@@ -1133,6 +1292,25 @@ function openFile(tagid){
 		        	saveToFile();
 		    });
 		});
+}
+
+function saveToFile(){
+	var data = $('#tempData').val();
+	
+	 if(!logOb) return;
+	 //var log = data + " [" + (new Date()) + "]\n";
+	 var log = data;
+	// console.log("going to log "+log);
+	 logOb.createWriter(function(fileWriter) {
+		 //fileWriter.seek(fileWriter.length);
+
+		 var blob = new Blob([log], {type:'text/plain'});
+		 fileWriter.write(blob);
+		 alert("file written");
+	 },  function fail(e) {
+			alert("FileSystem Error");
+			alert(e);
+	 });
 }
 
 function saveToFile(data){
@@ -1151,10 +1329,8 @@ function writeLog(str) {
     var log = str + " [" + (new Date()) + "]\n";
     console.log("going to log "+log);
     alert(logOb);
-    logOb.createWriter(function(fileWriter) {
-        
-        fileWriter.seek(fileWriter.length);
-        
+    logOb.createWriter(function(fileWriter) {        
+        fileWriter.seek(fileWriter.length);        
         var blob = new Blob([log], {type:'text/plain'});
         fileWriter.write(blob);
         console.log("ok, in theory i worked");
@@ -1163,7 +1339,7 @@ function writeLog(str) {
 
 function showTemp(){
 
-	var prevYear = [["2016-04-10 21:23:59",23.0],["2016-04-10 21:25:51",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:35:11",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:38:55",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:42:39",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:46:23",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:50:07",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:34:15",23.0],["2016-04-10 21:53:51",22.0],["2016-04-10 21:33:19",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:57:35",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 22:01:19",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 22:05:03",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 22:08:47",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 22:12:31",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 22:16:15",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 22:19:59",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 22:23:43",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 22:27:27",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 22:31:11",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 22:34:55",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 22:38:39",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 21:46:23",21.0],["2016-04-10 22:42:23",21.0],["2016-04-10 21:45:27",21.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 22:46:07",22.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 22:49:51",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 22:53:35",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 21:50:07",22.0]];
+	var prevYear = [["2016-04-10 21:23:59",43.0],["2016-04-10 21:25:51",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:26:47",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:27:43",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:35:11",23.0],["2016-04-10 21:28:39",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:38:55",23.0],["2016-04-10 21:29:35",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:42:39",23.0],["2016-04-10 21:30:31",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:46:23",23.0],["2016-04-10 21:31:27",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:50:07",23.0],["2016-04-10 21:32:23",23.0],["2016-04-10 21:33:19",23.0],["2016-04-10 21:34:15",23.0],["2016-04-10 21:53:51",22.0],["2016-04-10 21:33:19",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:57:35",22.0],["2016-04-10 21:34:15",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 22:01:19",22.0],["2016-04-10 21:35:11",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 22:05:03",22.0],["2016-04-10 21:36:07",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 22:08:47",22.0],["2016-04-10 21:37:03",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 22:12:31",22.0],["2016-04-10 21:37:59",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 22:16:15",22.0],["2016-04-10 21:38:55",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 22:19:59",22.0],["2016-04-10 21:39:51",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 22:23:43",22.0],["2016-04-10 21:40:47",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 22:27:27",22.0],["2016-04-10 21:41:43",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 22:31:11",22.0],["2016-04-10 21:42:39",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 22:34:55",22.0],["2016-04-10 21:43:35",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 22:38:39",22.0],["2016-04-10 21:44:31",22.0],["2016-04-10 21:45:27",22.0],["2016-04-10 21:46:23",21.0],["2016-04-10 22:42:23",21.0],["2016-04-10 21:45:27",21.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 22:46:07",22.0],["2016-04-10 21:46:23",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 22:49:51",22.0],["2016-04-10 21:47:19",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 22:53:35",22.0],["2016-04-10 21:48:15",22.0],["2016-04-10 21:49:11",22.0],["2016-04-10 21:50:07",22.0]];
 	             
 	             
 	                var plot1 = $.jqplot("chartdiv", [prevYear], {
@@ -1219,7 +1395,7 @@ function showTemp(){
 	                                angle: -30,
 	                                textColor: '#dddddd'
 	                            },
-	                            min: "2016-04-10 00:01:00",
+	                            min: "2016-04-10 21:01:00",
 	                            max: "2016-04-10 23:59:00",
 	                            tickInterval: "6 hour",
 	                            drawMajorGridlines: false
@@ -1240,19 +1416,52 @@ function showTemp(){
 }
 
 function setTempLogger(){
-	var tempInt = $("#interval").val();
+	var logUrl = HOST + API_PATH + WRITE_LOG;
+	
+	var formData = jQuery('#inNestLogger').serializeArray();
+	var requestData = {};
+	for (var i = 0, l = formData.length; i < l; i++) {
+	    requestData[formData[i].name] = formData[i].value;
+	}
+	
+	var today = new Date();
+	var someday = new Date();
+	var d2 = new Date(requestData.nestingDate);
+	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday < today){
+		showToast("You can't add previous start recording date", 'bottom', 'long');return;
+	}
+	if (requestData.depth > 1000||requestData.depth < 0) {
+		showToast("Enter valid depth", 'bottom', 'long');return;
+	}
+	if (!requestData.interval) {
+		showToast("Enter interval to set logger", 'bottom', 'long');return;
+	}
+	requestData.user_id = localStorage.getItem('team_id')
+
+
+
+	// RESETTING AND SETTING THE TEMP LOGGER ACCORDING TO INTERVAL
+
+	// var tempInt = $("#interval").val();
+	var tempInt = requestData.interval;
 	Caenrfid.restartTemp(function(data){
-		alert(data);
-		recordNestLogger()
+		// alert(data);
+		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json');
+		recordNestLogger(requestData)
 	},function (err){
-		alert("error"+err)
+		// alert("error"+err)
+		ajaxCall({text:JSON.stringify(err)},'POST',logUrl,'json');
+		showToast("Error while reading temp logger", 'bottom', 'long');return;
 		// recordNestLogger()
 	},[tempInt]);
 }
 
 function restartTemp(){
-	var tempInt = $("#tempint").val();
+	// var tempInt = $("#tempint").val();
+	var tempInt = 1800;
 	Caenrfid.restartTemp(function(data){
+		alert('Reset Successfully');
 		alert(data);
 	},function (err){
 		alert("error"+err)
@@ -1321,6 +1530,7 @@ function showDataInConfirm(fields,target){
 			    				HTML += "<tr><td>Days Operating</td><td>" + daysOperating + " days</td></tr>" ;
 			    			}else{
 			    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
+			    				console.log(field.name, field.value)
 			    			}
 			    		}
 			    	}
@@ -1837,7 +2047,7 @@ function syncAllPredationData(type){
     }else{    	
     	showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long');
     	return;
-    }	
+    }
 }
 
 function viewTurtle(tagid){
@@ -2962,26 +3172,10 @@ function remindLaterOfflineNotification() {
 
 // NEST LOGGER EVENTS & METHODS STARTS
 
-function recordNestLogger(){
+function recordNestLogger(requestData){
 	// type: 1.update, 2.new
+	
 
-	var data = jQuery('#inNestLogger').serializeArray();
-	var requestData = {};
-	for (var i = 0, l = data.length; i < l; i++) {
-	    requestData[data[i].name] = data[i].value;
-	}
-
-	var today = new Date();
-	var someday = new Date();
-	var d2 = new Date(requestData.nestingDate);
-	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
-	if(someday < today){
-		showToast("You can't add previous start recording date", 'bottom', 'long');return;
-	}
-	if (requestData.depth > 1000||requestData.depth < 0) {
-		showToast("Enter valid depth", 'bottom', 'long');return;
-	}
-	requestData.user_id = localStorage.getItem('team_id')
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_TEMP_INFO;
@@ -3307,11 +3501,17 @@ $("#locationPopupDialog").on({
 
 function login(username,password){
 	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
-	watchID = navigator.geolocation.getCurrentPosition(
-		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password)},
-		function(){ loginStepTwo(0,0,username,password) }, 
-		POS_OPTIONS_MINIFY
-	);	
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+		watchID = navigator.geolocation.getCurrentPosition(
+			function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password)},
+			function(){ loginStepTwo(0,0,username,password) }, 
+			POS_OPTIONS_MINIFY
+		);    
+	}else{    	
+    	showToast("Error while signning in. Check your internet connection.", 'bottom', 'long');
+    	return;
+    }	
 }
 
 function loginStepTwo(latitude,longitude,username,password) {

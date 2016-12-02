@@ -1,5 +1,6 @@
 <div data-role="page" id="temperature">
 	<div data-role="header">
+		<a data-rel="back" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-carat-l ui-btn-icon-left">Back</a>
 		<h1>Temperature</h1>				
 	</div>
 
@@ -17,16 +18,16 @@
 		<button onClick="readTempLoggers();">Read Temperature sensor(s)</button>
 		
 		<div id="chartdiv" style="height:400px;width:100%;"></div>
-		<div><textarea id="tempData"></textarea></div>
-		
+		<div><textarea id="tempData" readonly></textarea></div>
+		<div><button id="endSeason" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left" onClick="restartTemp();">End Season</button>
 		<!--
 		<div><button onClick="openFile();">OpenFile</button>
 		<button onClick="saveToFile();">Save to file</button>
 		<button onClick="readFromFile();">Read from file</button></div> 
 		-->
 
-		<ul data-role="listview"  id="fileList" data-filter="true" data-theme="b">
-		</ul>
+		<!-- <ul data-role="listview"  id="fileList" data-filter="true" data-theme="b">
+		</ul> -->
 	</div>
 
 	<div data-role="footer" data-position="fixed">

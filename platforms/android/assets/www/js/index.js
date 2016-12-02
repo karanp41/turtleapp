@@ -80,7 +80,7 @@ var app = {
                 console.log('Location Error')
                 // $.mobile.changePage("popupdialogs/locationTurnOnPopup.html", {transition: 'slideup', role: 'dialog'});
             },
-            POS_OPTIONS_MINIFY
+            POS_OPTIONS
         );
         //        var parentElement = document.getElementById(id);
         //        var listeningElement = parentElement.querySelector('.listening');
