@@ -140,12 +140,12 @@ function populateNestList(filter){
     if (networkState !== Connection.NONE) {
     	var data = {user_id:localStorage.getItem('team_id')}
     	if (filter) {
-    		data.hatching_counter = filter;
-    		currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
-    		if ( typeof currentBeachDetails == "object") {
-    			data.beach_id = currentBeachDetails.Beach.id
-    		}    		
+    		data.hatching_counter = filter;    		 		
     	}
+    	currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
+		if ( typeof currentBeachDetails == "object" && Object.keys(currentBeachDetails).length>0) {
+			data.beach_id = currentBeachDetails.Beach.id
+		}
 		$.ajax({
 			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
 			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
@@ -537,28 +537,6 @@ function saveEventToFileNest(data, fileNameToUpdate){
 	});	
 }
 
-function readFromFile(filename){
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
-        console.log("got main dir",dir);
-        dir.getFile(filename, {create:false}, function(file) {
-            console.log("got the file", file);
-            logOb = file;
-        });
-    });
-	logOb.file(function(file) {
-		 var reader = new FileReader();
-
-		reader.onloadend = function(e) {
-			//	alert("inside"+this.result);
-			plotTemperature(this.result,false);
-		};
-
-		reader.readAsText(file);
-	}, function fail(e) {
-			alert("FileSystem Error");
-			alert(e);
-	});
-}
 
 function renameFile(currentName, currentDir, newName, successFunction) {
 
@@ -616,10 +594,10 @@ function uploadTempFromFile(filename){
 		 };
 
 		 reader.readAsText(file);
-	 }, function fail(e) {
+	}, function fail(e) {
 			alert("FileSystem Error");
 			alert(e);
-	 });
+	});
 }
 
 
@@ -695,6 +673,29 @@ function syncAllNestData(type) {
     }	
 }
 
+function readFromFile(filename){
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+        console.log("got main dir",dir);
+        dir.getFile(filename, {create:false}, function(file) {
+            console.log("got the file", file);
+            logOb = file;
+        });
+    });
+	logOb.file(function(file) {
+		 var reader = new FileReader();
+
+		reader.onloadend = function(e) {
+			//	alert("inside"+this.result);
+			plotTemperature(this.result,false);
+		};
+
+		reader.readAsText(file);
+	}, function fail(e) {
+			alert("FileSystem Error");
+			alert(e);
+	});
+}
+
 function listOfflineTemps(){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory,
 		    function (fileSystem) {
@@ -719,7 +720,7 @@ function listOfflineTemps(){
 		        	$("#fileList").listview('refresh');		        	
 		        },
 		        function (err) {
-		          alert(err);
+		          	alert(err);
 		        });
 		    }, function (err) {
 		    	alert(err);
@@ -976,6 +977,24 @@ function listOfflineLogger(){
 		});
 }
 
+function readTempLoggers(){
+	// showImageLoader()
+	var logUrl = HOST + API_PATH + WRITE_LOG;
+	// var power = $('#pow').val();
+	var power = 500;
+	Caenrfid.readTemp(function(data){
+		$('#tempData').val(data);
+		// plotTemperature(data,true);
+		ajaxCall({text:data},'POST',logUrl,'json')
+		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
+		// listOfflineTemps();
+		$.mobile.loading( 'hide');
+	},function (err){
+		alert("error"+err);
+		console.log("error: ",err)
+	},[power]);
+}
+
 function readTemp(){
 	showImageLoader()
 	var power = $('#pow').val();
@@ -984,27 +1003,37 @@ function readTemp(){
 		plotTemperature(data,true);
 		listOfflineTemps();
 		$.mobile.loading( 'hide');
-	},function (err){alert("error"+err)},[power]);
+	},function (err){
+		alert("error"+err)
+	},[power]);
 }
 
 function readTempLoggerRFID(){
 	showImageLoader()
 	// var power = $('#pow').val();
-	var power = 10;
+	var power = 20;
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 
 	Caenrfid.readTemp(function(data){
-		var RFID = Object.keys(data)[0]
+		navigator.notification.beep(2);
+		// alert(data)
+
+		//var RFID = Object.keys(data)[0];		
+		var RFID = data.substring(4,26);
 		$('#loggerRFID').val(RFID);
+		
 		// plotTemperature(data,true);
 		// listOfflineTemps();
 		// data = {"3415AF9D600000000098962E":"]"};
-		alert(data)
-		alert(JSON.stringify(data));
+		//alert(data)
+		//alert(JSON.stringify(data));
+		
 		$.mobile.loading( 'hide');
 		showToast("Got the RFID", 'bottom', 'long');
-		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
-		ajaxCall({text:data},'POST',logUrl,'json')
+		
+		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
+		ajaxCall({text:RFID},'POST',logUrl,'json')
+
 	},function (err){
 		showToast("Unable to read Logger RFID", 'bottom', 'long');
 		console.log("error: ",err)
@@ -1112,7 +1141,7 @@ function saveToFile(data){
         dir.getFile("log.txt", {create:true}, function(file) {
             console.log("got the file", file);
             logOb = file;
-            writeLog(data);          
+            writeLog(data);
         });
     });
 }
@@ -1272,21 +1301,30 @@ function showDataInConfirm(fields,target){
 
 	    jQuery.each( fields, function( i, field ) {
 	    	if (typeof $("label[for='"+field.name+"']").html() != "undefined"){
-	    		console.log(field.name, field.value)
-	    		
-	    		if ( jQuery.inArray( field.name, DYNAMIC_FIELDS_ARRAY)>=0 ) {
-	    			if(field.value==0){
-	    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td> - </td></tr>" ;
-	    			}else{
-	    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $("#"+field.name+" option[value='"+field.value+"']").text() + "</td></tr>" ;
-	    			}		    		
-		    	}else{
-		    		if ( jQuery.inArray( field.name, DYNAMIC_RADIO_FIELDS_ARRAY)>=0 ) {
-		    			HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $('input:radio[name="'+field.name+'"]:checked').attr( "data-preview-name" ) +  "</td></tr>" ;
-		    		}else{
-		    			HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
-		    		}		    		
-		    	}	    	
+	    		// console.log(field.name, field.value, jQuery.inArray( field.name, DYNAMIC_TO_SKIP_FIELDS_ARRAY))	    		
+	    		if ( jQuery.inArray( field.name, DYNAMIC_TO_SKIP_FIELDS_ARRAY)<0 ) {
+	    			if ( jQuery.inArray( field.name, DYNAMIC_FIELDS_ARRAY)>=0 ) {
+		    			if(field.value==0){
+		    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td> - </td></tr>" ;
+		    			}else{
+		    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $("#"+field.name+" option[value='"+field.value+"']").text() + "</td></tr>" ;
+		    			}
+			    	}else{
+			    		if ( jQuery.inArray( field.name, DYNAMIC_RADIO_FIELDS_ARRAY)>=0 ) {
+			    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" + $('input:radio[name="'+field.name+'"]:checked').attr( "data-preview-name" ) +  "</td></tr>" ;
+			    		}else{
+			    			if(field.name=='interval'){
+			    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + " min</td></tr>" ;
+			    				var deviceType = $('input:radio[name="deviceType"]:checked').val();
+			    				(deviceType==0)? num = 4000/( (60/field.value)*24 ): num = 8000/( (60/field.value)*24 );			    				
+			    				var daysOperating = Math.round(num * 100) / 100;
+			    				HTML += "<tr><td>Days Operating</td><td>" + daysOperating + " days</td></tr>" ;
+			    			}else{
+			    				HTML += "<tr><td>"+$("label[for='"+field.name+"']").html()+"</td><td>" +field.value + "</td></tr>" ;
+			    			}
+			    		}
+			    	}
+	    		}	    		
 	    	}
 	    });
 
@@ -1425,9 +1463,12 @@ function recordPerdation(){
 	}
 	requestData.user_id = localStorage.getItem('team_id')
 
-	
-	if (!requestData.rfid) {
-		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
+	// if (!requestData.rfid) {
+	// 	showToast('RFID is required. You have to read nest before recording.', 'center', 'long');
+	// 	return;
+	// }
+	if (!requestData.nestID) {
+		showToast('Nest ID is required.', 'center', 'long');
 		return;
 	}
 
@@ -1799,14 +1840,6 @@ function syncAllPredationData(type){
     }	
 }
 
-function setCurrentDate(field){
-	var now = new Date();
-	var day = ("0" + now.getDate()).slice(-2);
-	var month = ("0" + (now.getMonth() + 1)).slice(-2);
-	var today = now.getFullYear()+"-"+(month)+"-"+(day);
-	$(field).val(today);
-}
-
 function viewTurtle(tagid){
 	$("body").pagecontainer("change", "turtleInfo.html", {reloadPage: true});
 	populateTurtleInfo(tagid);
@@ -1859,10 +1892,10 @@ function recordEmerg(){
 	}
 	requestData.user_id = localStorage.getItem('team_id')
 
-	if (!requestData.rfid) {
-		showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
-		return;
-	}
+	// if (!requestData.rfid) {
+	// 	showToast('RFID is required. You have to read nest 	before recording.', 'center', 'long');
+	// 	return;
+	// }
 
 	// OTHER VALIDATIONS
 	var today = new Date();
@@ -1884,7 +1917,7 @@ function recordEmerg(){
 	if (requestData.toSea > 1000||requestData.toSea < 0) {
 		showToast("Enter valid Sea reached turtle count", 'bottom', 'long');return;
 	}
-	if (requestData.deadInTransit > 1000||requestData.deadInTransit < 0) {
+	if (requestData.deadTransit > 1000||requestData.deadTransit < 0) {
 		showToast("Enter valid dead In Transit count", 'bottom', 'long');return;
 	}
 	if (requestData.incubation > 1000||requestData.incubation < 0) {
@@ -2037,11 +2070,10 @@ function recordUncover(){
 	}
 	requestData.user_id = localStorage.getItem('team_id');
 
-	if (!requestData.rfid) {
-		showToast('RFID is required. You have to read nest before recording this data.', 'center', 'long');
-		return;
-	}
-
+	// if (!requestData.rfid) {
+	// 	showToast('RFID is required. You have to read nest before recording this data.', 'center', 'long');
+	// 	return;
+	// }
 	
 	// OTHER VALIDATIONS
 	var today = new Date();
@@ -2237,9 +2269,14 @@ function searchRFID(rfidSearch){
 }
 
 function scanOnceSuccess(rfid){
-	//navigator.notification.beep(2);
+	navigator.notification.beep(2);
+	// navigator.notification.vibrate(2000);
+	$.mobile.loading('hide');
+	$('#rfid').val(rfid+"");
 	//alert(rfidRunning+"");
-	if ($.inArray(rfid,tags)==-1){
+	// if ($.inArray(rfid,tags)==-1){
+		
+		/*
 		curTag = rfid;
 		if (rfidRunning==1){
 			//	stopRFID();
@@ -2251,13 +2288,15 @@ function scanOnceSuccess(rfid){
 			$.mobile.loading('hide');
 			$('#rfid').val(rfid+"");			
 		}
+		*/
 
 		var requestData = {};
 		requestData.id = rfid;
-
+		showToast("Got the RFID.", 'bottom', 'long');
+		$.mobile.loading('hide');
 		$.ajax({
-			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			// beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			// complete: function() { $.mobile.loading('hide'); }, //Hide spinner
 			// url: HOST + API_PATH + "findNests.php?un="+username+"&rfid="+curTag+"&dbid="+curDbId,
 			dataType:"json",
 			url: HOST + API_PATH + FIND_NESTS_BY_RFID,
@@ -2288,7 +2327,7 @@ function scanOnceSuccess(rfid){
 			}
 		});
 		//tags.push(rfid);
-	}
+	// }
 }
 
 function dummyRead(rfidSearch){
@@ -2337,7 +2376,6 @@ function searchRFIDSuccess(rfid,search){
 	}   
 	allTags[rfid] = Math.floor(new Date() / 1000);
 }
-
 
 function checkInfo(tag){
 	
@@ -2423,13 +2461,15 @@ function populateNestInfo(curTag){
 				if (key == "rfid"){
 					// window.curTag = val;
 				}
-				htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
-				if (val==null) {
-					htmlInfo = htmlInfo + " - </div></div>";
-				}else{
-					htmlInfo = htmlInfo + val+"</div></div>";
+				if (jQuery.inArray( key, NEST_FIELDS_TO_SKIP)<0 ) {
+					htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
+					if (val==null) {
+						htmlInfo = htmlInfo + " - </div></div>";
+					}else{
+						htmlInfo = htmlInfo + val+"</div></div>";
+					}
 				}
-				
+
 			});
 			nestID = data.data.Nest.NestID;
 			curDbId = data.data.Nest.id;
@@ -2508,7 +2548,6 @@ function populateNestInfo(curTag){
 	//		$("#nestInfo").html(curhtml+key+": " + value +"<br/>");
 	//	});
 }
-
 
 function editNest(edNestID){
 	//	alert("editing "+edNestID);
@@ -2796,6 +2835,63 @@ function setNestDataField(nestData){
 	    }));
 	});
 }
+
+function clearPrefilledData() {
+	if (window.currentNestEventsData) {
+		console.log(window.currentNestEventsData)
+		delete window.currentNestEventsData;	
+	}
+}
+
+/********* PREFILL EMERGENCE FIELDS FOR CURRENT NEST ******/
+
+function prefillCurrentNestEmergenceData() {
+	console.log(window.currentNestEventsData.Emergence.Emergence);
+	emergenceData = window.currentNestEventsData.Emergence.Emergence;
+
+	$('#rfid').val(emergenceData.rfid);
+	$('#nestID').val(window.currentNestEventsData.Emergence.Nest.NestID);
+	var emergeDate = new Date(emergenceData.emergenceDate);
+	$('#emergeDate').val(emergeDate.getFullYear()+'-'+(emergeDate.getMonth()+1)+'-'+emergeDate.getDate());	
+	$('#dead').val(emergenceData.dead);
+	$('#alive').val(emergenceData.alive);
+	$('#tracks').val(emergenceData.tracks);
+	$('#toSea').val(emergenceData.toSea);
+	$('#deadTransit').val(emergenceData.deadTransit);
+	$('#cause').val(emergenceData.cause);
+	$('#incubation').val(emergenceData.incubation);
+	$('#empty').val(emergenceData.empty);
+	$('#comment').val(emergenceData.comment);
+}
+
+
+/********* PREFILL PREDATION FIELDS FOR CURRENT NEST ******/
+
+function prefillCurrentNestPredationData() {
+	console.log(window.currentNestEventsData.Predation.Predation)
+	predationData = window.currentNestEventsData.Predation.Predation
+
+	$('#rfid').val(predationData.rfid);
+	$('#nestID').val(window.currentNestEventsData.Predation.Nest.NestID);
+	var predationDate = new Date(predationData.predationDate);
+	console.log(predationDate)
+	$('#dist').val(predationDate.getFullYear()+'-'+(predationDate.getMonth()+1)+'-'+predationDate.getDate());
+	$('#predator').val(predationData.predator).selectmenu("refresh");
+	$('#gridcover').val(predationData.gridcover).selectmenu("refresh");
+	$('#clawedEggs').val(predationData.clawedEggs);
+	$('#fertilized').val(predationData.fertilized);
+	$('#unfertilized').val(predationData.unfertilized);
+	$('#earlyEmbryonic').val(predationData.earlyEmbryonic);
+	$('#middleEmbryonic').val(predationData.middleEmbryonic);
+	$('#lateEmbryonic').val(predationData.lateEmbryonic);
+	$('#dead').val(predationData.dead);
+	$('#alive').val(predationData.alive);
+	$('#deadOutside').val(predationData.deadOutside);
+	$('#aliveOutside').val(predationData.aliveOutside);
+	$('#empty').val(predationData.empty);
+	$('#comment').val(predationData.comment);
+}
+
 
 
 /********* GET ALL PREDATION INFORMATION NEEDED ON PREDATION CREATION PAGE ******/
@@ -3197,17 +3293,24 @@ function syncAllRelocateData(type){
 // RELOCATE NEST EVENTS & METHODS ENDS
 
 
-
+function gotoLocationMenu() {
+	cordova.plugins.diagnostic.switchToLocationSettings();
+	$( "#locationPopupDialog" ).popup( "close" )
+}
+$("#locationPopupDialog").on({
+    popupbeforeposition: function () {
+        $('.ui-popup-screen').off();
+    }
+});
 
 // LOGIN SUPER USER
 
 function login(username,password){
 	// var url= HOST + API_PATH + "login.php?un="+un+"&psw="+pw;
-
-	watchID = navigator.geolocation.watchPosition(
-		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password) }, 
+	watchID = navigator.geolocation.getCurrentPosition(
+		function(position){ loginStepTwo(position.coords.latitude,position.coords.longitude,username,password)},
 		function(){ loginStepTwo(0,0,username,password) }, 
-		options
+		POS_OPTIONS_MINIFY
 	);	
 }
 
@@ -3235,6 +3338,7 @@ function loginStepTwo(latitude,longitude,username,password) {
 				localStorage.setItem("nestFields", JSON.stringify(data.data.onloadInfo));
 				localStorage.setItem("teamDetails", JSON.stringify(data.data.team));
 				localStorage.setItem("currentBeachDetails", JSON.stringify(data.data.beach));
+				localStorage.setItem("currentUserDetails", JSON.stringify(data.data.User));
 				$.mobile.navigate( "#menuPage" );
 			}else if(data.code=="201"){
 				showToast('Username or password is incorrect.', 'bottom', 'long')
@@ -3254,10 +3358,11 @@ function setTeamData() {
 	console.log(JSON.parse(localStorage.getItem("teamDetails")))
 	teamData = JSON.parse(localStorage.getItem("teamDetails"))
 	$.each(teamData, function (i, item) {
-	    $('#teamNames').append($('<option>', { 
-	        value: item.User.id,
-	        text : item.User.first_name + ' ' + item.User.last_name
-	    }));
+	    // $('#teamNames').append($('<option>', { 
+	    //     value: item.User.id,
+	    //     text : item.User.first_name + ' ' + item.User.last_name
+	    // }));
+	    $('#teamNames').append('<option data-object-id="'+i+'" value="'+item.User.id+'">'+item.User.first_name + ' ' + item.User.last_name+'</option>')
 	});
 }
 
@@ -3265,8 +3370,12 @@ function setTeamData() {
 // SELECTING TEAM NAME 
 
 function setTeamName() {
-	var team_id = $('#teamNames').val()
+	var team_id = $('#teamNames').val();
+	var team_object_id = $('#teamNames option:selected').attr( "data-object-id" );	
 	console.log('team_id',team_id)
+	console.log('team_object_id',team_object_id)
+	localStorage.setItem("team_object_id", team_object_id);
+
 	if (!team_id||team_id<=0) {
 		showToast('You have no user with you. Selecting you as current user.', 'bottom', 'long')
 		// showToast('You have to select user first.', 'bottom', 'long')
@@ -3284,18 +3393,112 @@ function setTeamName() {
 
 function changeUser() {
 	localStorage.removeItem('team_id');
+	localStorage.removeItem('team_object_id');	
 	$.mobile.navigate( "#menuPage" );
 }
 
 
+// LOGOUT TEAM
+
+function logoutUser() {
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+
+    	var offlineRecordedNestNames 		= JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
+    	var offlineRecordedTurtleNames 		= JSON.parse(localStorage.getItem('offlineRecordedTurtleNames'));
+    	var offlineRecordedPredationNames 	= JSON.parse(localStorage.getItem('offlineRecordedPredationNames'));
+    	var offlineRecordedEmergenceNames 	= JSON.parse(localStorage.getItem('offlineRecordedEmergenceNames'));
+    	var offlineRecordedUncoverNames 	= JSON.parse(localStorage.getItem('offlineRecordedUncoverNames'));
+    	var offlineRecordedLoggerNames 		= JSON.parse(localStorage.getItem('offlineRecordedLoggerNames'));
+    	var offlineRecordedRelocateNames 	= JSON.parse(localStorage.getItem('offlineRecordedRelocateNames'));
+            if(offlineRecordedNestNames){
+            	if(offlineRecordedNestNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedTurtleNames){
+            	if(offlineRecordedTurtleNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedPredationNames){
+            	if(offlineRecordedPredationNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedEmergenceNames){
+            	if(offlineRecordedEmergenceNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedUncoverNames){
+            	if(offlineRecordedUncoverNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedLoggerNames){
+            	if(offlineRecordedLoggerNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            if(offlineRecordedRelocateNames){
+            	if(offlineRecordedRelocateNames.length > 0){
+            		showToast('Syncing offline data before logout.', 'bottom', 'long'); syncAllData(); return;
+            	}
+            }
+            	
+        	localStorage.removeItem('team_id');
+			localStorage.removeItem('user_id');
+			localStorage.removeItem('team_object_id');
+			$.mobile.navigate( "#menuPage" );
+            showToast('Logged out Successfully', 'bottom', 'long')
+            console.log('Logged out Successfully')
+
+	}else{
+		showToast('Before logout connect to internet first. Need to sync data before logout', 'bottom', 'long')
+	}
+}
+
+
+function syncAllData() {
+	console.log('syncAllData')
+	syncAllRelocateData('relocate')
+	syncAllLoggerData('logger')
+	syncAllUncoverData('uncover')
+	syncAllEmergenceData('emergence')
+	syncAllPredationData('predation')
+	syncAllNestData('nest')
+	syncAllTurtleData('turtle')
+}
+
+function checkCurrentLocation() {
+	// navigator.geolocation.getCurrentPosition(
+ //        function(position){  }, 
+ //        function(){
+ //            $( "#locationPopupDialogMenu" ).popup( "open" )
+ //            console.log('Location Error')
+ //        },
+ //        POS_OPTIONS
+ //    );
+}
 
 // LOGIN SESSION CHECK
 
 $(document).on("pagecontainerbeforechange", function(e, data) {
 	// console.log(data)
-	console.log(localStorage.getItem("team_id"),localStorage.getItem("user_id"));
-	if (localStorage.getItem("team_id")&&localStorage.getItem("user_id")) {		
-		// data.toPage = $("#menuPage");
+	// console.log(localStorage.getItem("team_id"),localStorage.getItem("user_id"));
+	if (localStorage.getItem("team_id")&&localStorage.getItem("user_id")) {
+		var team_object_id = localStorage.getItem("team_object_id");
+		if (team_object_id!='undefined') {			
+			var teamDetails = JSON.parse(localStorage.getItem("teamDetails"));
+			currentUsername = teamDetails[team_object_id].User.first_name +' '+ teamDetails[team_object_id].User.last_name;
+		}else{
+			var currentUserDetails = JSON.parse(localStorage.getItem("currentUserDetails"));
+			currentUsername = currentUserDetails.first_name +' '+ currentUserDetails.last_name;			
+		}
+		$('#user_name').text(currentUsername)
+
+		checkCurrentLocation()
 	}else if (localStorage.getItem("user_id")) {
 		data.toPage = $("#selectUser");
 	}else{

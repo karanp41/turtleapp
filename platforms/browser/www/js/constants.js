@@ -36,18 +36,25 @@ var DYNAMIC_FIELDS_ARRAY = ['nestLoc', 'gridCover', 'rightLandMark', 'leftLandMa
 
 var DYNAMIC_RADIO_FIELDS_ARRAY = ['deviceType']
 
+var DYNAMIC_TO_SKIP_FIELDS_ARRAY = ['rfid', 'loggerRFID']
+
+var NEST_FIELDS_TO_SKIP = ['id']
 
 
 
-/**********     CONFIG CONSTANT    ********/
+
+/**********    CONFIG CONSTANT    ********/
 
 var options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
 var POS_OPTIONS = {maximumAge:0, timeout:10000, enableHighAccuracy: true};
+var POS_OPTIONS_MINIFY = {
+	timeout: 1000, 
+	enableHighAccuracy: false
+};
 
 
 
-
-/**********     API CONSTANT    ********/
+/**********    API CONSTANT    ********/
 
 var HOST = 'http://203.100.79.86:8005/';
 // var HOST = 'http://192.155.246.146:8292/';

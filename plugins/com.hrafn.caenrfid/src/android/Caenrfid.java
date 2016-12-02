@@ -83,9 +83,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -128,7 +128,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			this.callbackContext = callbackContext;
 			this.callbackContext.sendPluginResult(result);
 			Log.v(TAG,"Caenrfid received: " + action);
-//			reader.InventoryAbort();
+			//			reader.InventoryAbort();
 			try {
 				reader.Disconnect();
 			} catch (CAENRFIDException e) {
@@ -146,9 +146,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -206,9 +206,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -229,14 +229,14 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			reader.addCAENRFIDEventListener(this);
+			//			reader.addCAENRFIDEventListener(this);
 			CAENRFIDLogicalSource source = null;
 			try {
 				int power =reader.GetPower();
 				Log.d("caenrfid","Power="+power);
 				reader.SetPower(450);
-//				source.SetSelected_EPC_C1G2(CAENRFIDLogicalSourceConstants.EPC_C1G2_All_SELECTED);
-//				reader.SetProtocol(CAENRFIDProtocol.CAENRFID_EPC_C1G1);
+				//				source.SetSelected_EPC_C1G2(CAENRFIDLogicalSourceConstants.EPC_C1G2_All_SELECTED);
+				//				reader.SetProtocol(CAENRFIDProtocol.CAENRFID_EPC_C1G1);
 				source = reader.GetSource("Source_0");
 				CAENRFIDTag[] MyTags = source.InventoryTag();
 
@@ -342,10 +342,10 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				// Loop through paired devices
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
-					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+								// in a ListView
+			//					mArrayAdapter.add(device.getName() + "\n"
+			//							+ device.getAddress());
+			//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -374,14 +374,14 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				int power =reader.GetPower();
 				Log.d("caenrfid","Power="+power);
 				source = reader.GetSource("Source_0");
-				//source.AddReadPoint("Ant1");
-//				CAENRFIDTag[] MyTags = source.InventoryTag();
+								//source.AddReadPoint("Ant1");
+				//				CAENRFIDTag[] MyTags = source.InventoryTag();
 				CAENRFIDTag[] MyTags = null;
 				int count = 10;
-//				while ((MyTags = source.InventoryTag()) == null && count > 0){
-//					count--;
-//					Log.d("caenrfid","once more");
-//				}
+				//				while ((MyTags = source.InventoryTag()) == null && count > 0){
+				//					count--;
+				//					Log.d("caenrfid","once more");
+				//				}
 				MyTags = source.InventoryTag();
 				Set<String> tagList = new HashSet<String>();
 				if (MyTags != null && MyTags.length > 0) {
@@ -549,8 +549,8 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 		//result.setKeepCallback(false);
 		if (this.callbackContext != null) {
 			this.callbackContext.sendPluginResult(result);
-//			this.callbackContext.success("success:"+tag);
-//			this.callbackContext = null;
+			//			this.callbackContext.success("success:"+tag);
+			//			this.callbackContext = null;
 		}
 
 	}

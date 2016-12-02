@@ -54,9 +54,9 @@
 							<!-- <li><a href="flag-nest.html">Flag Nest</a></li> -->
 							<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
 							<li><a href="turtles.html">Turtles</a></li>
-							<li><a href="predation.html">Predation</a></li>
-							<li><a href="emergence.html">Emergence</a></li>
-							<li><a href="uncoverControl.html">Uncover for Control</a></li>
+							<li><a href="predation.html" onclick="clearPrefilledData()">Predation</a></li>
+							<li><a href="emergence.html" onclick="clearPrefilledData()">Emergence</a></li>
+							<li><a href="uncoverControl.html" onclick="clearPrefilledData()">Uncover for Control</a></li>
 							<li><a href="temp-logger-menu.html">Temperature</a></li>
 
 							<li data-role="list-divider" data-theme="b">View</li>
@@ -68,6 +68,7 @@
 
 							<li data-role="list-divider" data-theme="b">Profile</li>
 							<li><a onclick="changeUser()">Change User</a></li>
+							<li><a onclick="logoutUser()">Logout</a></li>
 
 						</ul>
 					</div>
@@ -75,9 +76,10 @@
 			
 				<div data-role="footer" data-position="fixed">
 				</div>
-			<div data-role="popup" id="popupLogin" data-theme="a"
-				class="ui-corner-all">
-			</div>
+
+				<div data-role="popup" id="popupLogin" data-theme="a"
+					class="ui-corner-all">
+				</div>
 
 			<div data-role="popup" id="offlineNotificationPopup" data-position-to="window" data-transition="slideup">
 				<div data-role="header" data-theme="a">
@@ -99,6 +101,18 @@
 			      	</ul>
 			    </div>
 			</div>
+
+
+			<div data-role="popup" id="locationPopupDialogMenu" data-theme="a" data-overlay-theme="b" class="ui-corner-all">
+				<a href="#" data-rel="back" onclick="gotoLocationMenu()" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+				<div class="summary-popup-form">				
+					<h3>Location Error</h3>
+					<hr>
+					<p>You need to turn on your location before going forward</p>
+			        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-transition="flow" onclick="gotoLocationMenu()">Turn On</a>
+				</div>
+			</div>
+
 		</div>
 
 
@@ -131,6 +145,7 @@
 		    	<h1>Turtle Nesting Safe</h1>
 		  	</div>
 		  	<div data-role="main" class="ui-content">
+			    
 			    <form>        
 					<div class="login-form-wrapper">
 						<h3>Please sign in</h3>
@@ -140,15 +155,26 @@
 							for="pw" class="ui-hidden-accessible">Password:</label>
 						<input type="password" name="pass" id="pw" value=""
 							placeholder="password" data-theme="a">             
-						<button type="submit"
-							class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left " onClick="login($('#un').val(),$('#pw').val());">Sign
-							in</button>
+						<button type="submit" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left " onClick="login($('#un').val(),$('#pw').val());">Sign in</button>
 						        
 					</div>				    
 				</form>
+
+				<div data-role="popup" id="locationPopupDialog" data-theme="a" data-overlay-theme="b" class="ui-corner-all">
+					<a href="#" data-rel="back" onclick="gotoLocationMenu()" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+					<div class="summary-popup-form">				
+						<h3>Location Error</h3>
+						<hr>
+						<p>You need to turn on your location before going forward</p>
+				        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-transition="flow" onclick="gotoLocationMenu()">Turn On</a>
+					</div>
+				</div>
+
 		  	</div>
 		</div>
 			
+
+
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/constants.js"></script>
         <script type="text/javascript" src="js/jquery.min.js"></script>

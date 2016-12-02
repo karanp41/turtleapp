@@ -140,6 +140,8 @@ function removeFile(relativeFilePath, type) {
                 localStorage.setItem('offlineRecordedRelocateNames',JSON.stringify(offlineRecordedRelocateNames));
               }
               
+              
+              setInterval(function(){ $.mobile.loading('hide'); }, 1000);
               $.mobile.navigate( "#menuPage" );
 
           },function(){
@@ -190,7 +192,7 @@ function showImageLoader(){
 function scanOnce(){
   rfidRunning = 1;
   Caenrfid.scanSingle(function(data){
-    showToast('Got the RFID.', 'bottom', 'long')
+    // showToast('Got the RFID.', 'bottom', 'long')
     scanOnceSuccess(data.substring(0)+"");
   },function (err){
     console.log("error",err)
@@ -310,4 +312,19 @@ function CSV2JSON(csv) {
     var str = json.replace(/},/g, "},\r\n");
 
     return str;
+}
+
+// SET CURRENT DATE OF A PARTICULAR FILED
+function setCurrentDate(field){
+  var now = new Date();
+  var day = ("0" + now.getDate()).slice(-2);
+  var month = ("0" + (now.getMonth() + 1)).slice(-2);
+  var today = now.getFullYear()+"-"+(month)+"-"+(day);
+  $(field).val(today);
+}
+
+// SET CURRENT DATE AND TIME OF A PARTICULAR FILED
+function setCurrentDateTime(field){
+  d = new Date();
+  $(field).val(d.toLocaleString());
 }

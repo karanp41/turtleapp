@@ -62,6 +62,10 @@ input.not-ok-button{
 .temp-interval .ui-btn {
     padding: 2px 1em 0 44px;
 }
+.temp-interval .ui-radio {
+    margin: 8px 0;
+    position: relative;
+}
 .value-label{
     padding: 10px 5px 2px 5px;
     text-align: center;
@@ -121,4 +125,7 @@ input.not-ok-button{
     width: 22px;
     background-image: url(../img/flag.png);
     background-size: cover;
+}
+#depthOfProbeContainer{
+    display: none;
 }

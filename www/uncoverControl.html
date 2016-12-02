@@ -8,13 +8,13 @@
 		<p id="message" class="message"></p>
 		<form id="UncoverData">
 			<div>
-				<label for="RFID">NEST tag</label>
+				<label for="RFID">NEST tag rfid</label>
 				<input type="text" readonly name="rfid" id="rfid" ></input>
 				<input type="button" onClick="scanOnce()" value="Read TAG"></input>
 			</div>
 			<div>
 				<label for="nestID">NEST ID</label>
-				<input type="text" readonly name="nestID" id="nestID" placeholder=""></input>
+				<input type="text" name="nestID" id="nestID" placeholder=""></input>
 			</div>
 			<div class="ui-field-contain">
 				<label for="controlDate">Control date:</label>
@@ -125,9 +125,9 @@
 			<hr>
 			<div id="summary"></div>
 			<button id="successfulButton" class="ui-btn"
-				onClick="recordUncover();">Yes</button>
+				onClick="recordUncover();">Record now</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
-				data-icon="delete">No</a>			
+				data-icon="delete">Wait! Need Corrections </a>			
 		</form>
 	</div>
 </div><!-- /page -->

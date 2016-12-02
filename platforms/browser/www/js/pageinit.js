@@ -45,18 +45,24 @@ $(document).on('pageinit','#predationPage', function(){
 	// $('#rfid').val(curTag);
 	// $('#nestID').val(nestID);
 	fetchPredationData();
+	if (window.currentNestEventsData) {
+		setTimeout(function() {prefillCurrentNestPredationData()}, 100);
+	}
 });
 
 $(document).on('pageinit','#emergPage', function(){
 	$('#locationEmerg').html(lat.toFixed(5)+", "+long.toFixed(5));
-	$('#rfid').val(curTag);
-	$('#nestID').val(nestID);
+	if (window.currentNestEventsData) {
+		setTimeout(function() {prefillCurrentNestEmergenceData()}, 100);
+	}
+	// $('#rfid').val(curTag);
+	// $('#nestID').val(nestID);
 });
 
 $(document).on('pageinit','#uncoverPage', function(){
 	$('#locationUncover').html(lat.toFixed(5)+", "+long.toFixed(5));
-	$('#rfid').val(curTag);
-	$('#nestID').val(nestID);
+	// $('#rfid').val(curTag);
+	// $('#nestID').val(nestID);
 });
 
 $(document).on('pageinit','#turtleInfo', function(){
@@ -80,7 +86,8 @@ $(document).on('pageinit','#nestInfoPage', function(){
 
 $(document).on("pagebeforehide","#nestInfoPage",function(){
 	if (window.currentNestEventsData) {
-		delete window.currentNestEventsData;	
+		// console.log(window.currentNestEventsData)
+		// delete window.currentNestEventsData;	
 	}
 });
 
@@ -113,7 +120,7 @@ $(document).on('pageinit','#offlineRelocatedListPage', function(){
 });
 
 $(document).on('pageinit','#temperature', function(){
-	listOfflineTemps();
+	// listOfflineTemps();
 });
 
 $(document).on('pageinit','#turtles', function(){
@@ -128,16 +135,22 @@ $(document).on('pageinit','#inNestTempRecord', function(){
 	$("[name=deviceType]").click(function(){		
         $('.ui-block-c').hide();
         $("#daysOperating-"+$(this).val()).show('slow');
+        ($(this).val()==1)? $('#depthOfProbeContainer').hide() : $("#depthOfProbeContainer").show('slow');
     });
 	getCurLoc();
+	// setCurrentDateTime('#startDate');
+	setCurrentDate('#startDate');
 });
 
 $(document).on('pageinit','#experimentalTempRecord', function(){	
 	$("[name=deviceType]").click(function(){		
         $('.ui-block-c').hide();
         $("#daysOperating-"+$(this).val()).show('slow');
+        ($(this).val()==1)? $('#depthOfProbeContainer').hide() : $("#depthOfProbeContainer").show('slow');
     });
-	getCurLoc();
+	getCurLoc();	
+	// setCurrentDateTime('#startDate');
+	setCurrentDate('#startDate');
 });
 
 $(document).on('pageinit','#selectUser', function(){

@@ -59,7 +59,7 @@ var app = {
         }
 
         document.addEventListener("online", onOnline, false);
-        function onOnline() {                        
+        function onOnline() {
             // $("#offlineNotificationPopup").popup("open");
             var offlineRecordedNestNames = JSON.parse(localStorage.getItem('offlineRecordedNestNames'));
             if(offlineRecordedNestNames.length > 0){
@@ -67,20 +67,29 @@ var app = {
                 $.mobile.changePage("popupdialogs/dialog.html", {transition: 'slideup', role: 'dialog'});
             }else{
                 showToast('Connection established.', 'bottom', 'long')
-            }   
+            }
         }
 
     },
     // Update DOM on a Received Event
     receivedEvent: function(id) {
-    //        var parentElement = document.getElementById(id);
-    //        var listeningElement = parentElement.querySelector('.listening');
-    //        var receivedElement = parentElement.querySelector('.received');
-    //
-    //        listeningElement.setAttribute('style', 'display:none;');
-    //        receivedElement.setAttribute('style', 'display:block;');
-    //
-    //        console.log('Received Event: ' + id);
+        navigator.geolocation.getCurrentPosition(
+            function(position){ console.log('Location Found: ',position) }, 
+            function(){
+                $( "#locationPopupDialog" ).popup( "open" )
+                console.log('Location Error')
+                // $.mobile.changePage("popupdialogs/locationTurnOnPopup.html", {transition: 'slideup', role: 'dialog'});
+            },
+            POS_OPTIONS_MINIFY
+        );
+        //        var parentElement = document.getElementById(id);
+        //        var listeningElement = parentElement.querySelector('.listening');
+        //        var receivedElement = parentElement.querySelector('.received');
+        //
+        //        listeningElement.setAttribute('style', 'display:none;');
+        //        receivedElement.setAttribute('style', 'display:block;');
+        //
+        //        console.log('Received Event: ' + id);
     },
     // onOffline: function () {
     //     alert('Gone offline')

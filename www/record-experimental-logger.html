@@ -13,19 +13,19 @@
 			<div class="ui-field-contain">
 				<label for="loggerid">Temp Logger Id:</label>
 				<input name=loggerid  type="text" id="loggerid"></input>
-				<button onClick="readTemp();">Read Temperature sensor(s)</button>
+				<button onClick="readTempLoggerRFID();">Read Temperature sensor(s)</button>
 			</div>
 		
 			<div class="ui-field-contain">
-				<label for="startDate">Start Device date:</label> 
-				<!-- <input type="text" name="startDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="startDate"></input> -->
+				<label for="startDate">Device set up date and time:</label>
 				<input type="date" name="startDate" id="startDate"></input>
+				<!-- <input type="text" name="startDate" id="startDate" readonly></input> -->
 			</div>			
 
-			<div class="ui-field-contain">
-				<label for="startTime">Start Device Time:</label>
+			<!-- <div class="ui-field-contain">
+				<label for="startTime">Device set up Time:</label>
 				<input type="time" name="startTime" id="startTime"></input>
-			</div>
+			</div> -->
 
 			<fieldset data-role="controlgroup">
 				<legend>Device Type:</legend>
@@ -120,6 +120,11 @@
 					name="depth" type="number" id="depth"></input>
 			</div>
 
+			<div class="ui-field-contain" id="depthOfProbeContainer">
+				<label for="depthOfProbe">Depth of Probe (cm)</label> <input
+					name="depthOfProbe" type="number" id="depthOfProbe"></input>
+			</div>
+			
 			<div class="ui-field-contain">
 				<label for="comment">Comments </label> <textarea
 					name="comment" type="textarea" id="comment"></textarea>
@@ -149,7 +154,7 @@
 			<div id="summary"></div>
 			<button id="successfulButton" class="ui-btn" onClick="recordNestLogger();">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
-				data-icon="delete">No, Need Corrections </a>
+				data-icon="delete">Wait! Need Corrections </a>
 		</div>
 	</div>
 

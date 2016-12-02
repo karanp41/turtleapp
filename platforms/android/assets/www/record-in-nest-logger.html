@@ -33,27 +33,27 @@
 			</div>
 		
 			<div class="ui-field-contain">
-				<label for="startDate">Start Device date:</label> 
-				<!-- <input type="text" name="startDate" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="startDate"></input> -->
-				<input type="date" name="startDate" id="startDate"></input>
+				<label for="startDate">Device set up date and time:</label>
+				<input type="date" name="startDate" id="startDate" readonly></input>
+				<!-- <input type="text" name="startDate" id="startDate" readonly></input> -->
 			</div>			
 
-			<div class="ui-field-contain">
-				<label for="startTime">Start Device Time:</label>
+			<!-- <div class="ui-field-contain">
+				<label for="startTime">Device set up Time:</label>
 				<input type="time" name="startTime" id="startTime"></input>
-			</div>
+			</div> -->
 
 			<fieldset data-role="controlgroup">
 				<legend>Device Type:</legend>
 				<label for="deviceType">Device Type:</label>
 		        <label for="withProbe">With Probe</label>
-		        <input type="radio" name="deviceType" id="withProbe" value="0" checked="checked" data-preview-name="With Probe">
+		        <input type="radio" name="deviceType" id="withProbe" value="0" data-preview-name="With Probe">
 		        <label for="standard">Standard (Without Probe)</label>
-		        <input type="radio" name="deviceType" id="standard" value="1" data-preview-name="Without Probe">
+		        <input type="radio" name="deviceType" id="standard" value="1" checked="checked" data-preview-name="Without Probe">
 		    </fieldset>
 
 		    <div class="ui-field-contain temp-interval">
-		    	<label for="interval">Interval:</label>
+		    	<label for="interval">Interval (min):</label>
 			    <div class="ui-grid-b">
 			    	<div class="ui-block-a">
 						<div class="ui-bar ui-bar-a">Minutes</div>
@@ -132,8 +132,13 @@
 			</div> -->
 
 			<div class="ui-field-contain">
-				<label for="depth">Depth in cm</label> <input
+				<label for="depth">Depth of device (cm)</label> <input
 					name="depth" type="number" id="depth"></input>
+			</div>
+
+			<div class="ui-field-contain" id="depthOfProbeContainer">
+				<label for="depthOfProbe">Depth of Probe (cm)</label> <input
+					name="depthOfProbe" type="number" id="depthOfProbe"></input>
 			</div>
 
 			<div class="ui-field-contain">
@@ -146,12 +151,10 @@
 			<input type="hidden" name="latitude"  id="lat" />
 			<input type="hidden" name="longitude" id="long" />
 			<input type="hidden" name="tempRecordType" value="0" />
+			<input type="hidden" name="daysOperating" id="daysOperating" value="333" />
 			<!-- <input type="submit" class="ui-btn ui-btn-b ui-corner-all" value="Set & Start Recording" /> -->
 			<a href="#popupConfirmLogger" id="loginButton" data-rel="popup" data-position-to="#popupConfirmLogger" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Set & Start Recording</a>
 		</form>
-
-		
-		
 		
 	</div>
 
@@ -161,11 +164,14 @@
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
 		<div class="summary-popup-form">				
 			<h3>Preview of Logger Data</h3>
+			<div id="popupBasic" class="red-banner">
+			  	<p><b>NOTE:</b> New interval starts at time when press record</p>
+			</div>
 			<hr>
 			<div id="summary"></div>
 			<button id="successfulButton" class="ui-btn" onClick="recordNestLogger();">RECORD NOW</button>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
-				data-icon="delete">No, Need Corrections </a>
+				data-icon="delete">Wait! Need Corrections </a>
 		</div>
 	</div>
 

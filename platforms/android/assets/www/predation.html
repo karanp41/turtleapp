@@ -7,13 +7,13 @@
 			<p id="message" class="message"></p>
 			<form id="PredationData">
 				<div>
-					<label for="rfid">NEST tag</label>
+					<label for="rfid">NEST tag rfid</label>
 					<input readonly type="text" name="rfid" id="rfid" ></input>
 					<input type="button" onClick="scanOnce()" value="Read TAG"></input>
 				</div>
 				<div>
 					<label for="nestID">NEST ID</label>
-					<input type="text" readonly name="nestID" id="nestID" placeholder=""></input>
+					<input type="text" name="nestID" id="nestID" placeholder=""></input>
 				</div>
 				<div class="ui-field-contain">
 					<label for="locationPred">Nest location:</label>
@@ -90,10 +90,10 @@
 					<!-- </div> -->
 				</div>
 			</form>
-		</div><!-- /content -->
+		</div>
+		
 		<div data-role="footer" data-position="fixed">
-
-			</div><!-- /footer -->
+		</div>
 			
 	<div data-role="popup" id="popupConfirmPred" data-theme="a"	class="ui-corner-all">
 		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
@@ -101,13 +101,12 @@
 			<h3>Preview of Predation Data</h3>
 			<hr>
 			<div id="summary"></div>
-			<button id="successfulButton" class="ui-btn"
-				onClick="recordPerdation();">Yes</button>
+			<a id="successfulButton" href="#" data-rel="back" data-role="button" onClick="recordPerdation();">Record Now</a>
 			<a href="#" data-rel="back" data-role="button" data-theme="a"
-				data-icon="delete">No</a>
+				data-icon="delete">Wait! Need Corrections </a>
 			
 		</form>
 	</div>	
 			
 			
-		</div><!-- /page -->
+</div>

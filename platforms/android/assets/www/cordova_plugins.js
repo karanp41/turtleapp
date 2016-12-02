@@ -265,6 +265,13 @@ module.exports = [
         "clobbers": [
             "Connection"
         ]
+    },
+    {
+        "file": "plugins/cordova.plugins.diagnostic/www/android/diagnostic.js",
+        "id": "cordova.plugins.diagnostic.Diagnostic",
+        "clobbers": [
+            "cordova.plugins.diagnostic"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -281,7 +288,8 @@ module.exports.metadata =
     "cordova-plugin-geolocation": "2.4.0",
     "cordova-plugin-x-toast": "2.5.2",
     "cordova-plugin-file-transfer": "1.6.0",
-    "cordova-plugin-network-information": "1.3.0"
+    "cordova-plugin-network-information": "1.3.0",
+    "cordova.plugins.diagnostic": "3.3.2"
 };
 // BOTTOM OF METADATA
 });

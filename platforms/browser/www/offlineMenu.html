@@ -1,7 +1,8 @@
 <div data-role="page" id="offlineMenuPage">
 	<div data-role="header">
 		<!-- <a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a> -->
-		<h1>Offline Data Menu</h1>		
+		<h1>Offline Data</h1>		
+		<!-- <a href="#" onclick="syncAllData()" class="ui-btn ui-icon-refresh ui-btn-b ui-corner-all ui-shadow ui-btn-icon-right">Sync All</a> -->
 	</div><!-- /header -->
 
 	<div role="main" id="offlineMenuPage" class="ui-content">
@@ -15,6 +16,8 @@
 			<li><a href="offlineLoggerList.html">Temp. Logger Records</a></li>
 			<li><a href="offlineRelocatedList.html">Relocated Records</a></li>
 		</ul>
+		<hr/><br/>
+		<a href="#" onclick="syncAllData()" class="ui-btn ui-icon-refresh ui-btn-b ui-corner-all ui-shadow ui-btn-icon-right">Sync All</a>
 	</div><!-- /content -->
 
 	<div data-role="footer" data-position="fixed">
