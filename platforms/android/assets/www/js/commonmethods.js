@@ -147,6 +147,14 @@ function removeFile(relativeFilePath, type) {
                     tempLoggerData.splice(index, 1);
                 }
                 localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
+
+                // DELETING RFID AND LOGGERID DATA FROM LOCALSTORAGE
+                var arr = fileName.split("_")
+                var rfid = arr[arr.length-1]
+                var RfidLoggerList = JSON.parse(localStorage.getItem('RfidLoggerList'));
+                delete RfidLoggerList[rfid.slice(0, -4)];
+                localStorage.setItem('RfidLoggerList',JSON.stringify(RfidLoggerList));
+
               }
               
               

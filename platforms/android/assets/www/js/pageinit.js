@@ -161,6 +161,15 @@ $(document).on('pageinit','#offlineReadLoggerListPage', function(){
 	listOfflineReadLoggers()
 });
 
+$(document).on('pageinit','#tempDataInfoPage', function(){
+	tempDataDetails()
+});
+
+$(document).on("pagebeforehide","#tempDataInfoPage",function(){
+	// if (plotTemp) {
+	// 	plotTemp.destroy();
+	// }
+});
 
 /*
 $(document).on('pagebeforeshow', "#recordNestPage", function (event, data) {

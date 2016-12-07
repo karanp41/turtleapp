@@ -1,8 +1,9 @@
+/*
 window.setInterval(function(){
 	$.each(allTags,function(key,val){
 		var now = Math.floor(new Date() / 1000);
 		var diff = now - val;
-	//		alert (key+" is " +diff+ "old");
+		//		alert (key+" is " +diff+ "old");
 		if (diff > 10){
 			//alert (key+" is " +diff+ ": too old");
 			tags = jQuery.grep(tags, function(value) {
@@ -14,6 +15,7 @@ window.setInterval(function(){
 		}
 	});
 }, 5000);
+*/
 
 function mapInit(){
 	setTimeout(function(){
@@ -70,17 +72,21 @@ function findNest(tag){
 	$.mobile.changePage("findNest.html");	
 }
 
-
-
-
 function updateMap(){
+	var data = {user_id:localStorage.getItem('team_id')}
+	currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
+	if ( typeof currentBeachDetails == "object" && Object.keys(currentBeachDetails).length>0) {
+		data.beach_id = currentBeachDetails.Beach.id
+	}
 	$.ajax({
 		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
-		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
-			
-		url: HOST + API_PATH + "listNests.php?un="+username,
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner			
+		url: HOST + API_PATH + LIST_NESTS,
+		// url: HOST + API_PATH + "listNests.php?un="+username,
+		data:data,
+		type: "POST",
 		success: function(data) {
-			$.each( data, function( key, val ) {
+			$.each( data.data, function( key, val ) {
 				//rigLat);
 				circle = new L.circle([val.origLat, val.origLong], 5, {
 				    color: 'red',
@@ -224,7 +230,7 @@ function nestDetailOffline(filename){
 	}, function (e) {
 	    console.log("FileSystem Error");
 	    console.dir(e);
-	}); 
+	});
 }
 
 function filterByHatchlingDays(element) {
@@ -715,7 +721,7 @@ function listOfflineReadLoggers(){
 			        			continue;
 			        		}
 			        		$("#fileList").html("");
-			        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='syncReadLoggerData(\""+entries[i].name+"\");'>"+
+			        		htmlInset += "<li data-icon=\"recycle\"><a href='#' onclick='currentTempData(\""+entries[i].name+"\");'>"+
 							"<h3>"+entries[i].name+"</h3></a> ";
 			        		if (entries[i].name.search("finished_")==-1){
 			        			// htmlInset += "<a href='#' onclick='alert(\"upload data\");'>1st link</a> ";
@@ -1021,28 +1027,29 @@ function listOfflineLogger(){
 }
 
 function readTempLoggers(){
-	showImageLoader()
+	showImageLoader()	
+	showToast("Reading data...", 'bottom', 'long');
+	
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 	// var power = $('#pow').val();
 	var power = 450;
 	// showTemp()
 	Caenrfid.readTemp(function(data){
+		ajaxCall({text:data},'POST',logUrl,'json')
 		$.mobile.loading( 'hide');
 		// $('#tempData').val(data);
-		$('#endSeason').show();		
+		$('#endSeason').show();
 		plotTemperature(data,true);
-		ajaxCall({text:JSON.STRINGIFY(data)},'POST',logUrl,'json')
-		showToast("Got recorded data successfully", 'bottom', 'long');
 		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
 		// listOfflineTemps();
-		
+
 	},function (err){
 		$.mobile.loading( 'hide');
 		// alert("error"+err);
-		// plotTemperature(DUMMY_TEMPDATA_JSON,true);
+		plotTemperature(DUMMY_TEMPDATA_JSON,true);
 		showToast("Error reading Temperature Logger", 'bottom', 'long');
 		console.log("error: ",err)
-		ajaxCall({text:JSON.STRINGIFY(data)},'POST',logUrl,'json')
+		// ajaxCall({text:err},'POST',logUrl,'json')
 	},[power]);
 }
 
@@ -1094,17 +1101,17 @@ function readTempLoggerRFID(){
 }
 
 function plotTemperature(data,write){
-	$('#endSeason').show();
 
-	jsonData = $.parseJSON(data);
-	$.each(jsonData,function (key,value){
-	// $.each(data,function (key,value){
+	
+	$('#endSeason').show();
+	// jsonData = $.parseJSON(data);
+	// $.each(jsonData,function (key,value){
+	$.each(data,function (key,value){
 		$('#tempData').show();
 		$('#tempData').val('RFID: '+key);
 		// if (write)
 		// 	openFile(key);
-
-		saveReadLoggerData(key,data)
+		
 		// saveReadLoggerData('07E04FB1001D8B90BEAFA005',data)
 
 		var data2 = eval(value);
@@ -1176,39 +1183,46 @@ function plotTemperature(data,write){
                 }
             }
         });
+
+        saveReadLoggerData(key,data)
 	});
 }
 
 function saveReadLoggerData(rfid, data){
-	
-	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
-		var fileDate = new Date();
-		var filename = rfid + "_TEMP_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
-		    dir.getFile(filename + ".txt", {create:true}, function(file) {
-		        console.log("got the file", file);
-		        logOb = file;		        
-	        	if(!logOb) return;
-				logOb.createWriter(function(fileWriter) {
-	
-					var blob = new Blob([data], {type:'text/plain'});
-					// var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
-		 			fileWriter.write(blob);
+	if (rfid) {
+		console.log(rfid, data)
+		window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
+			var fileDate = new Date();
+			var filename = fileDate.getFullYear()+"_"+("0"+(fileDate.getMonth()+1)).slice(-2)+"_"+("0"+fileDate.getDate()).slice(-2)+"_"+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2) + "_TEMP_" + rfid ;
+			    dir.getFile(filename + ".txt", {create:true}, function(file) {
+			        console.log("got the file", file);
+			        logOb = file;
+		        	if(!logOb) return;
+					logOb.createWriter(function(fileWriter) {
 
-					if (localStorage.getItem('tempLoggerData')) {
-						var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));
-					}else{
-						var tempLoggerData = [];
-					}					
-					tempLoggerData.push(filename);
-					localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
-					showToast("Data Saved Successfully.", 'bottom', 'long')
+						// var blob = new Blob([data], {type:'text/plain'});
+						var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
+			 			fileWriter.write(blob);
 
-				},  function fail(e) {					
-					showToast("FileSystem Error", 'bottom', 'long')
-					console.log(e);
-				});
-		    });
-	});
+						if (localStorage.getItem('tempLoggerData')) {
+							var tempLoggerData = JSON.parse(localStorage.getItem('tempLoggerData'));
+						}else{
+							var tempLoggerData = [];
+						}					
+						tempLoggerData.push(filename);
+						localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
+						showToast("Data Saved Successfully.", 'bottom', 'long')
+
+					},  function fail(e) {					
+						showToast("FileSystem Error", 'bottom', 'long')
+						console.log(e);
+					});
+			    });
+		});
+	}else{
+		showToast("Data in logger is empty or invalid", 'bottom', 'long')
+	}
+	
 }
 
 function syncReadLoggerData(filename){
@@ -1438,8 +1452,13 @@ function setTempLogger(){
 	if (!requestData.interval) {
 		showToast("Enter interval to set logger", 'bottom', 'long');return;
 	}
+	// if (!requestData.loggerRFID) {
+	// 	showToast("Logger RFID is required", 'bottom', 'long');return;
+	// }
+	if (!requestData.loggerid) {
+		showToast("Logger Id is required", 'bottom', 'long');return;
+	}
 	requestData.user_id = localStorage.getItem('team_id')
-
 
 
 	// RESETTING AND SETTING THE TEMP LOGGER ACCORDING TO INTERVAL
@@ -1448,13 +1467,35 @@ function setTempLogger(){
 	var tempInt = requestData.interval;
 	Caenrfid.restartTemp(function(data){
 		// alert(data);
-		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json');
 		recordNestLogger(requestData)
+		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json');
+
+		if (requestData.loggerRFID) {
+			if (localStorage.getItem('RfidLoggerList')) {
+				var RfidLoggerList = JSON.parse(localStorage.getItem('RfidLoggerList'));
+			}else{
+				var RfidLoggerList = {};
+			}
+			RfidLoggerList[requestData.loggerRFID] = requestData.loggerid;
+			localStorage.setItem('RfidLoggerList',JSON.stringify(RfidLoggerList));
+		}
 	},function (err){
-		// alert("error"+err)
+		console.log(err)
+		showToast("Error while reading temp logger", 'bottom', 'long');		
 		ajaxCall({text:JSON.stringify(err)},'POST',logUrl,'json');
-		showToast("Error while reading temp logger", 'bottom', 'long');return;
-		// recordNestLogger()
+		// return;
+
+		recordNestLogger(requestData)
+		if (requestData.loggerRFID) {
+			if (localStorage.getItem('RfidLoggerList')) {
+				var RfidLoggerList = JSON.parse(localStorage.getItem('RfidLoggerList'));
+			}else{
+				var RfidLoggerList = {};
+			}
+			RfidLoggerList[requestData.loggerRFID] = requestData.loggerid;
+			localStorage.setItem('RfidLoggerList',JSON.stringify(RfidLoggerList));
+		}
+
 	},[tempInt]);
 }
 
@@ -1463,9 +1504,11 @@ function restartTemp(){
 	var tempInt = 1800;
 	Caenrfid.restartTemp(function(data){
 		alert('Reset Successfully');
-		alert(data);
+		// alert(data);
+		ajaxCall({text:data},'POST',logUrl,'json');
 	},function (err){
 		alert("error"+err)
+		ajaxCall({text:err},'POST',logUrl,'json');
 	},[tempInt]);
 }
 
@@ -3176,8 +3219,6 @@ function remindLaterOfflineNotification() {
 function recordNestLogger(requestData){
 	// type: 1.update, 2.new
 	
-
-
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_TEMP_INFO;
 	console.log('requestData',requestData)
@@ -3563,7 +3604,8 @@ function setTeamData() {
 	    //     value: item.User.id,
 	    //     text : item.User.first_name + ' ' + item.User.last_name
 	    // }));
-	    $('#teamNames').append('<option data-object-id="'+i+'" value="'+item.User.id+'">'+item.User.first_name + ' ' + item.User.last_name+'</option>')
+	    // $('#teamNames').append('<option data-object-id="'+i+'" value="'+item.User.id+'">'+item.User.first_name + ' ' + item.User.last_name+'</option>')
+	    $('#teamNames').append('<option data-object-id="'+i+'" value="'+item.User.id+'">'+item.User.username+'</option>')
 	});
 }
 
@@ -3692,13 +3734,14 @@ $(document).on("pagecontainerbeforechange", function(e, data) {
 		var team_object_id = localStorage.getItem("team_object_id");
 		if (team_object_id!='undefined') {			
 			var teamDetails = JSON.parse(localStorage.getItem("teamDetails"));
-			currentUsername = teamDetails[team_object_id].User.first_name +' '+ teamDetails[team_object_id].User.last_name;
+			// currentUsername = teamDetails[team_object_id].User.first_name +' '+ teamDetails[team_object_id].User.last_name;
+			currentUsername = teamDetails[team_object_id].User.username;
 		}else{
 			var currentUserDetails = JSON.parse(localStorage.getItem("currentUserDetails"));
-			currentUsername = currentUserDetails.first_name +' '+ currentUserDetails.last_name;			
+			// currentUsername = currentUserDetails.first_name +' '+ currentUserDetails.last_name;			
+			currentUsername = currentUserDetails.username;			
 		}
 		$('#user_name').text(currentUsername)
-
 		checkCurrentLocation()
 	}else if (localStorage.getItem("user_id")) {
 		data.toPage = $("#selectUser");
@@ -3721,8 +3764,179 @@ function openTurtleSummary() {
 	var body = $("html, body");
 	body.stop().animate({scrollTop:0}, '500', 'swing');
 }
+
 function closeTurtleSummary() {
 	$('.dismissible_poup').hide();
+}
+
+function currentTempData(tempFilename) {
+	window.currentTempFilename = tempFilename;
+	$.mobile.changePage("tempDataInfo.html");
+}
+
+function tempDataDetails() {
+	showToast("Loading graph. Please wait...", 'bottom', 'long')
+	console.log(window.currentTempFilename)
+	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory + window.currentTempFilename, function(fileEntry) {
+	    fileEntry.file(function(file) {
+	        var reader = new FileReader();
+	        reader.onloadend = function(e) {
+	            // console.log(this.result);
+	            var htmlInfo = '';
+	            var data = JSON.parse(this.result);
+	            $.each(data,function (key,value){
+	            	// console.log(value);
+
+	            	// SETTING LOOGER DATA POINTS IN TABLE LIST
+	            	if (localStorage.getItem('RfidLoggerList')) {
+						var RfidLoggerList = JSON.parse(localStorage.getItem('RfidLoggerList'));
+						var html = "<div data-role='collapsible' ><h3>Logger ID: "+RfidLoggerList[key]+"</h3><p><div class='ui-grid-a'>";
+						$.each(chartDataPoints,function (key,val){
+							html = html + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+val[0]+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' >";
+							if (val[1]==null) {
+								html = html + " - </div></div>";
+							}else{
+								html = html + val[1] +"</div></div>";
+							}							
+						});
+						html = html + "</div></div>";							
+						$("#tempList").html(html);
+						$('div[data-role=collapsible]').collapsible();
+					}
+	            	
+	            	// PLOTTING GRAPH/CHART OF TEMPERATURE DATA POINTS
+					var chartDataPoints = eval(value);
+
+					/*
+					var limit = 10000;
+					var data = [];
+					var dataSeries = { type: "line" };
+
+					var dataPoints = [];
+					for (index = 0; index < chartDataPoints.length; index++) {
+					    // console.log(chartDataPoints[index]);
+					    var d = new Date(chartDataPoints[index][0]);
+					    dataPoints.push({
+							x: d,
+							y: chartDataPoints[index][1]
+						});
+					}
+					
+					dataSeries.dataPoints = dataPoints;
+
+					// dataSeries.dataPoints = chartDataPoints;
+					data.push(dataSeries);
+					console.log(data)
+					//Better to construct options first and then pass it as a parameter
+					var options = {
+						zoomEnabled: true,
+				            animationEnabled: true,
+						title: {
+							text: 'Temperature plot: '+key
+						},
+						axisX: {
+							labelAngle: 30,
+							title: "timeline",
+        					gridThickness: 1
+						},
+						axisY: {
+							includeZero: false
+						},
+						data: data  // random data
+					};
+
+					$("#chartContainer").CanvasJSChart(options);
+					*/
+					// $("#tempChart").html("");
+					
+					$.jqplot.config.enablePlugins = true;
+					var plotTemp = $.jqplot("tempChart", [chartDataPoints], {
+			            seriesColors: ["rgba(78, 135, 194, 0.7)"],
+			            title: 'Temperature plot: '+key,
+			            highlighter: {
+			                show: true,
+			                sizeAdjust: 1,
+			                tooltipOffset: 9
+			            },
+			            grid: {
+			                background: 'rgba(57,57,57,0.0)',
+			                drawBorder: false,
+			                shadow: false,
+			                gridLineColor: '#666666',
+			                gridLineWidth: 2
+			            },
+			            legend: {
+			                show: false,
+			                placement: 'outside'
+			            },
+			            seriesDefaults: {
+			                rendererOptions: {
+			                    smooth: true,
+			                    animation: {
+			                        show: true
+			                    }
+			                },
+			                showMarker: false
+			            },
+			            series: [
+			                {
+			                    fill: false,
+			                    label: key
+			                }
+			            ],
+			            axesDefaults: {
+			                rendererOptions: {
+			                    baselineWidth: 1.5,
+			                    baselineColor: '#444444',
+			                    drawBaseline: false
+			                }
+			            },
+			            axes: {
+			                xaxis: {
+			                    renderer: $.jqplot.DateAxisRenderer,
+			                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+			                    tickOptions: {
+			                        formatString: "%b %e %H:%M:%S'",
+			                        angle: -30,
+			                        textColor: '#dddddd'
+			                    },
+			                    
+			                    tickInterval: "1 hour",
+			                    drawMajorGridlines: false
+			                },
+			                yaxis: {			                    
+			                    pad: 0,
+			                    rendererOptions: {
+			                        minorTicks: 1
+			                    },
+			                    tickOptions: {
+			                        formatString: "%'dC",
+			                        showMark: false
+			                    }
+			                }
+			            }
+			        });
+
+					/*					
+					$(document).on("pagebeforehide","#tempDataInfoPage",function(){
+						if (plotTemp) {
+							alert("Destroy everything");
+							plotTemp.destroy();
+							$( "#tempInfo" ).remove();
+						}
+					});
+					*/
+
+				});
+
+	        }
+	        reader.readAsText(file);
+	    });
+	}, function (e) {
+	    console.log("FileSystem Error");
+	    console.dir(e);
+	});
+
 }
 
 

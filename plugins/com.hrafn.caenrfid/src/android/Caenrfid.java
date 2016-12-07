@@ -160,7 +160,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			try {
 			    socket = deviceBT.createInsecureRfcommSocketToServiceRecord(myUUID);
 			  }
-			 catch (  IOException e) {
+			 catch ( IOException e) {
 			    e.printStackTrace();
 			  }
 			try {

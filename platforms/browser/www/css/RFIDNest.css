@@ -21,7 +21,9 @@ input.not-ok-button{
 .nestInfo .ui-block-a {
     min-height: 33px;
 }
-
+.nestInfo.tempInfo .ui-bar{
+    font-size: 12px;
+}
 /**** 18th Oct BY Krishan ****/
 
 .ui-header .ui-title {
