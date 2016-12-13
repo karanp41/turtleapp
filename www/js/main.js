@@ -25,15 +25,14 @@ function mapInit(){
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap 2</a> contributors'
 		}).addTo(map);
-		updateMap();
+		// updateMap();
+		// putNestMarkers();
 	//		map.locate({setView: true, maxZoom: 18, watch: false});
 	//		navigator.geolocation.getCurrentPosition(onLocationFound, function({alert("geo error");}));
 	}, 1);
 	//	map.on('click', onMapClick);
 	options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
-	navigator.geolocation.getCurrentPosition(onLocationFound, function(){
-		showToast("No Location found", 'bottom', 'long')
-	}, options);
+	navigator.geolocation.getCurrentPosition(onLocationFoundMap, onLocationErrorMap, POS_OPTIONS);
 	//	navigator.geolocation.watchPosition(onLocationFound, function(){alert("no location found");}, options);
 	
 	// setInterval(function(){
@@ -42,18 +41,43 @@ function mapInit(){
 	// },10000);
 }
 
+function onLocationFoundMap(position){
+	var latlng = L.latLng(position.coords.latitude, position.coords.longitude);
+	var radius = position.coords.accuracy / 2;
+	if (curPos == null){
+		map.setView(latlng,16);
+		curPos = L.marker(latlng).addTo(map);
+		curCircle = L.circle(latlng, radius).addTo(map);
+	} else {
+		curPos.setLatLng(latlng).update();
+		curCircle.setLatLng(latlng);
+		curCircle.setRadius(radius);
+	}
+	//	.bindPopup("You are within " + radius + " meters from this point");
+	var polyline_options = {
+		    color: 'red'
+		  };
+	var line = [];	
+	line.push(latlng);
+	putNestMarkers(position.coords.latitude, position.coords.longitude)
+}
+
+function onLocationErrorMap(){
+		showToast("No Location found", 'bottom', 'long')
+	}
+
 function mapInitFind(rfid){
 	
 	setTimeout(function(){
 		map = L.map('map');
 		map.options.maxZoom = 25;
-	//		map.on('locationfound', function (){alert("found");});
+		//		map.on('locationfound', function (){alert("found");});
 		L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 			attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap 2</a> contributors'
 		}).addTo(map);
 		updateMapFind(rfid);
-	//		map.locate({setView: true, maxZoom: 18, watch: false});
-	//		navigator.geolocation.getCurrentPosition(onLocationFound, function({alert("geo error");}));
+		//		map.locate({setView: true, maxZoom: 18, watch: false});
+		//		navigator.geolocation.getCurrentPosition(onLocationFound, function({alert("geo error");}));
 	}, 1);
 	//	map.on('click', onMapClick);
 	options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
@@ -70,6 +94,48 @@ function mapInitFind(rfid){
 function findNest(tag){
 	curTag=tag;
 	$.mobile.changePage("findNest.html");	
+}
+
+function putNestMarkers(latitude,longitude){
+
+	var greenIcon = L.icon({
+	    iconUrl: './img/turtle.png',
+	    // shadowUrl: 'leaf-shadow.png',
+
+	    iconSize:     [24, 24], // size of the icon
+	    // shadowSize:   [50, 64], // size of the shadow
+	    // iconAnchor:   [22, 94], // point of the icon which will correspond to marker's location
+	    // shadowAnchor: [4, 62],  // the same for the shadow
+	    popupAnchor:  [-3, -10] // point from which the popup should open relative to the iconAnchor
+	});
+
+	var data = {user_id:localStorage.getItem('team_id')}
+	currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
+	if ( typeof currentBeachDetails == "object" && Object.keys(currentBeachDetails).length>0) {
+		data.beach_id = currentBeachDetails.Beach.id
+	}
+	$.ajax({
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner			
+		url: HOST + API_PATH + LIST_NESTS,
+		// url: HOST + API_PATH + "listNests.php?un="+username,
+		data:data,
+		type: "POST",
+		success: function(data) {
+			console.log(data)
+			$.each( data.data, function( key, val ) {
+				// circle = new L.circle([val.Nest.origLat, val.Nest.origLong], 5, {
+				// 	color: 'red',
+				// 	fillColor: '#f03',
+				// 	fillOpacity: 0.5
+				// });
+				L.marker([val.Nest.origLat, val.Nest.origLong], {icon: greenIcon}).addTo(map).bindPopup("<b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+val.Nest.nestingDate+"<br/><button onClick='processTagDbId(\""+val.Nest.id+"\");' class='mapNestInfo' value='nestInfo'>Nest Info</button>");
+				// circle.bindPopup("<b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+val.Nest.nestingDate+"<br/><button onClick='processTag(\""+val.Nest.rfid+"\");' value='nestInfo'>nestInfo</button>").addTo(map);
+			});
+		},
+		dataType:"json"
+	});
+	map.invalidateSize();
 }
 
 function updateMap(){
@@ -161,6 +227,7 @@ function populateNestList(filter){
 			success: function(data) {
 				$('#nestList').html('');
 				$.each( data.data, function( key, val ) {
+					console.log(key, val)
 					var html = "<li>"+
 						//	"<a href='#' onClick='processTag(\""+val.rfid+"\");'><b>Nest ID: "+val.NestID+"</b><br />Nestingdate: "+val.nestingDate+"</a></li>");
 						"<a href='#' onClick='processTagDbId(\""+val.Nest.id+"\");'><b>Nest ID:</b> "+val.Nest.NestID+"<br /><b>Nestingdate:</b> "+formateDate(val.Nest.nestingDate);
@@ -289,10 +356,9 @@ function populateTurtlesListView(){
 }
 
 function onLocationFound(position) {
-	var latlng = L.latLng(position.coords.latitude , position.coords.longitude);
+	var latlng = L.latLng(position.coords.latitude, position.coords.longitude);
 	var radius = position.coords.accuracy / 2;
 	if (curPos == null){
-	//	if (curPos == null){
 		map.setView(latlng,16);
 		curPos = L.marker(latlng).addTo(map);
 		curCircle = L.circle(latlng, radius).addTo(map);
@@ -312,8 +378,7 @@ function onLocationFound(position) {
 		window.polyline = L.polyline(line, polyline_options).addTo(map);
 	} else {
 		window.polyline.setLatLngs(line).addTo(map);
-	}
-	
+	}	
 }
 
 function locate(){
@@ -354,8 +419,15 @@ function onGotLocation(position){
 	console.log(position)
 	$("#lat").val(position.coords.latitude);
 	$("#long").val(position.coords.longitude);
-	$("#loc").val(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
+
+	var locationText = position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5)
+
+	$("#loc").val(locationText);
 	$("#loc").button("refresh");
+	$("#locationPred").html(locationText);
+	$("#locationEmerg").html(locationText);
+	$("#locationUncover").html(locationText);
+	
 	lat = position.coords.latitude;
 	long = position.coords.longitude;
 	$("#accurazy").val(position.coords.accurazy);
@@ -1046,7 +1118,7 @@ function readTempLoggers(){
 	},function (err){
 		$.mobile.loading( 'hide');
 		// alert("error"+err);
-		plotTemperature(DUMMY_TEMPDATA_JSON,true);
+		// plotTemperature(DUMMY_TEMPDATA_JSON,true);
 		showToast("Error reading Temperature Logger", 'bottom', 'long');
 		console.log("error: ",err)
 		// ajaxCall({text:err},'POST',logUrl,'json')
@@ -1104,9 +1176,9 @@ function plotTemperature(data,write){
 
 	
 	$('#endSeason').show();
-	// jsonData = $.parseJSON(data);
-	// $.each(jsonData,function (key,value){
-	$.each(data,function (key,value){
+	jsonData = $.parseJSON(data);
+	$.each(jsonData,function (key,value){
+	// $.each(data,function (key,value){
 		$('#tempData').show();
 		$('#tempData').val('RFID: '+key);
 		// if (write)
@@ -1200,8 +1272,8 @@ function saveReadLoggerData(rfid, data){
 		        	if(!logOb) return;
 					logOb.createWriter(function(fileWriter) {
 
-						// var blob = new Blob([data], {type:'text/plain'});
-						var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
+						var blob = new Blob([data], {type:'text/plain'});
+						// var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
 			 			fileWriter.write(blob);
 
 						if (localStorage.getItem('tempLoggerData')) {
@@ -1847,15 +1919,15 @@ function saveTurtle(type){
 	}
 	var today = new Date();
 	var someday = new Date();
-	var d2 = new Date(requestData.replacedDate);
-	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	var d1 = new Date(requestData.replacedDate);
+	someday.setFullYear(d1.getFullYear(), d1.getMonth(), d1.getDate());
 	if(someday > today){
 		showToast("You can't add future replaced date", 'bottom', 'long');return;
 	}
-	var someday = new Date();
+	var someday2 = new Date();
 	var d2 = new Date(requestData.taggingDate);
-	someday.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
-	if(someday > today){
+	someday2.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
+	if(someday2 > today){
 		showToast("You can't add future tagging date", 'bottom', 'long');return;
 	}
 	if (requestData.wetZone > 1000||requestData.wetZone < 0) {
@@ -1930,11 +2002,16 @@ function saveTurtleOffline(data, type){
 					}
 					offlineRecordedTurtleNames.push(filename);
 					localStorage.setItem('offlineRecordedTurtleNames',JSON.stringify(offlineRecordedTurtleNames));
-					showToast("Data Saved Successfully.", 'bottom', 'long')
+					showToast("Data saved offline successfully.", 'bottom', 'long')
 					
 					if (type=='nest') {
-						$.mobile.changePage("popupdialogs/dialogAssociateTurtle.html", {transition: 'slideup', role: 'dialog'});
-			            window.RECENTTURTLEDATA = data;
+						console.log(data)
+						closeTurtleSummary()
+						window.RECENTTURTLEDATA = data;
+						$( "#associateTurtle" ).popup( "open" )
+						// $.mobile.changePage("popupdialogs/dialogAssociateTurtle.html", {transition: 'slideup', role: 'dialog'});
+			        }else{
+			        	$.mobile.changePage("turtles.html");
 			        }
 
 				},  function fail(e) {					
@@ -3767,6 +3844,7 @@ function openTurtleSummary() {
 
 function closeTurtleSummary() {
 	$('.dismissible_poup').hide();
+	setTimeout(function(){ console.log('asdsadasdasda'); $( "#addTurtleButton" ).trigger( "click" ); }, 100);	
 }
 
 function currentTempData(tempFilename) {

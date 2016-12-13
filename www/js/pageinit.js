@@ -12,7 +12,7 @@ $(document).on('pageinit','#relocateNestPage', function(){
 	setTimeout(function() {setNestFieldsValue()}, 100);
 });
 
-$(document).on("pagebeforehide","#recordNestPage",function(){ // When leaving pagetwo
+$(document).on("pagebeforehide","#recordNestPage",function(){
 	console.log("recordNestPage is about to be hidden");
 	if (window.RECENTTURTLEDATA) {
 		delete window.RECENTTURTLEDATA;	
@@ -44,6 +44,7 @@ $(document).on('pageshow','#mainPage', function(){
 $(document).on('pageinit','#predationPage', function(){	
 	// $('#rfid').val(curTag);
 	// $('#nestID').val(nestID);
+	getCurLoc()
 	fetchPredationData();
 	if (window.currentNestEventsData) {
 		setTimeout(function() {prefillCurrentNestPredationData()}, 100);
@@ -51,7 +52,8 @@ $(document).on('pageinit','#predationPage', function(){
 });
 
 $(document).on('pageinit','#emergPage', function(){
-	$('#locationEmerg').html(lat.toFixed(5)+", "+long.toFixed(5));
+	getCurLoc()
+	// $('#locationEmerg').html(lat.toFixed(5)+", "+long.toFixed(5));
 	if (window.currentNestEventsData) {
 		setTimeout(function() {prefillCurrentNestEmergenceData()}, 100);
 	}
@@ -60,7 +62,8 @@ $(document).on('pageinit','#emergPage', function(){
 });
 
 $(document).on('pageinit','#uncoverPage', function(){
-	$('#locationUncover').html(lat.toFixed(5)+", "+long.toFixed(5));
+	getCurLoc()
+	// $('#locationUncover').html(lat.toFixed(5)+", "+long.toFixed(5));
 	// $('#rfid').val(curTag);
 	// $('#nestID').val(nestID);
 });

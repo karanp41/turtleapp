@@ -1,15 +1,16 @@
 <div data-role="page" id="offlineUncoverListPage">
 	<div data-role="header">
-		<a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a>
+		<!-- <a href="index.html" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-home ui-btn-icon-left">Home</a> -->
+		<a data-rel="back" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-carat-l ui-btn-icon-left">Back</a>
 		<h1>Uncover List</h1>
 		<a onClick="syncAllUncoverData('uncover')" class="ui-btn ui-corner-all ui-shadow ui-icon-recycle ui-btn-icon-left">Sync All</a>
-	</div><!-- /header -->
+	</div>
 
 	<div role="main" id="offlineListPage" class="ui-content">
 		<ul id="offlineListUncover" data-role="listview"  data-filter="true">			
 		</ul>
-	</div><!-- /content -->
+	</div>
 
 	<div data-role="footer" data-position="fixed">
-	</div><!-- /footer -->	
-</div><!-- /page -->
+	</div>	
+</div>
