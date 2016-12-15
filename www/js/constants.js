@@ -36,7 +36,7 @@ var DYNAMIC_RADIO_FIELDS_ARRAY = ['deviceType']
 
 var DYNAMIC_TO_SKIP_FIELDS_ARRAY = ['rfid', 'loggerRFID']
 
-var NEST_FIELDS_TO_SKIP = ['id']
+var NEST_FIELDS_TO_SKIP = ['id','flagged','created','modified','user_id','tempCount','success']
 
 
 
