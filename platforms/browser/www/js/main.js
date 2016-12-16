@@ -1118,7 +1118,7 @@ function readTempLoggers(){
 	},function (err){
 		$.mobile.loading( 'hide');
 		// alert("error"+err);
-		plotTemperature(DUMMY_TEMPDATA_JSON,true);
+		// plotTemperature(DUMMY_TEMPDATA_JSON,true);
 		showToast("Error reading Temperature Logger", 'bottom', 'long');
 		console.log("error: ",err)
 		// ajaxCall({text:err},'POST',logUrl,'json')
@@ -1176,9 +1176,9 @@ function plotTemperature(data,write){
 
 	
 	$('#endSeason').show();
-	// jsonData = $.parseJSON(data);
-	// $.each(jsonData,function (key,value){
-	$.each(data,function (key,value){
+	jsonData = $.parseJSON(data);
+	$.each(jsonData,function (key,value){
+	// $.each(data,function (key,value){
 		$('#tempData').show();
 		$('#tempData').val('RFID: '+key);
 		// if (write)
@@ -1272,8 +1272,8 @@ function saveReadLoggerData(rfid, data){
 		        	if(!logOb) return;
 					logOb.createWriter(function(fileWriter) {
 
-						// var blob = new Blob([data], {type:'text/plain'});
-						var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
+						var blob = new Blob([data], {type:'text/plain'});
+						// var blob = new Blob([JSON.stringify(data)], {type:'text/plain'});
 			 			fileWriter.write(blob);
 
 						if (localStorage.getItem('tempLoggerData')) {
@@ -1921,13 +1921,19 @@ function saveTurtle(type){
 	var someday = new Date();
 	var d1 = new Date(requestData.replacedDate);
 	someday.setFullYear(d1.getFullYear(), d1.getMonth(), d1.getDate());
-	if(someday > today){
+	someday.setHours(0, 0, 0, 0);
+	today.setHours(0, 0, 0, 0);
+	console.log("HERE 1111--->",  someday.valueOf(), today.valueOf())
+	if(someday.valueOf() > today.valueOf()){
 		showToast("You can't add future replaced date", 'bottom', 'long');return;
 	}
 	var someday2 = new Date();
 	var d2 = new Date(requestData.taggingDate);
 	someday2.setFullYear(d2.getFullYear(), d2.getMonth(), d2.getDate());
-	if(someday2 > today){
+	someday2.setHours(0, 0, 0, 0);
+	console.log("HERE 1111--->",  someday2.valueOf(), today.valueOf())
+
+	if(someday2.valueOf() > today.valueOf()){
 		showToast("You can't add future tagging date", 'bottom', 'long');return;
 	}
 	if (requestData.wetZone > 1000||requestData.wetZone < 0) {
@@ -2793,7 +2799,7 @@ function populateNestInfo(curTag){
 					// window.curTag = val;
 				}
 				if (jQuery.inArray( key, NEST_FIELDS_TO_SKIP)<0 ) {
-					htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
+					htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').replace('_',' ').toUpperCase().trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
 					if (val==null) {
 						htmlInfo = htmlInfo + " - </div></div>";
 					}else{
@@ -2857,11 +2863,11 @@ function populateNestInfo(curTag){
 					*/
 				},
 				dataType:"json"
-				});
+			});
 
 		},
 		dataType:"json"
-		});
+	});
 	
 	
 	//			$.each( data[0], function( key, val ) {
@@ -3132,8 +3138,8 @@ function setNestDataField(nestData){
 
 	var NestLocationAlt = nestData.RelocatedNestLocation;
 	$.each(NestLocationAlt, function (i, item) {
-	    $('#nestLocAlt').append($('<option>', { 
-	        value: i,
+	    $('#alt_nestLoc').append($('<option>', { 
+	    	 value: i,
 	        text : item 
 	    }));
 	});
@@ -3144,10 +3150,7 @@ function setNestDataField(nestData){
 	        value: i,
 	        text : item 
 	    }));
-	    $('#alt_nestLoc').append($('<option>', { 
-	        value: i,
-	        text : item 
-	    }));
+	    
 	});
 
 	var RelocatedNestCover = nestData.RelocatedNestCover;
@@ -3720,6 +3723,11 @@ function changeUser() {
 
 // LOGOUT TEAM
 
+function logoutConfirm() {
+	// body...
+	$( "#logOutPopup" ).popup( "open");
+}
+
 function logoutUser() {
 	var networkState = navigator.connection.type;
     if (networkState !== Connection.NONE) {
@@ -3770,7 +3778,7 @@ function logoutUser() {
         	localStorage.removeItem('team_id');
 			localStorage.removeItem('user_id');
 			localStorage.removeItem('team_object_id');
-			$.mobile.navigate( "#menuPage" );
+			$.mobile.navigate( "#popupLogin" );
             showToast('Logged out Successfully', 'bottom', 'long')
             console.log('Logged out Successfully')
 

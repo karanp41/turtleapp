@@ -2863,11 +2863,11 @@ function populateNestInfo(curTag){
 					*/
 				},
 				dataType:"json"
-				});
+			});
 
 		},
 		dataType:"json"
-		});
+	});
 	
 	
 	//			$.each( data[0], function( key, val ) {

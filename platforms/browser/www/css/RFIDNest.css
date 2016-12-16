@@ -146,3 +146,7 @@ input.not-ok-button{
     color: #fff;
     margin-top: 3px;
 }
+#myTable td{
+    word-wrap: break-word;
+    word-break: break-all;
+}
