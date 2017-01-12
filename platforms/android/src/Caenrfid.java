@@ -347,8 +347,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 //							+ device.getAddress());
 //					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
-						Log.d("caenRFID",device.getName() + "\n"
-								+ device.getAddress());
+						Log.d("caenRFID",device.getName() + "\n" + device.getAddress());
 						deviceBT = device;
 					}
 				}

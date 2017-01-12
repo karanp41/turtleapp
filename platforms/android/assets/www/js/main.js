@@ -1143,11 +1143,29 @@ function readTempLoggerRFID(){
 	// var power = $('#pow').val();
 	var power = 450;
 	var logUrl = HOST + API_PATH + WRITE_LOG;
+	var HTML = '';
 
 	Caenrfid.readTemp(function(data){
-		navigator.notification.beep(1);
-		// alert(data)
 
+		console.log('data',JSON.parse(data))
+		var RFIDs = JSON.parse(data);
+		if (isEmpty(RFIDs)){
+			showToast("Loggers not in reach. Please place it near to detector.", 'bottom', 'long');
+			$.mobile.loading( 'hide');
+			return;
+		}
+
+		HTML += '<fieldset data-role="controlgroup">';		    
+		Object.keys(RFIDs).forEach(function(key,index) {			
+			HTML += '<label for="' + key + '">' + key + '</label>';
+			HTML += '<input type="radio" name="selectRfid" id="' + key + '" value="' + key + '">';
+		});
+		HTML += '</fieldset>';
+
+		$( "#rfidsListingContainer" ).html( HTML )
+		$( "#rfidsListingPopup" ).popup( "open" )
+
+		navigator.notification.beep(1);
 		//var RFID = Object.keys(data)[0];		
 		var RFID = data.substring(4,26);
 		$('#loggerRFID').val(RFID);
@@ -1173,7 +1191,6 @@ function readTempLoggerRFID(){
 }
 
 function plotTemperature(data,write){
-
 	
 	$('#endSeason').show();
 	jsonData = $.parseJSON(data);
@@ -2610,6 +2627,7 @@ function scanOnceSuccess(rfid){
 	// navigator.notification.vibrate(2000);
 	$.mobile.loading('hide');
 	$('#rfid').val(rfid+"");
+
 	//alert(rfidRunning+"");
 	// if ($.inArray(rfid,tags)==-1){
 		

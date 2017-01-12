@@ -210,6 +210,7 @@ function scanOnce(){
   rfidRunning = 1;
   Caenrfid.scanSingle(function(data){
     // showToast('Got the RFID.', 'bottom', 'long')
+    console.log('data',data)
     scanOnceSuccess(data.substring(0)+"");
   },function (err){
     console.log("error",err)
@@ -344,4 +345,13 @@ function setCurrentDate(field){
 function setCurrentDateTime(field){
   d = new Date();
   $(field).val(d.toLocaleString());
+}
+
+// CHECK OBJECT IS EMPTY OR NOT
+function isEmpty(obj) {
+    for(var prop in obj) {
+        if(obj.hasOwnProperty(prop))
+            return false;
+    }
+    return JSON.stringify(obj) === JSON.stringify({});
 }
