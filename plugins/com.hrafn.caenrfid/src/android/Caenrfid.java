@@ -136,8 +136,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				e.printStackTrace();
 			}
 			reader =null;
-		}
-		else if ("scanRFID".equals(action)){
+		} else if ("scanRFID".equals(action)){
 			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
 					.getBondedDevices();
 			// If there are paired devices
@@ -243,7 +242,6 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				if (MyTags != null && MyTags.length > 0) {
 					for (int i = 0; i < MyTags.length; i++)
 					{
-
 						resultString = "";
 						String EPCString = Caenrfid.toHexString(MyTags[i].GetId());
 						Log.d("caenrfid",EPCString);
@@ -343,9 +341,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 								// in a ListView
-			//					mArrayAdapter.add(device.getName() + "\n"
-			//							+ device.getAddress());
-			//					mArrayDevice.add(device);
+					//	mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -364,12 +362,12 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				reader.Connect(socket);
 			} catch (CAENRFIDException e) {
 				// TODO Auto-generated catch block
+				Log.d("Inside catch of socket connection");
 				e.printStackTrace();
 			}
 			reader.addCAENRFIDEventListener(this);
 			CAENRFIDLogicalSource source = null;
 			try {
-
 				reader.SetPower(args.getInt(0));
 				int power =reader.GetPower();
 				Log.d("caenrfid","Power="+power);

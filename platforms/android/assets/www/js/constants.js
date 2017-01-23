@@ -25,6 +25,8 @@ var watchID=null;
 var markers = [];
 var polyline = null; 
 var logOb = null;
+var LOGGERS_RFID_DATA = {};
+var SELECTED_RFID = '';
 
 
 

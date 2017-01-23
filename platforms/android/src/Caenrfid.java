@@ -83,9 +83,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -98,10 +98,10 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			}
 			try {
 			    socket = deviceBT.createInsecureRfcommSocketToServiceRecord(myUUID);
-			  }
-			 catch (  IOException e) {
+			}
+			catch (  IOException e) {
 			    e.printStackTrace();
-			  }
+			}
 			try {
 				reader.Connect(socket);
 			} catch (CAENRFIDException e) {
@@ -115,20 +115,38 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				source.SetReadCycle(0);
 				reader.SetPower(1300);
 				CAENRFIDTag[] tag = source.InventoryTag();
-				if (tag != null)
-					resultString = Caenrfid.toHexString(tag[0].GetId());
-				else
+				if (tag != null){
+					byte[] DataToRead;
+					// Reading company id to differentiate b/w cradal and logger
+					DataToRead = source.ReadTagData_EPC_C1G2(tag[0], (short)2, (short)0, (short)4);
+					String companyId = Caenrfid.toHexString(DataToRead);
+					if ("00005358".equals(companyId)) {
+						Log.d("caenrfid","This is Temp Logger.");
+						Log.d("caenrfid","companyId:"+companyId);
+						resultString = "foundlogger";
+						// resultString = Caenrfid.toHexString(tag[0].GetId());
+					}else {
+						Log.d("caenrfid","This is Cradal Tag.");
+						Log.d("caenrfid","companyId:"+companyId);
+						resultString = Caenrfid.toHexString(tag[0].GetId());
+					}
+				}else{
 					resultString = "noTag";
+				}
 			} catch (CAENRFIDException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 
+			
+			
+			
+
 			PluginResult result = new PluginResult(PluginResult.Status.OK,resultString);
 			this.callbackContext = callbackContext;
 			this.callbackContext.sendPluginResult(result);
 			Log.v(TAG,"Caenrfid received: " + action);
-//			reader.InventoryAbort();
+			//			reader.InventoryAbort();
 			try {
 				reader.Disconnect();
 			} catch (CAENRFIDException e) {
@@ -136,8 +154,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				e.printStackTrace();
 			}
 			reader =null;
-		}
-		else if ("scanRFID".equals(action)){
+		} else if ("scanRFID".equals(action)){
 			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
 					.getBondedDevices();
 			// If there are paired devices
@@ -146,9 +163,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -159,10 +176,10 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			reader = new CAENRFIDReader();
 			try {
 			    socket = deviceBT.createInsecureRfcommSocketToServiceRecord(myUUID);
-			  }
-			 catch (  IOException e) {
+			}
+			catch (IOException e) {
 			    e.printStackTrace();
-			  }
+			}
 			try {
 				reader.Connect(socket);
 			} catch (CAENRFIDException e) {
@@ -197,6 +214,8 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			}
 			reader =null;
 		} else if ("restartTemp".equals(action)) {
+
+			String rfidToReset = args.getString(1);			
 			String resultString = "";
 			Set<BluetoothDevice> pairedDevices = mBluetoothAdapter
 					.getBondedDevices();
@@ -206,9 +225,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n"
 								+ device.getAddress());
@@ -216,6 +235,7 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 					}
 				}
 			}
+			
 			reader = new CAENRFIDReader();
 			try {
 			    socket = deviceBT.createInsecureRfcommSocketToServiceRecord(myUUID);
@@ -229,86 +249,96 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-//			reader.addCAENRFIDEventListener(this);
+				//			reader.addCAENRFIDEventListener(this);
 			CAENRFIDLogicalSource source = null;
 			try {
 				int power =reader.GetPower();
 				Log.d("caenrfid","Power="+power);
 				reader.SetPower(450);
-//				source.SetSelected_EPC_C1G2(CAENRFIDLogicalSourceConstants.EPC_C1G2_All_SELECTED);
-//				reader.SetProtocol(CAENRFIDProtocol.CAENRFID_EPC_C1G1);
+				//				source.SetSelected_EPC_C1G2(CAENRFIDLogicalSourceConstants.EPC_C1G2_All_SELECTED);
+				//				reader.SetProtocol(CAENRFIDProtocol.CAENRFID_EPC_C1G1);
 				source = reader.GetSource("Source_0");
 				CAENRFIDTag[] MyTags = source.InventoryTag();
 
 				if (MyTags != null && MyTags.length > 0) {
 					for (int i = 0; i < MyTags.length; i++)
 					{
-
+						Log.d("caenrfid","argument 2 : "+rfidToReset);
+						
+						
 						resultString = "";
 						String EPCString = Caenrfid.toHexString(MyTags[i].GetId());
 						Log.d("caenrfid",EPCString);
 
-						byte[] DataToRead;
-						DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)0, (short)2);
-						int numsamples = Integer.parseInt(Caenrfid.toHexString(DataToRead),16);
-						Log.d("caenrfid","sensors: "+numsamples);
-						boolean ext = false;
-						if (numsamples==3)
-							ext = true;
+						// CHECKING IF FOUNDED RFID'S HAS CURRENT SELECTED RFID
+						if (EPCString.equals(rfidToReset)) {
 
-						int samplesaddress = 34;
-						if (ext)
-							samplesaddress = 34+8230;
-						DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplesaddress, (short)2);
-						resultString += "Number of samples now deleted: "+Caenrfid.toHexString(DataToRead)+"\n";
-						Log.d("caenrfid","Tag read, value = " + Caenrfid.toHexString(DataToRead));
+							byte[] DataToRead;
+							// Read from memory location
+							DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)0, (short)2);
+							int numsamples = Integer.parseInt(Caenrfid.toHexString(DataToRead),16);
+							Log.d("caenrfid","sensors: "+numsamples);
+							boolean ext = false;
+							if (numsamples==3)
+								ext = true;
 
-						int startTimeAddress = 30;
-						if (ext)
-							startTimeAddress = 30+8230;
-						DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)startTimeAddress, (short)4);
-						String tid = new Date(Long.parseLong(Caenrfid.toHexString(DataToRead), 16)*1000).toString();
-						resultString += "Was start time: "+tid+"\n";
-						Log.d("caenrfid","Tag read, value = " + Long.parseLong(Caenrfid.toHexString(DataToRead), 16) +","+ Caenrfid.toHexString(DataToRead));
-						//Stop logging
-						int opAddress = 28;
-						if (ext)
-							opAddress = 28+8230;
-						byte[] DataToWrite = hexStringToByteArray("0000");
-						source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2, DataToWrite);
-						//Set sampling
-						int samplingAddress = 36;
-						if (ext)
-							samplingAddress = 36+8230;
+							int samplesaddress = 34;
+							if (ext)
+								samplesaddress = 34+8230;
+							DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplesaddress, (short)2);
+							resultString += "Number of samples now deleted: "+Caenrfid.toHexString(DataToRead)+"\n";
+							Log.d("caenrfid","Tag read, value = " + Caenrfid.toHexString(DataToRead));
 
-						int seconds = args.getInt(0);
+							int startTimeAddress = 30;
+							if (ext)
+								startTimeAddress = 30+8230;
+							DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)startTimeAddress, (short)4);
+							String tid = new Date(Long.parseLong(Caenrfid.toHexString(DataToRead), 16)*1000).toString();
+							resultString += "Was start time: "+tid+"\n";
+							Log.d("caenrfid","Tag read, value = " + Long.parseLong(Caenrfid.toHexString(DataToRead), 16) +","+ Caenrfid.toHexString(DataToRead));
+							//Stop logging
+							int opAddress = 28;
+							if (ext)
+								opAddress = 28+8230;
+							byte[] DataToWrite = hexStringToByteArray("0000");
+							source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2, DataToWrite);
+							//Set sampling
+							int samplingAddress = 36;
+							if (ext)
+								samplingAddress = 36+8230;
 
-						Log.d("caenrfid","Sampling = " + seconds);
-						DataToWrite = hexStringToByteArray(String.format("%04d", seconds));
-				//		DataToWrite = hexStringToByteArray("0708");
-				//		DataToWrite = hexStringToByteArray("0008");
-						source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplingAddress, (short)2, DataToWrite);
+							int seconds = args.getInt(0);
 
-						//Read sampling
-						DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplingAddress, (short)2);
-						Log.d("caenrfid","Sampling = " + Caenrfid.toHexString(DataToRead));
-						resultString += "Sampling time (seconds): "+Caenrfid.toHexString(DataToRead)+"\n";
+							Log.d("caenrfid","Sampling = " + seconds);
+							DataToWrite = hexStringToByteArray(String.format("%04d", seconds));
+							//		DataToWrite = hexStringToByteArray("0708");
+							//		DataToWrite = hexStringToByteArray("0008");
+							source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplingAddress, (short)2, DataToWrite);
 
-						//Set startTime
+							//Read sampling
+							DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)samplingAddress, (short)2);
+							Log.d("caenrfid","Sampling = " + Caenrfid.toHexString(DataToRead));
+							resultString += "Sampling time (seconds): "+Caenrfid.toHexString(DataToRead)+"\n";
 
-						long unixTime = System.currentTimeMillis() / 1000L;
-						DataToWrite = hexStringToByteArray(Long.toHexString(unixTime));
-						String tid2 = new Date(Long.parseLong(Caenrfid.toHexString(DataToWrite), 16)*1000).toString();
-						resultString += "Is now start time: "+tid2+"\n";
-						Log.d("caenrfid","Written time start = "+ unixTime +","+ Caenrfid.toHexString(DataToWrite));
-						source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)startTimeAddress, (short)4, DataToWrite);
+							//Set startTime
 
-						//start logging
-						DataToWrite = hexStringToByteArray("03c0");
-						source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2, DataToWrite);
-						Log.d("caenrfid","tag started again");
-						DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2);
-						Log.d("caenrfid","Tag read, should be 03c0 for started confirmation = " + Caenrfid.toHexString(DataToRead));
+							long unixTime = System.currentTimeMillis() / 1000L;
+							DataToWrite = hexStringToByteArray(Long.toHexString(unixTime));
+							String tid2 = new Date(Long.parseLong(Caenrfid.toHexString(DataToWrite), 16)*1000).toString();
+							resultString += "Is now start time: "+tid2+"\n";
+							Log.d("caenrfid","Written time start = "+ unixTime +","+ Caenrfid.toHexString(DataToWrite));
+							source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)startTimeAddress, (short)4, DataToWrite);
+
+							//start logging
+							DataToWrite = hexStringToByteArray("03c0");
+							source.WriteTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2, DataToWrite);
+							Log.d("caenrfid","tag started again");
+							DataToRead = source.ReadTagData_EPC_C1G2(MyTags[i], (short)3, (short)opAddress, (short)2);
+							Log.d("caenrfid","Tag read, should be 03c0 for started confirmation = " + Caenrfid.toHexString(DataToRead));
+							break;
+						}else {
+							resultString += "0";
+						}
 					}
 				}
 			} catch (CAENRFIDException e) {
@@ -326,10 +356,10 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+
 			PluginResult result = new PluginResult(PluginResult.Status.OK,resultString);
 			this.callbackContext = callbackContext;
 			this.callbackContext.sendPluginResult(result);
-
 		} else if ("readTemp".equals(action)) {
 			String resultString = "";
 			String resultString2= "";
@@ -343,9 +373,9 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 				for (BluetoothDevice device : pairedDevices) {
 					// Add the name and address to an array adapter to show
 					// in a ListView
-//					mArrayAdapter.add(device.getName() + "\n"
-//							+ device.getAddress());
-//					mArrayDevice.add(device);
+					//					mArrayAdapter.add(device.getName() + "\n"
+					//							+ device.getAddress());
+					//					mArrayDevice.add(device);
 					if (device.getName().contains("qID")){
 						Log.d("caenRFID",device.getName() + "\n" + device.getAddress());
 						deviceBT = device;
@@ -355,32 +385,33 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 			reader = new CAENRFIDReader();
 			try {
 			    socket = deviceBT.createInsecureRfcommSocketToServiceRecord(myUUID);
-			  }
-			 catch (  IOException e) {
+			} catch (  IOException e) {
 			    e.printStackTrace();
-			  }
+			}
 			try {
 				reader.Connect(socket);
 			} catch (CAENRFIDException e) {
 				// TODO Auto-generated catch block
+				Log.d("caenrfid","Inside catch of socket connection");
 				e.printStackTrace();
 			}
 			reader.addCAENRFIDEventListener(this);
 			CAENRFIDLogicalSource source = null;
 			try {
-
+				Log.d("caenrfid","Power="+args.getInt(0));
+				//Log.d("caenrfid","MyRFID="+args.getInt(1));
 				reader.SetPower(args.getInt(0));
-				int power =reader.GetPower();
+				int power = reader.GetPower();
 				Log.d("caenrfid","Power="+power);
 				source = reader.GetSource("Source_0");
 				//source.AddReadPoint("Ant1");
-//				CAENRFIDTag[] MyTags = source.InventoryTag();
+				//				CAENRFIDTag[] MyTags = source.InventoryTag();
 				CAENRFIDTag[] MyTags = null;
 				int count = 10;
-//				while ((MyTags = source.InventoryTag()) == null && count > 0){
-//					count--;
-//					Log.d("caenrfid","once more");
-//				}
+				//				while ((MyTags = source.InventoryTag()) == null && count > 0){
+				//					count--;
+				//					Log.d("caenrfid","once more");
+				//				}
 				MyTags = source.InventoryTag();
 				Set<String> tagList = new HashSet<String>();
 				if (MyTags != null && MyTags.length > 0) {

@@ -15,8 +15,9 @@
 		</div>
 		<button onClick="restartTemp();">Restart Temperature sensor(s)</button> -->
 		<!-- <button onClick="readTemp();">Read Temperature sensor(s)</button> -->
-		<button onClick="restartTemp();">Restart Temperature sensor(s)</button>
-		<button onClick="readTempLoggers();">Read Temperature sensor(s)</button>
+		<!-- <button onClick="restartTemp();" class="ui-btn ui-corner-all ui-shadow ui-btn-b ui-btn-icon-left">Restart Temperature sensor(s)</button> -->
+		<button onClick="readTempLoggerRFID();">Read Temperature sensor(s)</button>
+		<!-- <button onClick="readTempLoggers();">Read Temperature sensor(s) Data</button> -->
 		
 		<div id="chartdiv" style="height:400px;width:100%;"></div>
 		<div><textarea id="tempData" readonly></textarea></div>
@@ -26,11 +27,19 @@
 		<button onClick="saveToFile();">Save to file</button>
 		<button onClick="readFromFile();">Read from file</button></div> 
 		-->
-
 		<!-- <ul data-role="listview"  id="fileList" data-filter="true" data-theme="b">
 		</ul> -->
 	</div>
 
 	<div data-role="footer" data-position="fixed">
+	</div>
+
+	<div data-role="popup" id="rfidsListingPopup" data-overlay-theme="b" class="ui-content">
+		
+		<h3>Detected RFID's Listing</h3>
+		<p>Please select one logger:</p>
+		<div id="rfidsListingContainer"></div>
+		<a onClick="selectLoggerPlotData();" href="#" data-role="button" data-theme="b" >Select RFID</a>
+
 	</div>
 </div>

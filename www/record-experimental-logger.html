@@ -16,7 +16,7 @@
 				<!-- <button onClick="readTempLoggerRFID();">Read Temperature sensor(s)</button> -->
 				<a onClick="readTempLoggerRFID();" href="#" data-role="button" data-theme="b" >Read Temperature sensor(s)</a>
 			</div>
-			
+
 			<div class="ui-field-contain">
 				<label for="loggerid">Temp Logger Id:</label>
 				<input name=loggerid  type="text" id="loggerid"></input>
@@ -26,7 +26,7 @@
 				<label for="startDate">Device set up date and time:</label>
 				<input type="date" name="startDate" id="startDate" readonly></input>
 				<!-- <input type="text" name="startDate" id="startDate" readonly></input> -->
-			</div>			
+			</div>
 
 			<!-- <div class="ui-field-contain">
 				<label for="startTime">Device set up Time:</label>
@@ -160,4 +160,11 @@
 		</div>
 	</div>
 
+	<div data-role="popup" id="rfidsListingPopup" data-overlay-theme="b" class="ui-content">		
+		<h3>Detected RFID's Listing</h3>
+		<p>Please select one logger:</p>
+		<div id="rfidsListingContainer"></div>
+		<a onClick="selectRfid();" href="#" data-role="button" data-theme="b" >Select RFID</a>
+	</div>
+	
 </div>

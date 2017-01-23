@@ -410,7 +410,7 @@ function locateGSM(){
 function getCurLoc(){
 	if (watchID!=null)
 	navigator.geolocation.clearWatch(watchID);
-	options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
+	options = {maximumAge:600, timeout:100000, enableHighAccuracy: true};
 	watchID = navigator.geolocation.watchPosition(onGotLocation, function(){ console.log("no location found"); }, options);
 }
 
@@ -1104,14 +1104,19 @@ function readTempLoggers(){
 	
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 	// var power = $('#pow').val();
-	var power = 450;
+	var power = 40;
 	// showTemp()
 	Caenrfid.readTemp(function(data){
+		console.log(data)
 		ajaxCall({text:data},'POST',logUrl,'json')
 		$.mobile.loading( 'hide');
 		// $('#tempData').val(data);
-		$('#endSeason').show();
-		plotTemperature(data,true);
+		// $('#endSeason').show();
+		if(data=='{}'){
+			showToast("Loggers not in reach. Please try one more time.", 'bottom', 'long');
+		}else{
+			plotTemperature(data,true);
+		}		
 		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
 		// listOfflineTemps();
 
@@ -1138,17 +1143,26 @@ function readTemp(){
 	},[power]);
 }
 
+function selectRfid(){
+	var selectedRfid = $("input:radio[name=selectRfid]:checked").val();
+	SELECTED_RFID = selectedRfid;
+	$('#loggerRFID').val(selectedRfid);
+	$( "#rfidsListingPopup" ).popup( "close" )
+}
+
 function readTempLoggerRFID(){
-	showImageLoader()
-	// var power = $('#pow').val();
 	var power = 450;
 	var logUrl = HOST + API_PATH + WRITE_LOG;
 	var HTML = '';
+	showImageLoader()
+	// var power = $('#pow').val();
 
 	Caenrfid.readTemp(function(data){
+	// Caenrfid.scanRFID(function(data){
 
 		console.log('data',JSON.parse(data))
 		var RFIDs = JSON.parse(data);
+		LOGGERS_RFID_DATA = RFIDs;
 		if (isEmpty(RFIDs)){
 			showToast("Loggers not in reach. Please place it near to detector.", 'bottom', 'long');
 			$.mobile.loading( 'hide');
@@ -1156,9 +1170,11 @@ function readTempLoggerRFID(){
 		}
 
 		HTML += '<fieldset data-role="controlgroup">';		    
-		Object.keys(RFIDs).forEach(function(key,index) {			
-			HTML += '<label for="' + key + '">' + key + '</label>';
-			HTML += '<input type="radio" name="selectRfid" id="' + key + '" value="' + key + '">';
+		Object.keys(RFIDs).forEach(function(key,index) {
+			HTML += '<div><input type="radio" name="selectRfid" id="' + key + '" value="' + key + '"';	
+			(index==0) ? HTML += 'checked="checked"' : HTML += '';
+			HTML += ' >';
+			HTML += '<label for="' + key + '">' + key + '</label></div>';
 		});
 		HTML += '</fieldset>';
 
@@ -1166,114 +1182,122 @@ function readTempLoggerRFID(){
 		$( "#rfidsListingPopup" ).popup( "open" )
 
 		navigator.notification.beep(1);
+		$.mobile.loading( 'hide');
+		showToast("Got the RFID", 'bottom', 'long');
+
 		//var RFID = Object.keys(data)[0];		
-		var RFID = data.substring(4,26);
-		$('#loggerRFID').val(RFID);
-		
+		// var RFID = data.substring(4,26);
+		// $('#loggerRFID').val(RFID);		
 		// plotTemperature(data,true);
 		// listOfflineTemps();
 		// data = {"3415AF9D600000000098962E":"]"};
-		//alert(data)
-		//alert(JSON.stringify(data));
-		
-		$.mobile.loading( 'hide');
-		showToast("Got the RFID", 'bottom', 'long');
 		
 		// ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json')
 		// ajaxCall({text:RFID},'POST',logUrl,'json')
 
 	},function (err){
-		showToast("Unable to read Logger RFID", 'bottom', 'long');
+		showToast("Unable to read Logger RFID, please check connection with device.", 'bottom', 'long');
 		console.log("error: ",err)
 		$.mobile.loading('hide');		
 		ajaxCall({text:JSON.stringify(err)},'POST',logUrl,'json')
 	},[power]);
 }
 
+function selectLoggerPlotData() {
+	console.log(LOGGERS_RFID_DATA)
+	var selectedRfid = $("input:radio[name=selectRfid]:checked").val();
+	SELECTED_RFID = selectedRfid;
+	$( "#rfidsListingPopup" ).popup( "close" )
+	var loggerData = {};
+	loggerData[selectedRfid] = LOGGERS_RFID_DATA[selectedRfid]
+	plotTemperature(loggerData,true);
+}
+
 function plotTemperature(data,write){
 	
 	$('#endSeason').show();
-	jsonData = $.parseJSON(data);
-	$.each(jsonData,function (key,value){
+	// jsonData = $.parseJSON(data);
+	$.each(data,function (key,value){
 	// $.each(data,function (key,value){
 		$('#tempData').show();
 		$('#tempData').val('RFID: '+key);
 		// if (write)
-		// 	openFile(key);
-		
+		// openFile(key);
 		// saveReadLoggerData('07E04FB1001D8B90BEAFA005',data)
-
-		var data2 = eval(value);
 		$("#chartdiv").html("");
-		var plot1 = $.jqplot("chartdiv", [data2], {
-            seriesColors: ["rgba(78, 135, 194, 0.7)"],
-            title: 'Temperature plot: '+key,
-            highlighter: {
-                show: true,
-                sizeAdjust: 1,
-                tooltipOffset: 9
-            },
-            grid: {
-                background: 'rgba(57,57,57,0.0)',
-                drawBorder: false,
-                shadow: false,
-                gridLineColor: '#666666',
-                gridLineWidth: 2
-            },
-            legend: {
-                show: false,
-                placement: 'outside'
-            },
-            seriesDefaults: {
-                rendererOptions: {
-                    smooth: true,
-                    animation: {
-                        show: true
-                    }
-                },
-                showMarker: false
-            },
-            series: [
-                {
-                    fill: false,
-                    label: key
-                }
-            ],
-            axesDefaults: {
-                rendererOptions: {
-                    baselineWidth: 1.5,
-                    baselineColor: '#444444',
-                    drawBaseline: false
-                }
-            },
-            axes: {
-                xaxis: {
-                    renderer: $.jqplot.DateAxisRenderer,
-                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
-                    tickOptions: {
-                        formatString: "%b %e %H:%M:%S'",
-                        angle: -30,
-                        textColor: '#dddddd'
-                    },
-                    
-                    tickInterval: "1 hour",
-                    drawMajorGridlines: false
-                },
-                yaxis: {
-                    
-                    pad: 0,
-                    rendererOptions: {
-                        minorTicks: 1
-                    },
-                    tickOptions: {
-                        formatString: "%'dC",
-                        showMark: false
-                    }
-                }
-            }
-        });
-
-        saveReadLoggerData(key,data)
+		if (value==']') {
+			showToast("No record to show. This logger is empty.", 'bottom', 'long');
+		}else{
+			var data2 = eval(value);
+			var plot1 = $.jqplot("chartdiv", [data2], {
+	            seriesColors: ["rgba(78, 135, 194, 0.7)"],
+	            title: 'Temperature plot: '+key,
+	            highlighter: {
+	                show: true,
+	                sizeAdjust: 1,
+	                tooltipOffset: 9
+	            },
+	            grid: {
+	                background: 'rgba(57,57,57,0.0)',
+	                drawBorder: false,
+	                shadow: false,
+	                gridLineColor: '#666666',
+	                gridLineWidth: 2
+	            },
+	            legend: {
+	                show: false,
+	                placement: 'outside'
+	            },
+	            seriesDefaults: {
+	                rendererOptions: {
+	                    smooth: true,
+	                    animation: {
+	                        show: true
+	                    }
+	                },
+	                showMarker: false
+	            },
+	            series: [
+	                {
+	                    fill: false,
+	                    label: key
+	                }
+	            ],
+	            axesDefaults: {
+	                rendererOptions: {
+	                    baselineWidth: 1.5,
+	                    baselineColor: '#444444',
+	                    drawBaseline: false
+	                }
+	            },
+	            axes: {
+	                xaxis: {
+	                    renderer: $.jqplot.DateAxisRenderer,
+	                    tickRenderer: $.jqplot.CanvasAxisTickRenderer,
+	                    tickOptions: {
+	                        formatString: "%b %e %H:%M:%S'",
+	                        angle: -30,
+	                        textColor: '#dddddd'
+	                    },
+	                    
+	                    tickInterval: "1 hour",
+	                    drawMajorGridlines: false
+	                },
+	                yaxis: {
+	                    
+	                    pad: 0,
+	                    rendererOptions: {
+	                        minorTicks: 1
+	                    },
+	                    tickOptions: {
+	                        formatString: "%'dC",
+	                        showMark: false
+	                    }
+	                }
+	            }
+	        });
+	        saveReadLoggerData(key,data)
+	    }
 	});
 }
 
@@ -1300,7 +1324,7 @@ function saveReadLoggerData(rfid, data){
 						}					
 						tempLoggerData.push(filename);
 						localStorage.setItem('tempLoggerData',JSON.stringify(tempLoggerData));
-						showToast("Data Saved Successfully.", 'bottom', 'long')
+						showToast("Data Read and Saved Successfully.", 'bottom', 'long')
 
 					},  function fail(e) {					
 						showToast("FileSystem Error", 'bottom', 'long')
@@ -1381,7 +1405,6 @@ function syncAllReadLoggerData(type){
     	return;
     }
 }
-
 
 function openFile(tagid){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
@@ -1553,9 +1576,13 @@ function setTempLogger(){
 	// RESETTING AND SETTING THE TEMP LOGGER ACCORDING TO INTERVAL
 
 	// var tempInt = $("#interval").val();
-	var tempInt = requestData.interval;
+	var tempInt = (requestData.interval*60);
 	Caenrfid.restartTemp(function(data){
-		// alert(data);
+		console.log('data:'+data+':data');
+		if (data=="0"||data=="") {
+			showToast("Selected Logger not detected. Try again placing it close to detector.", 'bottom', 'long');
+			return;
+		}
 		recordNestLogger(requestData)
 		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json');
 
@@ -1568,15 +1595,17 @@ function setTempLogger(){
 			RfidLoggerList[requestData.loggerRFID] = requestData.loggerid;
 			localStorage.setItem('RfidLoggerList',JSON.stringify(RfidLoggerList));
 		}
+
 	},function (err){
 		console.log(err)
-		showToast("Error while reading temp logger", 'bottom', 'long');		
+		showToast("Error while reading temp logger", 'bottom', 'long');
 		ajaxCall({text:JSON.stringify(err)},'POST',logUrl,'json');
-		// return;
+		return;
 
+		/*
 		recordNestLogger(requestData)
 		if (requestData.loggerRFID) {
-			if (localStorage.getItem('RfidLoggerList')) {
+			if (localStorage.getItem(z'RfidLoggerList')) {
 				var RfidLoggerList = JSON.parse(localStorage.getItem('RfidLoggerList'));
 			}else{
 				var RfidLoggerList = {};
@@ -1584,21 +1613,28 @@ function setTempLogger(){
 			RfidLoggerList[requestData.loggerRFID] = requestData.loggerid;
 			localStorage.setItem('RfidLoggerList',JSON.stringify(RfidLoggerList));
 		}
+		*/
 
-	},[tempInt]);
+	},[tempInt,SELECTED_RFID]);
 }
 
 function restartTemp(){
 	// var tempInt = $("#tempint").val();
-	var tempInt = 1800;
+	// var tempInt = 1800;
+	var tempInt = 259200;
 	Caenrfid.restartTemp(function(data){
-		alert('Reset Successfully');
-		// alert(data);
-		ajaxCall({text:data},'POST',logUrl,'json');
+		console.log('data:'+data+':data');
+		if (data=="0") {
+			showToast("Selected Logger not detected. Try again placing it close to detector.", 'bottom', 'long');
+			return;
+		}
+		showToast("Logger Reset Successfully", 'bottom', 'long');
+		// ajaxCall({text:data},'POST',logUrl,'json');
 	},function (err){
-		alert("error"+err)
-		ajaxCall({text:err},'POST',logUrl,'json');
-	},[tempInt]);
+		// alert("error"+err)
+		// ajaxCall({text:err},'POST',logUrl,'json');
+		showToast("Unable to detect logger. Please try again.", 'bottom', 'long');
+	},[tempInt,SELECTED_RFID]);
 }
 
 function scanRFIDSuccess(rfid){
@@ -2623,6 +2659,14 @@ function searchRFID(rfidSearch){
 }
 
 function scanOnceSuccess(rfid){
+	if (rfid=="noTag") {
+		showToast("No tag found. Please try again.", 'bottom', 'long');
+		return;
+	}
+	if (rfid=="foundlogger") {
+		showToast("Found logger instead of tag. Place your Cradal tag near detector & try again.", 'bottom', 'long');
+		return;
+	}
 	navigator.notification.beep(2);
 	// navigator.notification.vibrate(2000);
 	$.mobile.loading('hide');

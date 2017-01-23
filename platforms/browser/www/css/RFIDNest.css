@@ -150,3 +150,22 @@ input.not-ok-button{
     word-wrap: break-word;
     word-break: break-all;
 }
+#rfidsListingContainer{
+    background: #eee;
+    padding: 5px;
+}
+#rfidsListingContainer label {
+    font-size: 15px;
+    font-weight: 900;
+    float: left;
+    margin-top: 4px;
+    margin-bottom: 20px;
+}
+#rfidsListingContainer input[type="radio"] {
+    float: left;
+    /*margin-left: 10%;*/
+    margin-top: 4px;
+}
+#rfidsListingContainer fieldset {
+    padding: 13px 0 0 0;
+}
