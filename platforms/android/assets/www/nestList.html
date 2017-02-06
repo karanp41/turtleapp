@@ -4,28 +4,48 @@
 		<h1>NestList</h1>				
 	</div>
 
+	<!-- <a href="#popupPanel" data-rel="popup" data-transition="slide" data-position-to="window" data-role="button">Open panel</a>
+			
+	<div data-role="popup" id="popupPanel" data-corners="false" data-theme="none" data-shadow="false" data-tolerance="0,0">
+	    <button data-theme="b" data-icon="back" data-mini="true">Back</button>
+	    <button data-theme="b" data-icon="grid" data-mini="true">Menu</button>
+		<button data-theme="b" data-icon="search" data-mini="true">Search</button>
+	</div> -->
+
+
 	<div role="main" id="frontPage" class="ui-content">
-		<select onchange="filterByHatchlingDays(this);">
-		    <option value="">Days to hatch</option>
-		    <option value="5">5</option>
-		    <option value="4">4</option>
-		    <option value="3">3</option>
-		    <option value="2">2</option>
-		    <option value="1">1</option>
-		    <option value="0">0</option>
-		    <option value="-1">-1</option>
-		    <option value="-2">-2</option>
-		    <option value="-3">-3</option>
-		    <option value="-4">-4</option>
-		    <option value="-5">-5</option>
-		    <option value="">Default Records</option>
-		</select>
+		<div class="nest-list-search-wrapper">
+			<label class="nestlist-search-label">Search By</label>
+			<select class="nestlist-search-select" onchange="filterByParams(this);">
+			    <!-- <option value="">Days to hatch</option> -->
+			    <option value="0">Nesting Date</option>
+			    <option value="1">Earliest Hatchling</option>
+			    <option value="2">Nest Id</option>
+			    <option value="">Default Records</option>
+			</select>
+			<!-- <select class="nestlist-search-select" onchange="filterByHatchlingDays(this);">
+			    <option value="">Days to hatch</option>
+			    <option value="5">5</option>
+			    <option value="4">4</option>
+			    <option value="3">3</option>
+			    <option value="2">2</option>
+			    <option value="1">1</option>
+			    <option value="0">0</option>
+			    <option value="-1">-1</option>
+			    <option value="-2">-2</option>
+			    <option value="-3">-3</option>
+			    <option value="-4">-4</option>
+			    <option value="-5">-5</option>
+			    <option value="">Default Records</option>
+			</select> -->
+		</div>
+		<input type="text" id="searchParams" name="Date" style="display:none;">
 		<ul id="nestList" class="nestlist" data-role="listview" data-filter="true">
 		</ul>
-		<ul id="offlineList" class="nestlist" data-role="listview" data-filter="true">			
+		<ul id="offlineList" class="nestlist" data-role="listview" data-filter="true">
 		</ul>
-	</div><!-- /content -->
-		
+	</div>
+
 	<div id="tab-footer" data-role="footer" data-position="fixed">
 		<div data-role="navbar">
 	      	<ul>
@@ -34,6 +54,6 @@
 	        	<li><a href="offlineMenu.html" data-theme="b" data-icon="recycle">Offline Data</a></li>
 	      	</ul>
 	    </div>
-	</div><!-- /footer -->
+	</div>
 
-</div><!-- /page -->
+</div>

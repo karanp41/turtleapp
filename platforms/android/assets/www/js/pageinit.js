@@ -3,7 +3,16 @@ $(document).on('pageinit','#recordNestPage', function(){
 	getRecordNestInformation();
 	$('#rfid').val(curTag);
 	$('#rfidHEX').val(curTag);
-	populateTurtlesList();    
+	populateTurtlesList();
+	$("[name=turtleType]").click(function(){
+		setNestIdOnTurtelForm()
+		var val = $(this).val()
+		if (val==1) {$( "#popupAddTurtle" ).popup( "open" );$("html, body").animate({ scrollTop: 0 }, "slow")}
+		else{$( "#turtleTagID" ).focus()}	
+        // $('.ui-block-c').hide();
+        // $("#daysOperating-"+$(this).val()).show('slow');
+        // ($(this).val()==1)? $('#depthOfProbeContainer').hide() : $("#depthOfProbeContainer").show('slow');
+    });
 });
 
 $(document).on('pageinit','#relocateNestPage', function(){
@@ -74,6 +83,13 @@ $(document).on('pageinit','#turtleInfo', function(){
 });
 
 $(document).on('pageinit','#nestListPage', function(){
+	$( "#popupPanel" ).on({
+	    popupbeforeposition: function() {
+	        var h = $( window ).height();
+
+	        $( "#popupPanel" ).css( "height", h );
+	    }
+	});
 	populateNestList();
 });
 

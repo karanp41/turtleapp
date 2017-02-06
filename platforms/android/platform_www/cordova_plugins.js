@@ -272,6 +272,13 @@ module.exports = [
         "clobbers": [
             "cordova.plugins.diagnostic"
         ]
+    },
+    {
+        "file": "plugins/cordova-plugin-keyboard/www/keyboard.js",
+        "id": "cordova-plugin-keyboard.keyboard",
+        "clobbers": [
+            "window.Keyboard"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -289,7 +296,8 @@ module.exports.metadata =
     "cordova-plugin-x-toast": "2.5.2",
     "cordova-plugin-file-transfer": "1.6.0",
     "cordova-plugin-network-information": "1.3.0",
-    "cordova.plugins.diagnostic": "3.3.2"
+    "cordova.plugins.diagnostic": "3.3.2",
+    "cordova-plugin-keyboard": "1.1.4"
 };
 // BOTTOM OF METADATA
 });

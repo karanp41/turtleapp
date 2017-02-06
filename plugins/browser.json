@@ -45,6 +45,9 @@
         },
         "cordova.plugins.diagnostic": {
             "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
+        },
+        "cordova-plugin-keyboard": {
+            "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
         }
     },
     "dependent_plugins": {}

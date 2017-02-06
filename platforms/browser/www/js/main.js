@@ -63,8 +63,8 @@ function onLocationFoundMap(position){
 }
 
 function onLocationErrorMap(){
-		showToast("No Location found", 'bottom', 'long')
-	}
+	showToast("No Location found", 'bottom', 'long')
+}
 
 function mapInitFind(rfid){
 	
@@ -207,6 +207,26 @@ function updateMapFind(rfid){
 }
 
 
+function unflagNest(){
+	if (currentNestId) {
+		console.log(currentNestId)
+		var data = {id:currentNestId}
+		$.ajax({
+			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			url: HOST + API_PATH + REMOVE_FLAG,
+			data:data,
+			type: "POST",
+			success: function(data) {
+				showToast("Nest Unflagged successfully", 'bottom', 'long');
+				$.mobile.changePage("nestList.html");
+				console.log(data)
+			},
+			dataType:"json"
+		});
+	}	
+}
+
 function populateNestList(filter){
 	var networkState = navigator.connection.type;
     if (networkState !== Connection.NONE) {
@@ -303,6 +323,11 @@ function nestDetailOffline(filename){
 function filterByHatchlingDays(element) {
 	console.log(element.value)
 	populateNestList(element.value)
+}
+
+function filterByParams(element) {	
+	$("#searchParams").show();
+	$("#searchParams").val(element.value);
 }
 
 function populateTurtlesList(){
@@ -1145,6 +1170,7 @@ function readTemp(){
 
 function selectRfid(){
 	var selectedRfid = $("input:radio[name=selectRfid]:checked").val();
+	SELECTED_RFID = selectedRfid;
 	$('#loggerRFID').val(selectedRfid);
 	$( "#rfidsListingPopup" ).popup( "close" )
 }
@@ -1157,6 +1183,7 @@ function readTempLoggerRFID(){
 	// var power = $('#pow').val();
 
 	Caenrfid.readTemp(function(data){
+	// Caenrfid.scanRFID(function(data){
 
 		console.log('data',JSON.parse(data))
 		var RFIDs = JSON.parse(data);
@@ -1404,7 +1431,6 @@ function syncAllReadLoggerData(type){
     }
 }
 
-
 function openFile(tagid){
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
@@ -1577,8 +1603,11 @@ function setTempLogger(){
 	// var tempInt = $("#interval").val();
 	var tempInt = (requestData.interval*60);
 	Caenrfid.restartTemp(function(data){
-		console.log(data)
-		
+		console.log('data:'+data+':data');
+		if (data=="0"||data=="") {
+			showToast("Selected Logger not detected. Try again placing it close to detector.", 'bottom', 'long');
+			return;
+		}
 		recordNestLogger(requestData)
 		ajaxCall({text:JSON.stringify(data)},'POST',logUrl,'json');
 
@@ -1611,7 +1640,7 @@ function setTempLogger(){
 		}
 		*/
 
-	},[tempInt]);
+	},[tempInt,SELECTED_RFID]);
 }
 
 function restartTemp(){
@@ -1619,8 +1648,11 @@ function restartTemp(){
 	// var tempInt = 1800;
 	var tempInt = 259200;
 	Caenrfid.restartTemp(function(data){
-		console.log(data);
-		// alert('Reset Successfully');
+		console.log('data:'+data+':data');
+		if (data=="0") {
+			showToast("Selected Logger not detected. Try again placing it close to detector.", 'bottom', 'long');
+			return;
+		}
 		showToast("Logger Reset Successfully", 'bottom', 'long');
 		// ajaxCall({text:data},'POST',logUrl,'json');
 	},function (err){
@@ -2640,18 +2672,25 @@ function populateNests(){
 }
 
 function searchRFID(rfidSearch){
-	// alert('search pressed')
-	
 	Caenrfid.scanRFID(function(data){
-		// alert(JSON.stringify(data), '  :  '+data);
-		// alert(JSON.stringify(data));
+		console.log('data',data);
+		// return;
 		searchRFIDSuccess(data.substring(0)+"",rfidSearch);
 	},function (err){
-		alert("error"+err)
+		showToast("Unable to detect. Check bluetooth connectivity with device & try again", 'bottom', 'long');
+		// alert("error"+err)
 	});    
 }
 
 function scanOnceSuccess(rfid){
+	if (rfid=="noTag") {
+		showToast("No tag found. Please try again.", 'bottom', 'long');
+		return;
+	}
+	if (rfid=="foundlogger") {
+		showToast("Found logger instead of tag. Place your Cradal tag near detector & try again.", 'bottom', 'long');
+		return;
+	}
 	navigator.notification.beep(2);
 	// navigator.notification.vibrate(2000);
 	$.mobile.loading('hide');
@@ -2729,6 +2768,7 @@ function searchRFIDSuccess(rfid,search){
 		navigator.notification.beep(2);
 	}
 	var requestData = {};
+	var output = "";
 	requestData.id = rfid;
 	if ($.inArray(rfid,tags)==-1){
 		//	navigator.notification.beep(2);
@@ -2743,17 +2783,21 @@ function searchRFIDSuccess(rfid,search){
 			type: "POST",
 
 			success: function(data) {
-				alert(JSON.stringify(data));
-				var output = "<li id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" ("+hex+")</li>";
-				if (typeof data.data.Nest.NestID != "undefined")
-					output = "<li id='"+hex+"' hex='"+hex+"'>"+data.data.Nest.NestID+" ("+hex+")</li>";
-					$('#taglist').append(output).listview('refresh');
-					var selector = '#'+hex+'';
-					$(selector).on("click",nestListClick);
-					data=" "+data+" ";
-				//				if (data.indexOf(search)>-1){
-				//					navigator.notification.beep(1)
-				//				}
+				// alert(JSON.stringify(data));
+				output += "<li id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" ("+hex+")</li>";
+				if (typeof data.data.Nest != "undefined"){
+					if (typeof data.data.Nest.NestID != "undefined"){
+						output = "<li id='"+hex+"' hex='"+hex+"'>"+data.data.Nest.NestID+" ("+hex+")</li>";
+						
+						//				if (data.indexOf(search)>-1){
+						//					navigator.notification.beep(1)
+						//				}
+					}
+				}
+				$('#taglist').append(output).listview('refresh');
+				var selector = '#'+hex+'';
+				$(selector).on("click",nestListClick);
+				data=" "+data+" ";
 			}
 		});
 		tags.push(rfid);
@@ -2821,6 +2865,7 @@ function processTagDbId(id){
 	$("body").pagecontainer("change", "nestInfo.html", {reloadPage: true});
 }
 
+
 function populateNestInfo(curTag){
 	$("#nestInfo").html("");
 	var requestData = {};
@@ -2839,15 +2884,39 @@ function populateNestInfo(curTag){
 			var eventTime = (new Date(data.data.Nest.timestamp)).toDateString();
 			var nestingDate = (new Date(data.data.Nest.nestingDate)).toDateString();
 			
-			var htmlInfo = "<div data-role='collapsible' ><h3>"+data.data.Nest.NestID+"</h3><p><div class='ui-grid-a'>";
-			$.each(data.data.Nest,function (key,val){
+			var htmlInfo = "<div data-role='collapsible' ><h3>"+data.data.Nest.NestID+"</h3><div class='ui-grid-a'><div class='divider'>ORIGINAL NEST (Position A)</div>";
 
-				if (key == "rfid"){
-					// window.curTag = val;
-				}
+			unsortedNestFields = data.data.Nest;
+			// console.log(unsortedNestFields)
+				sortedNestFields = {}
+				NEST_DETAILS_SORT_SERIAL.forEach(function(key) {
+					// console.log(key)
+					if (unsortedNestFields[key]) {
+						sortedNestFields[key]=unsortedNestFields[key]
+					}else{
+						sortedNestFields[key]=""
+					}
+				})
+
+			$.each(sortedNestFields,function (key,val){
+
 				if (jQuery.inArray( key, NEST_FIELDS_TO_SKIP)<0 ) {
-					htmlInfo = htmlInfo + "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>"+key.replace(/([A-Z])/g, ' $1').replace('_',' ').toUpperCase().trim()+"</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
-					if (val==null) {
+					if (key=="alt_tideZone") {
+						htmlInfo += "<div class='divider'>RELOCATED NEST (Position B)</div>";
+					}
+					htmlInfo += "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>";
+					if (NEST_FIELDS_TO_REPLACE_NAME[key]) {						
+						if (sortedNestFields['flagged']==1&&key=="comment") {
+							htmlInfo += "FLAG COMMENT";
+							$("#unflagNest").show();
+						}else{
+							htmlInfo += NEST_FIELDS_TO_REPLACE_NAME[key];
+						}
+					}else{
+						htmlInfo += key.replace(/([A-Z])/g, ' $1').replace('_',' ').toUpperCase().trim();
+					}
+					htmlInfo += "</div></div>" + "<div class='ui-block-b'><div class='ui-bar ui-bar-a' id='nest"+key+"'>";
+					if (val==null||val=="") {
 						htmlInfo = htmlInfo + " - </div></div>";
 					}else{
 						htmlInfo = htmlInfo + val+"</div></div>";
@@ -2858,14 +2927,14 @@ function populateNestInfo(curTag){
 			nestID = data.data.Nest.NestID;
 			curDbId = data.data.Nest.id;
 			nestData = data.data.Nest;
-			htmlInfo = htmlInfo + "</div><!-- /grid-a --></p></div>";
+			htmlInfo = htmlInfo + "</div></div>";
 			//	$("#nestInfo").html(htmlInfo);
-				if (data.data.Nest.adoptId != ""){
-			//		$("#linkaAdoptAnestButton").button( "disable" );
-				}
+			if (data.data.Nest.adoptId != ""){
+				//	$("#linkaAdoptAnestButton").button( "disable" );
+			}
 			$("#nestInfo").html(htmlInfo );
 			$('div[data-role=collapsible]').collapsible();
-			htmlInfo="";
+			// htmlInfo="";
 
 
 			$.ajax({
@@ -3887,11 +3956,14 @@ $(document).on("pagecontainerbeforechange", function(e, data) {
 
 function setNestIdOnTurtelForm() {
 	$('#turtleNestId').html($('#NestID').val());
+	$('#tagid').val($('#turtleTagID').val());
+	$( "#popupAddTurtle" ).popup( "open" );
+	$("html, body").animate({ scrollTop: 0 }, "slow");
 }
 
 function openTurtleSummary() {
 	showDataInConfirm($('#turtleInfoForm').serializeArray(),"#summary_turtle");	
-	$( "#popupAddTurtle" ).popup( "close" )
+	$( "#popupAddTurtle" ).popup( "close" );
 	$('.dismissible_poup').show();
 	var body = $("html, body");
 	body.stop().animate({scrollTop:0}, '500', 'swing');
@@ -3899,7 +3971,11 @@ function openTurtleSummary() {
 
 function closeTurtleSummary() {
 	$('.dismissible_poup').hide();
-	setTimeout(function(){ console.log('asdsadasdasda'); $( "#addTurtleButton" ).trigger( "click" ); }, 100);	
+	setTimeout(function(){ 
+		$( "#popupAddTurtle" ).popup( "open" );
+		$("html, body").animate({ scrollTop: 0 }, "slow")
+		// $( "#addTurtleButton" ).trigger( "click" ); 
+	}, 100);	
 }
 
 function currentTempData(tempFilename) {

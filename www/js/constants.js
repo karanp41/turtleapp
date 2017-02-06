@@ -28,7 +28,7 @@ var logOb = null;
 var LOGGERS_RFID_DATA = {};
 var SELECTED_RFID = '';
 
-
+// 3 pillar global
 
 /**********     OTHER CONSTANT    ********/
 
@@ -38,8 +38,81 @@ var DYNAMIC_RADIO_FIELDS_ARRAY = ['deviceType']
 
 var DYNAMIC_TO_SKIP_FIELDS_ARRAY = ['rfid', 'loggerRFID']
 
-var NEST_FIELDS_TO_SKIP = ['id','flagged','created','modified','user_id','tempCount','success']
+var NEST_FIELDS_TO_SKIP = ['id','flagged','created','modified','user_id','tempCount','success','timestamp','wetSand']
 
+var NEST_FIELDS_TO_REPLACE_NAME = {NestID:"NEST ID",alt_nestLoc:"ALT NEST AREA",gridCover:"NEST COVER WITH",drySand:"DRY ZONE",nestLoc:"NEST AREA",comment:"COMMENT ORIG NEST",certain:"DAYS UNCERTAIN",alternationTime:"ALTERATION TIME"}
+
+var NEST_DETAILS_SORT_SERIAL = [
+									"NestID",
+									"rfid",
+									"adoptId",
+									"turtleId",
+									"nestingDate",
+									"nestingTime",
+									"certain",
+									"species",
+									"origLat",
+									"origLong",
+									"probability",
+									"dataLoggerId",
+									"timestamp",
+									"wetSand",
+									
+									"tideZone",
+									"wetZone",
+									"drySand",
+									"distanceFromSea",
+									"vegetation",
+									"leftLandMark",
+									"leftMarkNum",
+									"leftMarkDist",
+									"rightLandMark",
+									"rightMarkNum",
+									"rightMarkDist",									
+									
+									"nestLoc",
+									"heightOfWetSand",
+									"heightOfDrySand",
+									"diameterEggChamber",
+									"totEggs",
+									"dmgEggs",
+									"numberOfBodyPits",
+									"gridCover",
+									"comment",
+									"devices",
+
+									"alt_tideZone",
+									"alt_wetZone",									
+									"alt_dryZone",
+									"alt_distSea",
+									"alt_vegetation",
+									"altTimeOptions",
+									"alternationTime",
+									"alt_lat",
+									"alt_long",
+									"gridCoverAlt",
+									"alt_nestLoc",
+
+									"altLeftLandmark",
+									"altLeftLandmarkNum",
+									"altLeftLandmarkDist",
+
+									"altRightLandmark",
+									"altRightLandmarkNum",
+									"altRightLandmarkDist",
+
+									"commentAlt",
+									"devicesAlt",
+									"flag_reason",
+
+									"created",
+									"flagged",
+									"id",
+									"modified",
+									"success",
+									"tempCount",
+									"user_id"
+								]
 
 
 
@@ -69,6 +142,7 @@ var SAVE_NEST 		= 'saveNest';
 var LIST_NESTS 		= 'listNests';
 var FIND_NESTS 		= 'findNests';
 var FIND_NESTS_BY_RFID = 'NestByRFID';
+var REMOVE_FLAG 	= 'removeFlag';
 
 var LIST_TURTLES 	= 'listTurtles';
 var LIST_NEST_EVENTS= 'nestEvents';
@@ -77,6 +151,7 @@ var SAVE_TURTLE 	= 'saveTurtle';
 var SAVE_PREDATIONS = 'savePredations';
 var SAVE_EMERGENCE 	= 'saveEmergences';
 var SAVE_UNCOVER 	= 'saveUncover';
+var SAVE_TEMP_INFO	= 'saveTempInfo';
 
 var NEST_PREDATION 	= 'nestPredation';
 
@@ -89,7 +164,6 @@ var UPLOAD_UNCOVER		= 'uploadOfflineUncover';
 var UPLOAD_LOGGER		= 'saveOfflineTempInfo';
 var UPLOAD_READ_LOGGER	= 'uploadTemp';
 
-var SAVE_TEMP_INFO	= 'saveTempInfo';
 var WRITE_LOG		= 'writeLog';
 
 

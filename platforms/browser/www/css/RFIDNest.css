@@ -100,6 +100,13 @@ input.not-ok-button{
     color: #272727;
     width: 100%;
     display: none;
+    z-index: 12;
+    padding-bottom: 27px;
+    height: 100%;
+}
+#summary_turtle table td {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.49);
+    border-right: 1px solid rgba(0, 0, 0, 0.49);
 }
 #summary_turtle {
     background: rgb(234, 234, 234);
@@ -168,4 +175,60 @@ input.not-ok-button{
 }
 #rfidsListingContainer fieldset {
     padding: 13px 0 0 0;
+}
+#popupAddTurtle{
+    margin-top: 20px;
+}
+.add-turtle-button {
+    font-size: 16px;
+    text-transform: capitalize;
+}
+.divider {
+    width: 100%;
+    text-align: center;
+    background: #111;
+    color: #fff;
+    text-shadow: none;
+    font-weight: 100;
+    margin: 8px auto;
+    padding: 5px 0;
+    clear: both;
+    top: 3px;
+    position: relative;
+}
+#unflagNest{
+    display: none;
+}
+#popupPanel-popup {
+    right: 0 !important;
+    left: auto !important;
+}
+#popupPanel {
+    width: 200px;
+    border: 1px solid #000;
+    border-right: none;
+    background: rgba(0,0,0,.5);
+    margin: -1px 0;
+}
+#popupPanel .ui-btn {
+    margin: 2em 15px;
+}
+
+.nest-list-search-wrapper {
+    overflow: hidden;
+}
+.nestlist-search-label{
+    width: 30%;
+    float: left;
+    height: 40px;
+    font-weight: 900 !important;
+    margin-top: 20px !important;
+}
+.nestlist-search-select {
+    width: 70%;
+    float: right;
+}
+span.nestlist-search-select {
+    width: 100%;
+    float: left;
 }

@@ -579,8 +579,8 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 		//result.setKeepCallback(false);
 		if (this.callbackContext != null) {
 			this.callbackContext.sendPluginResult(result);
-//			this.callbackContext.success("success:"+tag);
-//			this.callbackContext = null;
+			//			this.callbackContext.success("success:"+tag);
+			//			this.callbackContext = null;
 		}
 
 	}
@@ -614,6 +614,26 @@ public class Caenrfid extends CordovaPlugin implements CAENRFIDEventListener {
 		Log.d("caenrfid","notified tag");
 		ArrayList<CAENRFIDNotify> tags= (ArrayList<CAENRFIDNotify>)evt.getData();
 		for (CAENRFIDNotify tag : tags) {
+			
+			/*
+			CAENRFIDLogicalSource source = null;
+			source = reader.GetSource("Source_0");
+			source.SetReadCycle(0);
+			reader.SetPower(1300);
+			
+			byte[] DataToRead;
+			// Reading company id to differentiate b/w cradal and logger
+			DataToRead = source.ReadTagData_EPC_C1G2(tag, (short)2, (short)0, (short)4);
+			String companyId = Caenrfid.toHexString(DataToRead);
+			if ("00005358".equals(companyId)) {
+				Log.d("caenrfid","This is Temp Logger.");
+				Log.d("caenrfid","companyId:"+companyId);
+			}else {
+				Log.d("caenrfid","This is Cradal Tag.");
+				Log.d("caenrfid","companyId:"+companyId);
+			}
+			*/
+
 			String id=this.toHexString(tag.getTagID());
 			Log.d("caenrfid","tag: "+id);
 			onReaderDetectTag(id);
