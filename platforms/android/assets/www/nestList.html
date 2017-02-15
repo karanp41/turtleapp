@@ -15,15 +15,14 @@
 
 	<div role="main" id="frontPage" class="ui-content">
 		<div class="nest-list-search-wrapper">
-			<label class="nestlist-search-label">Search By</label>
-			<select class="nestlist-search-select" onchange="filterByParams(this);">
-			    <!-- <option value="">Days to hatch</option> -->
+			<label class="nestlist-search-label">Filter By</label>
+			<!-- <select class="nestlist-search-select" onchange="filterByParams(this);">
 			    <option value="0">Nesting Date</option>
 			    <option value="1">Earliest Hatchling</option>
 			    <option value="2">Nest Id</option>
 			    <option value="">Default Records</option>
-			</select>
-			<!-- <select class="nestlist-search-select" onchange="filterByHatchlingDays(this);">
+			</select> -->
+			<select class="nestlist-search-select" onchange="filterByHatchlingDays(this);">
 			    <option value="">Days to hatch</option>
 			    <option value="5">5</option>
 			    <option value="4">4</option>
@@ -37,7 +36,7 @@
 			    <option value="-4">-4</option>
 			    <option value="-5">-5</option>
 			    <option value="">Default Records</option>
-			</select> -->
+			</select>
 		</div>
 		<input type="text" id="searchParams" name="Date" style="display:none;">
 		<ul id="nestList" class="nestlist" data-role="listview" data-filter="true">

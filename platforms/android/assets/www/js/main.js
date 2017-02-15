@@ -1737,6 +1737,35 @@ function showDataInConfirm(fields,target){
     
 }
 
+function confirmDeleteImageNewNest(image) {
+	console.log(image)
+	$('#popupDialogDelete').popup("open"); 
+	document.getElementById('confirmDelete').onclick = function(){ deleteImageNewNest(image); }	
+}
+
+function deleteImageNewNest(image) {
+	delete window[image];
+	$('#'+image).attr('src',NEST_IMG_DEFAULT);	
+	$('#'+image).next().hide();	
+}
+
+function confirmDelete(popupDiv, image) {
+	// CHECKING IF IMAGE IS DELETED OR NOT EXIST OR NOT
+	if($('#'+image).attr('src')!=NEST_IMG_DEFAULT) {
+		$('#'+popupDiv).popup("open"); 
+		document.getElementById('confirmDelete').onclick = function(){ deleteImage(image); }
+	}else{
+		showToast("Can't delete. Please add an image first.", 'bottom', 'long');
+	}
+}
+
+function deleteImage(image) {	
+	window[image] = '';
+	window[image+'_id'] = $('#'+image+'_id').val();	
+	$('#'+image).attr('src',NEST_IMG_DEFAULT);
+	$('#'+image).next().hide();
+}
+
 function recordNewNest(type, successStatus){
 	// type: 1.update, 2.new
 
@@ -1789,6 +1818,26 @@ function recordNewNest(type, successStatus){
 		requestData.success = successStatus
 	}	
 	requestData.user_id = localStorage.getItem('team_id')
+
+
+	if (typeof window['nestImage1']!='object') {
+		requestData.nestImage1 = window['nestImage1'].toString(); delete window['nestImage1'];
+		if (typeof window['nestImage1_id']!='object'&&requestData.id) {
+			requestData.nestImage1_id = window['nestImage1_id'].toString(); delete window['nestImage1_id'];
+		}
+	}
+	if (typeof window['nestImage2']!='object') {
+		requestData.nestImage2 = window['nestImage2'].toString(); delete window['nestImage2'];
+		if (typeof window['nestImage2_id']!='object'&&requestData.id) {
+			requestData.nestImage2_id = window['nestImage2_id'].toString(); delete window['nestImage2_id'];
+		}
+	}
+	if (typeof window['nestImage3']!='object') {
+		requestData.nestImage3 = window['nestImage3'].toString(); delete window['nestImage3'];
+		if (typeof window['nestImage3_id']!='object'&&requestData.id) {
+			requestData.nestImage3_id = window['nestImage3_id'].toString(); delete window['nestImage3_id'];
+		}
+	}
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_NEST;
@@ -3057,6 +3106,7 @@ function setNestFieldsValue(){
 	var networkState = navigator.connection.type;
 	if (networkState !== Connection.NONE) {
 		var nestData = window.currentNestData.data.Nest
+		var nestImageData = window.currentNestData.data.NestImage
 	}else{
 		var nestData = window.currentNestData
 	}
@@ -3107,6 +3157,19 @@ function setNestFieldsValue(){
 	$('#comment').val(nestData.comment);
 	$('#devices').val(nestData.devices);
 	$('#primaryId').val(nestData.id);
+
+	if(nestImageData[0]) {
+		$('#nestImage1').attr('src',NEST_IMG_PATH + nestImageData[0].image_name); 
+		$('#nestImage1_id').val(nestImageData[0].id);
+	}
+	if(nestImageData[1]){
+		$('#nestImage2').attr('src',NEST_IMG_PATH + nestImageData[1].image_name); 
+		$('#nestImage2_id').val(nestImageData[1].id);
+	} 
+	if(nestImageData[2]){
+		$('#nestImage3').attr('src',NEST_IMG_PATH + nestImageData[2].image_name); 
+		$('#nestImage3_id').val(nestImageData[2].id);
+	} 
 
 	// RELLOCATED FIELDS
 	$('#alterationTime').val(nestData.alterationTime);

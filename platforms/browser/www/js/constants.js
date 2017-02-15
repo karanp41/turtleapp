@@ -129,11 +129,14 @@ var POS_OPTIONS_MINIFY = {
 
 /**********    API CONSTANT    ********/
 
-var HOST = 'http://203.100.79.86:8005/';
+var HOST = 'http://203.129.220.70:8005/';
+// var HOST = 'http://203.100.79.86:8005/';
 // var HOST = 'http://192.155.246.146:8292/';
 
 var API_PATH = 'webservices/';
 // var API_PATH = 'application/ajax/';
+var NEST_IMG_PATH = HOST + 'files/nestimages/';
+var NEST_IMG_DEFAULT = 'img/plus.png';
 
 var LOGIN = 'login';
 var GET_RECORD_NEST_INFORMATION = 'getRecordNestInformation';

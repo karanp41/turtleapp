@@ -11,6 +11,61 @@ function showToast(message, position, duration, onSuccess, onSuccess) {
   );
 }
 
+// CAPTURE IMAGE FROM CAMERA
+function captureImage(imageDiv, quality, destinationType, sourceType, targetWidth, targetHeight, isEdit) {
+
+  switch (destinationType) {
+      case 'base64':
+          destinationType = Camera.DestinationType.DATA_URL;
+          break;
+      case 'fileURI':
+          destinationType = Camera.DestinationType.FILE_URI;
+          break;
+      case 'nativeURI':
+          destinationType = Camera.DestinationType.NATIVE_URI;
+          break;
+      default:
+          destinationType = Camera.DestinationType.DATA_URL;
+          break;
+  }
+
+  switch (sourceType) {
+      case 'gallery':
+          sourceType = Camera.PictureSourceType.PHOTOLIBRARY;
+          break;
+      case 'camera':
+          sourceType = Camera.PictureSourceType.CAMERA;
+          break;
+      default:
+          sourceType = Camera.PictureSourceType.CAMERA;
+          break;
+  }
+
+  navigator.camera.getPicture(onSuccess, onFail, { 
+    quality: quality,
+    destinationType: destinationType,
+    sourceType: sourceType,
+    correctOrientation: true,
+    targetWidth: targetWidth,
+    targetHeight: targetHeight
+  });
+
+  function onSuccess(imageData) {
+      var image = document.getElementById(imageDiv);
+      image.src = "data:image/jpeg;base64," + imageData;
+      window[imageDiv] = "data:image/jpeg;base64," + imageData;
+      if (isEdit) {
+        window[imageDiv+'_id'] = $('#'+imageDiv+'_id').val();
+      }
+      $( "#"+imageDiv ).next().css('display','block')      
+  }
+
+  function onFail(message) {
+      showToast('Failed because: ' + message, 'bottom', 'long');
+  }
+}
+
+
 // GETTING QUERYSTRING FROM URL
 function getUrlVars(){
     var vars = [], hash;
