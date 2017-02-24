@@ -140,6 +140,7 @@ var NEST_IMG_DEFAULT = 'img/plus.png';
 
 var LOGIN = 'login';
 var GET_RECORD_NEST_INFORMATION = 'getRecordNestInformation';
+var GET_BEACH_LIST = 'getBeachList';
 
 var SAVE_NEST 		= 'saveNest';
 var LIST_NESTS 		= 'listNests';

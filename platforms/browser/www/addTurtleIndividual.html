@@ -13,12 +13,12 @@
 			</div> -->
 
 			<div>
-				<label for="tagID">tagID</label> <input type="text"
+				<label for="tagID">tag ID</label> <input type="text"
 					 id="tagid" name="tagID" placeholder=""></input>
 			</div>
 
 			<div>
-				<label for="replacedID">replacedID</label> <input type="text"
+				<label for="replacedID">replaced Tag ID</label> <input type="text"
 					id="replacedID" name="replacedID" placeholder=""></input>
 			</div>
 
@@ -30,6 +30,11 @@
 			<div>
 			<label for="taggingDate">Tagging date</label><input type="date"
 					name="taggingDate" id="taggingDate" placeholder=""></input>
+			</div>
+
+			<div class="ui-field-contain">
+				<label for="locationPred">Turtle location:</label>
+				<p id="locationPred" class="message"><img src="img/loader-mini.gif"></p>
 			</div>
 
 			<div>
@@ -92,6 +97,22 @@
 			<label for="supracaudal">Supracaudal</label> <input type="number"
 					name="supracaudal" id="supracaudal" placeholder=""></input>
 			</div>
+				<div>
+				<label for="rightflipper_tagid">Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid" id="rightflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid">Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid" id="leftflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="rightflipper_tagid_replaced">Replaced Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid_replaced" class="transform-to-caps" id="rightflipper_tagid_replaced" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid_replaced">Replaced Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid_replaced" class="transform-to-caps" id="leftflipper_tagid_replaced" placeholder=""></input>
+				</div>
 
 			<div>
 			<label for="devices">Devices</label> <input type="text"
@@ -101,6 +122,8 @@
 			<label for="notes">Notes</label> <textarea 
 					name="notes" id="notes" placeholder=""></textarea>
 			</div>
+			<input type="hidden" name="latitude" 	id="lat" />
+			<input type="hidden" name="longitude" 	id="long" />
 			<a href="#popupConfirmTurtleInfo" id="confirmButton" data-rel="popup" 
 			data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" 
 			data-transition="pop">Save</a>
@@ -111,7 +134,7 @@
 		<form class="summary-popup-form">
 				<h3>Summary of the data below. Submit?</h3>
 				<div id="summary"></div>
-				<button id="successfulButton" class="ui-btn"
+				<button type="button" id="successfulButton" class="ui-btn"
 					onClick="saveTurtle('individual');">RECORD NOW</button>
 				<a href="#" data-rel="back" data-role="button" data-theme="a"
 					data-icon="delete">Wait! Need Corrections </a>			

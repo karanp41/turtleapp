@@ -250,6 +250,13 @@ function formateDate(date) {
   return newDate.getDate()+'-'+newDate.getMonth()+'-'+newDate.getFullYear()
 }
 
+function setDateOfField(date,field) {
+  var newDate = new Date(date)
+  var month = ("0" + (newDate.getMonth() + 1)).slice(-2);
+  value = newDate.getFullYear()+'-'+month+'-'+newDate.getDate();
+  $('#'+field).val(value);
+}
+
 function showImageLoader(){  
       $.mobile.loading( 'show', {
         text: 'Loading temperature',

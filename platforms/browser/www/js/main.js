@@ -442,6 +442,18 @@ function getCurLoc(){
 function onGotLocation(position){
 	//	alert(position.coords.latitude.toFixed(5)+", "+position.coords.longitude.toFixed(5));
 	console.log(position)
+
+	// if (localStorage.getItem("latitudeArray")) {
+	// 	if (latitudeArray.length<=12) {
+	// 		var total = 0;
+	// 		for(var i = 0; i < latitudeArray.length; i++) {
+	// 		    total += latitudeArray[i];
+	// 		}
+	// 		var avg = total / latitudeArray.length;
+	// 	}
+	// }
+
+
 	$("#lat").val(position.coords.latitude);
 	$("#long").val(position.coords.longitude);
 
@@ -457,6 +469,35 @@ function onGotLocation(position){
 	long = position.coords.longitude;
 	$("#accurazy").val(position.coords.accurazy);
 	accurazy = position.coords.accurazy;
+	
+
+
+	// LATITUDE
+	if (localStorage.getItem("latitudeArray")) {
+		var latitudeArray = JSON.parse(localStorage.getItem("latitudeArray"));
+	}else{
+		var latitudeArray = []
+	}
+	if (latitudeArray.length<=12) {
+		latitudeArray.push(lat)
+		latitudeArrayString = JSON.stringify(latitudeArray)
+		localStorage.setItem("latitudeArray", latitudeArrayString);
+	}
+	
+	
+
+	// LONGITUDE
+	if (localStorage.getItem("longitudeArray")) {
+		var longitudeArray = JSON.parse(localStorage.getItem("longitudeArray"));
+	}else{
+		var longitudeArray = []
+	}
+	if (longitudeArray.length<=12) {
+		longitudeArray.push(long)
+		longitudeArrayString = JSON.stringify(longitudeArray)
+		localStorage.setItem("longitudeArray", longitudeArrayString);
+	}
+	
 }
 
 function altGetCurLoc(){
@@ -1596,6 +1637,7 @@ function setTempLogger(){
 		showToast("Logger Id is required", 'bottom', 'long');return;
 	}
 	requestData.user_id = localStorage.getItem('team_id')
+	requestData.beach_id = localStorage.getItem("current_beach_id");
 
 
 	// RESETTING AND SETTING THE TEMP LOGGER ACCORDING TO INTERVAL
@@ -1767,8 +1809,8 @@ function deleteImage(image) {
 }
 
 function recordNewNest(type, successStatus){
-	// type: 1.update, 2.new
-
+	// type: 1.update, 2.new, 3.relocate
+	console.log(type)
 	var data = jQuery('#NestData').serializeArray();
 	var requestData = {};
 	for (var i = 0, l = data.length; i < l; i++) {
@@ -1819,25 +1861,30 @@ function recordNewNest(type, successStatus){
 	}	
 	requestData.user_id = localStorage.getItem('team_id')
 
+	if (!requestData.id) {
+		requestData.beach_id = localStorage.getItem("current_beach_id");
+	}
 
-	if (typeof window['nestImage1']!='object') {
-		requestData.nestImage1 = window['nestImage1'].toString(); delete window['nestImage1'];
-		if (typeof window['nestImage1_id']!='object'&&requestData.id) {
-			requestData.nestImage1_id = window['nestImage1_id'].toString(); delete window['nestImage1_id'];
+	if (type != "relocate") {
+		if (typeof window['nestImage1']!='object') {
+			requestData.nestImage1 = window['nestImage1'].toString(); delete window['nestImage1'];
+			if (typeof window['nestImage1_id']!='object'&&requestData.id) {
+				requestData.nestImage1_id = window['nestImage1_id'].toString(); delete window['nestImage1_id'];
+			}
 		}
-	}
-	if (typeof window['nestImage2']!='object') {
-		requestData.nestImage2 = window['nestImage2'].toString(); delete window['nestImage2'];
-		if (typeof window['nestImage2_id']!='object'&&requestData.id) {
-			requestData.nestImage2_id = window['nestImage2_id'].toString(); delete window['nestImage2_id'];
+		if (typeof window['nestImage2']!='object') {
+			requestData.nestImage2 = window['nestImage2'].toString(); delete window['nestImage2'];
+			if (typeof window['nestImage2_id']!='object'&&requestData.id) {
+				requestData.nestImage2_id = window['nestImage2_id'].toString(); delete window['nestImage2_id'];
+			}
 		}
-	}
-	if (typeof window['nestImage3']!='object') {
-		requestData.nestImage3 = window['nestImage3'].toString(); delete window['nestImage3'];
-		if (typeof window['nestImage3_id']!='object'&&requestData.id) {
-			requestData.nestImage3_id = window['nestImage3_id'].toString(); delete window['nestImage3_id'];
+		if (typeof window['nestImage3']!='object') {
+			requestData.nestImage3 = window['nestImage3'].toString(); delete window['nestImage3'];
+			if (typeof window['nestImage3_id']!='object'&&requestData.id) {
+				requestData.nestImage3_id = window['nestImage3_id'].toString(); delete window['nestImage3_id'];
+			}
 		}
-	}
+	}		
 
 	// var url = HOST + API_PATH + "addNest.php?un="+username+"&mac="+ownID+"&"+content;
 	var url = HOST + API_PATH + SAVE_NEST;
@@ -2066,6 +2113,9 @@ function saveTurtle(type){
 	if (requestData.wetZone > 1000||requestData.wetZone < 0) {
 		showToast("Enter valid wet zone distance", 'bottom', 'long');return;
 	}
+	if (!requestData.id) {
+		requestData.beach_id = localStorage.getItem("current_beach_id");
+	}
 
 	var networkState = navigator.connection.type;
 	if (networkState !== Connection.NONE) {
@@ -2085,6 +2135,9 @@ function saveTurtle(type){
 	        		$( "#associateTurtle" ).popup( "open" )
 		            window.RECENTTURTLEDATA = data.data.Turtle;
 		            console.log(window.RECENTTURTLEDATA)
+	        	}
+	        	if (type=='individual') {
+	        		$.mobile.changePage("turtles.html");
 	        	}
 	            // $("#associateTurtlePopup").popup("open");
 	            
@@ -2319,23 +2372,28 @@ function populateTurtleInfo(tagid){
 		type: "POST",
 		success: function(data) {
 			val = data.data.Turtle;
-			$('#dbid').val(val.id);
+			$('#turtle_id').val(val.id);
 			$('#replacedID').val(val.replacedID);
 			$('#tagid').val(val.tagID);
-			$('#tagDate').val(val.taggingDate);
-			$('#replacedDate').val(val.replacedDate);
+			// $('#tagDate').val(val.taggingDate);
+			setDateOfField(val.replacedDate,'replacedDate');
+			setDateOfField(val.taggingDate,'taggingDate');
 			$('#nameOfMeasurer').val(val.nameOfMeasurer);
-			$('#scl').val(val.straight_carapace_length);
-			$('#scw').val(val.straight_carapace_width);
-			$('#ccl').val(val.curved_carapace_length);
-			$('#ccw').val(val.curved_carapace_width);
-			$('#n').val(val.nuchal);
-			$('#cr').val(val.costal_right);
-			$('#cl').val(val.costal_left);
-			$('#v').val(val.vertbral);
-			$('#mr').val(val.marginal_right);
-			$('#ml').val(val.marginal_left);
-			$('#sc').val(val.supracaudal);
+			$('#straight_carapace_length').val(val.straight_carapace_length);
+			$('#straight_carapace_width').val(val.straight_carapace_width);
+			$('#curved_carapace_length').val(val.curved_carapace_length);
+			$('#curved_carapace_width').val(val.curved_carapace_width);
+			$('#nuchal').val(val.nuchal);
+			$('#costal_right').val(val.costal_right);
+			$('#costal_left').val(val.costal_left);
+			$('#vertbral').val(val.vertbral);
+			$('#marginal_right').val(val.marginal_right);
+			$('#marginal_left').val(val.marginal_left);
+			$('#supracaudal').val(val.supracaudal);
+			$('#rightflipper_tagid').val(val.rightflipper_tagid);
+			$('#leftflipper_tagid').val(val.leftflipper_tagid);
+			$('#rightflipper_tagid_replaced').val(val.rightflipper_tagid_replaced);
+			$('#leftflipper_tagid_replaced').val(val.leftflipper_tagid_replaced);
 			$('#devices').val(val.devices);
 			$('#notes').val(val.notes);			
 		},
@@ -2947,10 +3005,23 @@ function populateNestInfo(curTag){
 					}
 				})
 
+			isRelocated = true;
+			if(
+				sortedNestFields['alt_lat']=="" ||sortedNestFields['alt_lat']==null ||
+				sortedNestFields['alt_long']=="" ||sortedNestFields['alt_long']==null
+				){
+				isRelocated = false;
+			}
+			console.log('isRelocated',isRelocated)
+			console.log(sortedNestFields)
+
 			$.each(sortedNestFields,function (key,val){
 
 				if (jQuery.inArray( key, NEST_FIELDS_TO_SKIP)<0 ) {
 					if (key=="alt_tideZone") {
+						if (!isRelocated) {
+							return false;
+						}
 						htmlInfo += "<div class='divider'>RELOCATED NEST (Position B)</div>";
 					}
 					htmlInfo += "<div class='ui-block-a'><div class='ui-bar ui-bar-a'>";
@@ -3172,7 +3243,7 @@ function setNestFieldsValue(){
 	} 
 
 	// RELLOCATED FIELDS
-	$('#alterationTime').val(nestData.alterationTime);
+	setDateOfField(nestData.alternationTime,'alternationTime');	
 	$('#altTimeOptions').val(nestData.altTimeOptions).selectmenu("refresh");
 	$('#alt_wetZone').val(nestData.alt_wetZone);
 	$('#alt_tideZone').val(nestData.alt_tideZone);
@@ -3185,8 +3256,10 @@ function setNestFieldsValue(){
 	$('#altRightLandmark').val(nestData.altRightLandmark).selectmenu("refresh");
 	$('#altRightLandmarkNum').val(nestData.altRightLandmarkNum);
 	$('#altRightLandmarkDist').val(nestData.altRightLandmarkDist);
+	$('#commentAlt').val(nestData.commentAlt);
 	$('#alt_nestLoc').val(nestData.alt_nestLoc).selectmenu("refresh");
 	$('#gridCoverAlt').val(nestData.gridCoverAlt).selectmenu("refresh");
+	$('#relocateNestId').text(nestData.NestID);
 }
 
 $(document).on('popupafteropen','#popupConfirm', function () {
@@ -3831,7 +3904,7 @@ function loginStepTwo(latitude,longitude,username,password) {
 			console.log(data)
 			$.mobile.loading('hide'); 
 			
-			if (data.code=="200"){				
+			if (data.code=="200"){
 				console.log(data);
 				showToast('Successfully Logged In', 'bottom', 'long')
 				localStorage.setItem("group_id", data.data.Group.id);
@@ -3842,7 +3915,7 @@ function loginStepTwo(latitude,longitude,username,password) {
 				localStorage.setItem("currentUserDetails", JSON.stringify(data.data.User));
 				$.mobile.navigate( "#menuPage" );
 			}else if(data.code=="201"){
-				showToast('Username or password is incorrect.', 'bottom', 'long')
+				showToast(data.message, 'bottom', 'long')
 				$('button').button( "disable" );
 			}else{
 				showToast('Seems like something went wrong.', 'bottom', 'long')
@@ -3868,16 +3941,62 @@ function setTeamData() {
 	});
 }
 
+// GETTING AND SETTING BEACH NAME DATA ON USER(TEAM) SELECTION DROPDOWN
+
+function getBeachList() {
+	var url= HOST + API_PATH + GET_BEACH_LIST;
+	var data = {id:$('#teamNames').val()}
+	$.ajax({
+		type: "POST",
+		data: data,
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+		url: url,
+		success: function(data) {
+			$.mobile.loading('hide');
+			if (data.code=="200"){
+				$("#currentBeach").selectmenu('refresh', true)
+				$("#currentBeach").html('')
+				$("#currentBeach").prev().html('Select')
+				$('#currentBeach').append('<option value="">Select</option>')
+
+				$.each(data.data, function (i, item) {
+					$('#currentBeach').append('<option data-object-id="'+i+'" value="'+item.UserBeach.beach_id+'">'+item.Beach.name+'</option>')
+				})
+			}else if(data.code=="201"){
+				$("#currentBeach").selectmenu('refresh', true)
+				$("#currentBeach").html('')
+				$("#currentBeach").prev().html('Select')
+				$('#currentBeach').append('<option value="">Select</option>')
+
+				showToast('No beach is assigned to this user.', 'bottom', 'long')
+			}else{
+				showToast('Seems like something went wrong.', 'bottom', 'long')
+			}
+		},
+		dataType:"json"
+	});
+}
 
 // SELECTING TEAM NAME 
 
 function setTeamName() {
 	var team_id = $('#teamNames').val();
-	var team_object_id = $('#teamNames option:selected').attr( "data-object-id" );	
-	console.log('team_id',team_id)
-	console.log('team_object_id',team_object_id)
-	localStorage.setItem("team_object_id", team_object_id);
+	var team_object_id = $('#teamNames option:selected').attr( "data-object-id" );
+	var current_beach_id = $('#currentBeach').val();
+	var current_beach_object_id = $('#currentBeach option:selected').attr( "data-object-id" );
+	var current_beach_name = $("#currentBeach option:selected").text();
 
+	console.log(team_id,current_beach_id)
+	if (team_id==""||current_beach_id=="") {
+		console.log('Please select username and beach to continue.')
+		showToast('Please select username and beach to continue.', 'bottom', 'long')
+		return;
+	}
+	// console.log('team_id',team_id)
+	// console.log('team_object_id',team_object_id)
+
+	localStorage.setItem("team_object_id", team_object_id);
 	if (!team_id||team_id<=0) {
 		showToast('You have no user with you. Selecting you as current user.', 'bottom', 'long')
 		// showToast('You have to select user first.', 'bottom', 'long')
@@ -3887,6 +4006,12 @@ function setTeamName() {
 
 	}
 	localStorage.setItem("team_id", team_id);
+
+		
+	localStorage.setItem("current_beach_id", current_beach_id);	
+	localStorage.setItem("current_beach_object_id", current_beach_object_id);
+	localStorage.setItem("current_beach_name", current_beach_name);
+
 	$.mobile.navigate( "#menuPage" );
 }
 
@@ -4005,7 +4130,9 @@ $(document).on("pagecontainerbeforechange", function(e, data) {
 			// currentUsername = currentUserDetails.first_name +' '+ currentUserDetails.last_name;			
 			currentUsername = currentUserDetails.username;			
 		}
+		currentBeachName = localStorage.getItem("current_beach_name")
 		$('#user_name').text(currentUsername)
+		$('#current_beach_name').text(currentBeachName)
 		checkCurrentLocation()
 	}else if (localStorage.getItem("user_id")) {
 		data.toPage = $("#selectUser");
@@ -4210,6 +4337,7 @@ function tempDataDetails() {
 	});
 
 }
+
 
 
 

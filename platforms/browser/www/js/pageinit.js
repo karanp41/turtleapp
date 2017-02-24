@@ -146,6 +146,10 @@ $(document).on('pageinit','#turtles', function(){
 	populateTurtlesListView();
 });
 
+$(document).on('pageinit','#addTurtleSimple', function(){
+	getCurLoc();
+});
+
 $(document).on('pageinit','#menuPage', function(){
 	console.log('here');
 });

@@ -44,7 +44,7 @@
 			
 				<div role="main" id="frontPage" class="ui-content">
 					<!-- <p id="message" class="message"></p> -->
-					<p class="current-user">Current user <b id="user_name">Raman Kumar</b></p>
+					<p class="current-user"><b id="user_name">Raman Kumar</b>(<b id="current_beach_name">Raman Kumar</b>)</p>
 					<p id="id" hidden="hidden" class="message"></p>
 					<div class="ui-field-contain">
 						<ul id="menu" data-role="listview">
@@ -53,6 +53,7 @@
 							<li><a href="record-nest.html">Nest information</a></li>
 							<!-- <li><a href="flag-nest.html">Flag Nest</a></li> -->
 							<!--li><a onclick="gotoRecordNestAndReset()">Nest information</a></li-->
+							<li><a href="nonNestingEmergence.html">Non-nesting Emergence</a></li>
 							<li><a href="turtles.html">Turtles</a></li>
 							<li><a href="predation.html" onclick="clearPrefilledData()">Predation</a></li>
 							<li><a href="emergence.html" onclick="clearPrefilledData()">Emergence</a></li>
@@ -144,7 +145,14 @@
 					<label for="un" class="ui-hidden-accessible">Username:</label>
 					<div class="ui-field-contain">
 						<label for="teamNames">Username:</label>
-						<select name="teamNames" id="teamNames">
+						<select name="teamNames" id="teamNames" onchange="getBeachList()">
+							<option value="">SELECT</option>
+						</select>
+					</div>
+					
+					<div class="ui-field-contain">
+						<label for="currentBeach">Current Beach:</label>
+						<select name="currentBeach" id="currentBeach">
 							<option value="">SELECT</option>
 						</select>
 					</div>

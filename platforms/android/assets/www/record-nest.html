@@ -139,13 +139,13 @@
 				</div>
 
 				<div class="ui-field-contain">
-					<label for="nestLoc">Nest area:</label> <select name="nestLoc"
-						id="nestLoc">
+					<label for="nestLoc">Nest area:</label>
+					<select name="nestLoc" onchange="$('#nest-area-subtitle').show()" id="nestLoc">
 						<option value="0">Select Nest Area</option>
 					</select>
+					<h6 class="h6-subtitle" id="nest-area-subtitle"><b>If must empty ORIGINAL NEST</b></h6>
 				</div>
 
-				<hr />
 
 				<div class="ui-field-contain">
 					<label for="heightOfWetSand">Height wet sand (cm):</label> <input
@@ -233,8 +233,8 @@
 			<!-- </div> -->
 
 		</form>
-		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="#popupConfirm" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
-		<a href="#popupConfirm2" id="loginButton2" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Unsuccessful</a>
+		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="#popupConfirm" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Preview Data</a>
+		<!-- <a href="#popupConfirm2" id="loginButton2" data-rel="popup" data-position-to="window" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Unsuccessful</a> -->
 		
 
 		<!-- POPUP TO DELETE IMAGE -->
@@ -309,12 +309,29 @@
 				</div>
 
 				<div>
+				<label for="rightflipper_tagid">Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid" id="rightflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid">Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid" id="leftflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="rightflipper_tagid_replaced">Replaced Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid_replaced" class="transform-to-caps" id="rightflipper_tagid_replaced" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid_replaced">Replaced Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid_replaced" class="transform-to-caps" id="leftflipper_tagid_replaced" placeholder=""></input>
+				</div>
+
+				<div>
 				<label for="taggingDate">Tagging date</label><input type="date"
 						name="taggingDate" id="taggingDate" placeholder=""></input>
 				</div>
 
 				<div>
-					<label for="replacedID">replaced ID</label> <input type="text"
+					<label for="replacedID">replaced tag ID</label> <input type="text"
 						id="replacedID" name="replacedID" placeholder=""></input>
 				</div>
 
@@ -383,6 +400,7 @@
 				<label for="supracaudal">Supracaudal</label> <input type="number"
 						name="supracaudal" id="supracaudal" placeholder=""></input>
 				</div>
+				
 
 				<div>
 				<label for="devices">Devices</label> <input type="text"
@@ -425,7 +443,7 @@
 		</div>		
 	</div>
 
-
+	<!-- ASSOCIATE TURTLE POPUP -->
 	<div data-role="popup" id="associateTurtle" data-theme="a" class="ui-corner-all" data-overlay-theme="b" >
 		<div role="main" class="ui-content">
 	        <p>Do you want to associate this turtle with the nest you're recording now?</p>

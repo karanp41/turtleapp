@@ -6,15 +6,16 @@
 	<div role="main" class="ui-content">
 		<h3>Relocated nest (position B)</h3>
 		<form id="NestData">
+			<h4>Nest ID: <span id="relocateNestId" ></span> </h4>
 			<!-- <div class="ui-field-contain">
 				<label for="alt_loc">Altered location:</label> 
 				<input type="button" value="click for current position" 
 				onClick="altGetCurLoc();" name="alt_loc" id="alt_loc"></input>
 			</div> -->
 			<div class="ui-field-contain">
-				<label for="alterationTime">Alteration date:</label> 
+				<label for="alternationTime">Alteration date:</label> 
 				<!-- <input type="text" name="alterationTime" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="alt_date"></input> -->
-				<input type="date" name="alterationTime" id="alterationTime"></input>
+				<input type="date" name="alternationTime" id="alternationTime"></input>
 			</div>
 			
 			<div class="ui-field-contain">
@@ -95,9 +96,15 @@
 				</select>
 			</div>
 
+			<div class="ui-field-contain">
+				<label for="commentAlt">Comment</label>
+				<textarea name="commentAlt" id="commentAlt" placeholder=""></textarea>
+			</div>
+
 			<input type="hidden" name="alt_lat" 	id="lat" />
 			<input type="hidden" name="alt_long" 	id="long" />
 			<input type="hidden" name="id" 			id="primaryId">
+			<input type="hidden" name="isRelocate" 	id="isRelocate" value="true" >
 		</form>
 		<a href="#popupConfirmRelocate" id="loginButton" data-rel="popup" data-position-to="#popupConfirmRelocate" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
 	

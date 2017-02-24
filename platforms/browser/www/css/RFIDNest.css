@@ -252,3 +252,10 @@ span.nestlist-search-select {
 .delete-nest-image-edit{
     display: block;
 }
+.transform-to-caps{
+    text-transform:uppercase;
+}
+.h6-subtitle{
+    margin: 8px 0px 0 2px;
+    display: none;
+}
