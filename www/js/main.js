@@ -31,7 +31,11 @@ function mapInit(){
 	//		navigator.geolocation.getCurrentPosition(onLocationFound, function({alert("geo error");}));
 	}, 1);
 	//	map.on('click', onMapClick);
-	options = {maximumAge:600, timeout:50000, enableHighAccuracy: true};
+	options = {
+		maximumAge:600, 
+		timeout:50000, 
+		enableHighAccuracy: true
+	};
 	navigator.geolocation.getCurrentPosition(onLocationFoundMap, onLocationErrorMap, POS_OPTIONS);
 	//	navigator.geolocation.watchPosition(onLocationFound, function(){alert("no location found");}, options);
 	
@@ -226,6 +230,88 @@ function unflagNest(){
 		});
 	}	
 }
+
+function populateNneList(){
+	var networkState = navigator.connection.type;
+    if (networkState !== Connection.NONE) {
+    	var data = {user_id:localStorage.getItem('team_id')}
+    	currentBeachDetails = JSON.parse(localStorage.getItem("currentBeachDetails"))
+		if ( typeof currentBeachDetails == "object" && Object.keys(currentBeachDetails).length>0) {
+			data.beach_id = currentBeachDetails.Beach.id
+		}
+		$.ajax({
+			beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+			complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+			url: HOST + API_PATH + LIST_NNE,
+			data:data,
+			type: "POST",
+			success: function(data) {
+				$('#nneList').html('');
+				$.each( data.data, function( key, val ) {
+					console.log(key, val)
+					var html = "<li>"+
+						"<a href='#' onClick='editNNE(\""+val.Nest.id+"\");'><b>NNE ID:</b> "+val.Nest.NNE_ID+"<br /><b>NNE Date:</b> "+formateDate(val.Nest.nestingDate);
+						html += "</a></li>";
+					$('#nneList').append(html);					
+				});
+				
+				function refreshList(){
+				  	$('#nneList').listview("refresh");
+				}
+				setTimeout(refreshList, 500);
+			},
+			dataType:"json"
+		});
+		$('#offlineList').prev( "form" ).hide();
+    }else{
+    	showToast("Showing the local listing of Non Nesting Emergence.", 'bottom', 'long');
+    	// $('#nestList').prev( "form" ).hide();
+    	// readOfflineRecords('offlineRecordedNestNames','offlineList','carat-r','openNestDetailOffline')
+    }		
+}
+
+function editNNE(id){
+	console.log('id: '+id)
+	window.curTag = id;
+	window.currentNestId = id;
+	$("body").pagecontainer("change", "edit-nne.html", {reloadPage: true});
+
+
+	var requestData = {};
+	requestData.id = curTag;
+	$.ajax({
+		beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+		complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+		url: HOST + API_PATH + FIND_NESTS,
+		data:requestData,
+		type: "POST",
+		success: function(data) {
+			window.currentNestData = data;
+
+			var eventTime = (new Date(data.data.Nest.timestamp)).toDateString();
+			var nestingDate = (new Date(data.data.Nest.nestingDate)).toDateString();
+
+			$.ajax({
+				beforeSend: function() { $.mobile.loading('show'); }, //Show spinner
+				complete: function() { $.mobile.loading('hide'); }, //Hide spinner
+				url: HOST + API_PATH + LIST_NEST_EVENTS,
+				data:{rfid:data.data.Nest.rfid},
+				type:'POST',
+				success: function(data) {
+
+					window.currentNestEventsData = data.data;
+
+				},
+				dataType:"json"
+			});
+
+		},
+		dataType:"json"
+	});
+
+
+}
+
 
 function populateNestList(filter){
 	var networkState = navigator.connection.type;
@@ -434,9 +520,15 @@ function locateGSM(){
 
 function getCurLoc(){
 	if (watchID!=null)
-	navigator.geolocation.clearWatch(watchID);
-	options = {maximumAge:600, timeout:100000, enableHighAccuracy: true};
-	watchID = navigator.geolocation.watchPosition(onGotLocation, function(){ console.log("no location found"); }, options);
+		navigator.geolocation.clearWatch(watchID);
+	options = {
+		maximumAge:600, 
+		timeout:100000, 
+		enableHighAccuracy: true
+	};
+	watchID = navigator.geolocation.watchPosition(onGotLocation, function(){ 
+		console.log("no location found");
+	}, options);
 }
 
 function onGotLocation(position){
@@ -2862,20 +2954,20 @@ function scanOnceSuccess(rfid){
 
 function dummyRead(rfidSearch){
 	var random = Math.floor(Math.random() * (999 - 100)) + 100;
-	searchRFIDSuccess("3415AF99E800000000000"+random,rfidSearch)
+	searchRFIDSuccess("3415AF99E80000000"+random,rfidSearch)
+	searchRFIDSuccess("AF9D60000001DCD6553E",rfidSearch)
+	searchRFIDSuccess("3415AF99E80000000"+random,rfidSearch)
 	return "testing";
 }
 
 function searchRFIDSuccess(rfid,search){
 	var hex = rfid;
-	//alert(rfid+" "+search);
-	// alert('search: '+search);
 	navigator.notification.beep(1);
 	if (rfid==search){
 		navigator.notification.beep(2);
 	}
 	var requestData = {};
-	var output = "";
+	
 	requestData.id = rfid;
 	if ($.inArray(rfid,tags)==-1){
 		//	navigator.notification.beep(2);
@@ -2890,18 +2982,23 @@ function searchRFIDSuccess(rfid,search){
 			type: "POST",
 
 			success: function(data) {
-				// alert(JSON.stringify(data));
-				output += "<li id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" ("+hex+")</li>";
-				if (typeof data.data.Nest != "undefined"){
-					if (typeof data.data.Nest.NestID != "undefined"){
-						output = "<li id='"+hex+"' hex='"+hex+"'>"+data.data.Nest.NestID+" ("+hex+")</li>";
+				
+				console.log(data.data.length)
+				console.log(typeof data)
+				if (data.data.length != 0){
+					if (typeof data.data[0].Nest.NestID != "undefined"){
+						ASYNC_HTML_OUTPUT += "<li class='custom-li' id='"+hex+"' hex='"+hex+"'><strong>"+data.data[0].Nest.NestID+"</strong> ("+hex+")</li>";
 						
 						//				if (data.indexOf(search)>-1){
 						//					navigator.notification.beep(1)
 						//				}
 					}
+				}else{
+					ASYNC_HTML_OUTPUT += "<li class='custom-li new-tag-li' id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" ("+hex+")</li>";
 				}
-				$('#taglist').append(output).listview('refresh');
+
+
+				$('#taglist').append(ASYNC_HTML_OUTPUT).listview('refresh');
 				var selector = '#'+hex+'';
 				$(selector).on("click",nestListClick);
 				data=" "+data+" ";
@@ -4145,7 +4242,11 @@ $(document).on("pagecontainerbeforechange", function(e, data) {
 });
 
 function setNestIdOnTurtelForm() {
+	// FOR RECORD NEST SCREEN
 	$('#turtleNestId').html($('#NestID').val());
+	// FOR NON NESTING EMERGENCE SCREEN
+	$('#turtleNneId').html($('#NNE_ID').val());
+	
 	$('#tagid').val($('#turtleTagID').val());
 	$( "#popupAddTurtle" ).popup( "open" );
 	$("html, body").animate({ scrollTop: 0 }, "slow");

@@ -259,3 +259,10 @@ span.nestlist-search-select {
     margin: 8px 0px 0 2px;
     display: none;
 }
+
+.custom-li{
+    border-bottom: 2px solid #a2a2a2 !important;
+}
+.new-tag-li{
+    background: #e0dfdf !important;
+}

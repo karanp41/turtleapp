@@ -27,8 +27,8 @@ var polyline = null;
 var logOb = null;
 var LOGGERS_RFID_DATA = {};
 var SELECTED_RFID = '';
+var ASYNC_HTML_OUTPUT = "";
 
-// 3 pillar global
 
 /**********     OTHER CONSTANT    ********/
 
@@ -144,6 +144,7 @@ var GET_BEACH_LIST = 'getBeachList';
 
 var SAVE_NEST 		= 'saveNest';
 var LIST_NESTS 		= 'listNests';
+var LIST_NNE 		= 'listNNE';
 var FIND_NESTS 		= 'findNests';
 var FIND_NESTS_BY_RFID = 'NestByRFID';
 var REMOVE_FLAG 	= 'removeFlag';

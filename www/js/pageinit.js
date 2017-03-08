@@ -1,8 +1,8 @@
 $(document).on('pageinit','#recordNestPage', function(){	
 	getCurLoc();
 	getRecordNestInformation();
-	$('#rfid').val(curTag);
-	$('#rfidHEX').val(curTag);
+	// $('#rfid').val(curTag);
+	// $('#rfidHEX').val(curTag);
 	populateTurtlesList();
 	$("[name=turtleType]").click(function(){
 		setNestIdOnTurtelForm()
@@ -12,6 +12,19 @@ $(document).on('pageinit','#recordNestPage', function(){
         // $('.ui-block-c').hide();
         // $("#daysOperating-"+$(this).val()).show('slow');
         // ($(this).val()==1)? $('#depthOfProbeContainer').hide() : $("#depthOfProbeContainer").show('slow');
+    });
+});
+
+$(document).on('pageinit','#nonNestingEmergence', function(){	
+	getCurLoc();
+	getRecordNestInformation();
+	populateTurtlesList();
+	$("[name=turtleType]").click(function(){
+		setNestIdOnTurtelForm()
+		var val = $(this).val()
+		if (val==1) {$( "#popupAddTurtle" ).popup( "open" );$("html, body").animate({ scrollTop: 0 }, "slow")}
+		else{$( "#turtleTagID" ).focus()}	
+        
     });
 });
 
@@ -29,6 +42,12 @@ $(document).on("pagebeforehide","#recordNestPage",function(){
 });
 
 $(document).on('pageinit','#editNestPage', function(){
+	console.log('currentNestData: ', window.currentNestData)
+	getRecordNestInformation()	
+	setTimeout(function() {setNestFieldsValue()}, 100);
+});
+
+$(document).on('pageinit','#editNnePage', function(){
 	console.log('currentNestData: ', window.currentNestData)
 	getRecordNestInformation()	
 	setTimeout(function() {setNestFieldsValue()}, 100);
@@ -70,6 +89,13 @@ $(document).on('pageinit','#emergPage', function(){
 	// $('#nestID').val(nestID);
 });
 
+$(document).on('pageinit','#nonNestingEmergence', function(){
+	getCurLoc()
+	// if (window.currentNestEventsData) {
+	// 	setTimeout(function() {prefillCurrentNestEmergenceData()}, 100);
+	// }
+});
+
 $(document).on('pageinit','#uncoverPage', function(){
 	getCurLoc()
 	// $('#locationUncover').html(lat.toFixed(5)+", "+long.toFixed(5));
@@ -91,6 +117,10 @@ $(document).on('pageinit','#nestListPage', function(){
 	    }
 	});
 	populateNestList();
+});
+
+$(document).on('pageinit','#nneListPage', function(){
+	populateNneList();
 });
 
 $(document).on('pageinit','#nestInfoPage', function(){

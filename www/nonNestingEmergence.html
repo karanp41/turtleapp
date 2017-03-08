@@ -4,10 +4,405 @@
 		<h3>Non-Nesting Emergence</h3>
 	</div><!-- /header -->
 	<div role="main" class="ui-content">
-		<h3 style="text-align:center;">Under Progress!</h3>
-		<img src="./img/progress.png" style="margin:0 auto;" >
+		<p id="message" class="message"></p>
+		<form id="NestData">
+			<div class="ui-field-contain">
+				<label for="NNE_ID">Non Nesting Emergence ID:</label> 
+				<input name="NNE_ID" type="text" id="NNE_ID"></input>
+			</div>
+			<div class="ui-field-contain">
+				<label for="Specie">Species:</label> 
+				<select name="species" id="Specie">
+					<option value="0">Select Species</option>					
+				</select>
+			</div>
+			<hr />
+
+			<input type="hidden" name="is_nne" 		id="is_nne" value="1" ></input>
+			<input type="hidden" name="origLat" 	id="lat" />
+			<input type="hidden" name="origLong" 	id="long" />
+			<input type="hidden" name="accurazy" 	id="accurazy" />
+			<input type="hidden" name="alt_lat" 	id="alt_lat" />
+			<input type="hidden" name="alt_long" 	id="alt_long" />
+			<input type="hidden" name="alt_accurazy"  id="alt_accurazy"/>
+			
+
+			<div class="ui-field-contain">
+				<label for="turtleTagID">Turtle Tag ID:</label> 
+				<input name="turtleTagID" type="text" data-type="search" id="turtleTagID" ></input>
+				<input name="turtleId" type="hidden" id="turtleId" ></input>
+				<ul data-role="listview" id="turtlesAutoComplete" data-filter="true" data-filter-reveal="true" data-input="#turtleTagID">					
+				</ul>
+				<br>
+				<a href="#popupAddTurtle" id="addTurtleButton" onclick="setNestIdOnTurtelForm()" data-rel="popup" data-position-to="#popupAddTurtle" class="ui-btn ui-btn-b ui-corner-all add-turtle-button" data-theme="a" data-transition="pop">+ Measurements / Replace Tag(s)</a>
+			</div>
+
+				<!-- <h3>Original nest (Position A)</h3> -->
+				<div class="ui-field-contain">
+					<label for="nestingDate">Non Nesting Emergence date:</label> 
+					<input type="date" name="nestingDate" id="nestingDate"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="nestingTime">Non Nesting Emergence time:</label> 
+					<input type="time" name="nestingTime" data-inline="true" id="nestingTime"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="certain">How many days uncertain?:</label>
+					<select name="certain" id="certain">
+						<option value="0">SELECT</option>
+						<option value="<3hrs">2-3 days</option>
+						<option value="<6hrs">3-5 days</option>
+						<option value="<12hrs">More than 10 days</option>         
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="loc">Nest location:</label> 
+					<input type="button"
+						value="click for current position" onClick="getCurLoc();"
+						name="loc" id="loc"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="wetZone">Dist. wet zone (m):</label> 
+					<input type="number" id="wetZone" name="wetZone" onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="tideZone">Dist. high tide zone (m):</label> <input
+						type="number" id="tideZone" name="tideZone" onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"> </input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="drySand">Dist. dry zone (m):</label> <input
+						type="number" id="drySand" name="drySand"
+						onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"
+						> </input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="distanceFromSea">Distance from sea (m):</label> <input name="distanceFromSea"
+						type="number" id="distanceFromSea"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="vegetation">Dist. (m) to vegetation:</label> <input
+						type="number" id="vegetation" name="vegetation"> </input>
+				</div>
+	
+				<div class="ui-field-contain">
+					<label for="leftLandMark">Left landmark:</label> <select
+						name="leftLandMark" id="leftLandMark">
+						<option value="0">Select Left Landmark</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="leftMarkNum">Left landmark #:</label> <input
+						type="number" id="leftMarkNum" name="leftMarkNum"> </input>
+				</div>
+				<!-- <div class="ui-field-contain">
+					<label for="leftMarkDist">Left landmark distance (m):</label> <input
+						type="number" id="leftMarkDist" name="leftMarkDist"> </input>
+				</div> -->
+
+				<div class="ui-field-contain">
+					<label for="rightLandMark">Right Landmark:</label> <select
+						name="rightLandMark" id="rightLandMark">
+						<option value="0">Select Right Landmark</option>
+					</select>
+				</div>
+				<div class="ui-field-contain">
+					<label for="rightMarkNum">Right landmark #:</label> <input
+						type="number" id="rightMarkNum" name="rightMarkNum"> </input>
+				</div>
+				<!-- <div class="ui-field-contain">
+					<label for="rightMarkDist">Right landmark distance (m):</label> <input
+						type="number" id="rightMarkDist" name="rightMarkDist"> </input>
+				</div> -->
+
+				<div class="ui-field-contain">
+					<label for="nestLoc">Nest area:</label>
+					<select name="nestLoc" onchange="$('#nest-area-subtitle').show()" id="nestLoc">
+						<option value="0">Select Nest Area</option>
+					</select>
+					<h6 class="h6-subtitle" id="nest-area-subtitle"><b>If must empty ORIGINAL NEST</b></h6>
+				</div>
+
+
+				<div class="ui-field-contain">
+					<label for="heightOfWetSand">Height wet sand (cm):</label> <input
+						name="heightOfWetSand" type="number" id="heightOfWetSand"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="heightOfDrySand">Height dry sand (cm):</label> <input
+						type="number" name="heightOfDrySand" id="heightOfDrySand"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="dmgEggs"># damaged eggs:</label> <input type="number"
+						id="dmgEggs" name="dmgEggs"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="totEggs">Total # eggs:</label> <input type="number"
+						id="totEggs" name="totEggs"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="diaEggChamb">Diameter Egg Chamber (cm):</label> <input
+						type="number" id="diaEggChamb" name="diameterEggChamber"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="numberOfBodyPits"># of hole/body pits:</label> 
+					<input name="numberOfBodyPits" type="number"
+						id="numberOfBodyPits"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="gridCover">Nest covered with:</label> 
+					<select	name="gridCover" id="gridCover">
+						<option value="0">Select Nest cover</option>
+					</select>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="gridCover">Select Image:</label> 
+					<div class="ui-grid-b">
+				      <div class="ui-block-a">
+				        <img class="image-select-button" src="img/plus.png" onclick="captureImage('nestImage1',50,'base64','camera',400,400)" id="nestImage1">
+				      	<a onclick="confirmDeleteImageNewNest('nestImage1')" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext delete-nest-image">Delete</a>
+				      </div>
+				      <div class="ui-block-b">
+				      	
+				        <img class="image-select-button" src="img/plus.png" onclick="captureImage('nestImage2',50,'base64','camera',400,400)" id="nestImage2">
+				        <a onclick="confirmDeleteImageNewNest('nestImage2')" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext delete-nest-image">Delete</a>
+				      </div>
+				      <div class="ui-block-c">
+				      	
+				        <img class="image-select-button" src="img/plus.png" onclick="captureImage('nestImage3',50,'base64','camera',400,400)" id="nestImage3">
+				        <a onclick="confirmDeleteImageNewNest('nestImage3')" class="ui-btn ui-shadow ui-corner-all ui-icon-delete ui-btn-icon-notext delete-nest-image">Delete</a>
+				      </div>
+				    </div>
+				</div>
+
+
+				<div class="ui-field-contain">
+					<label for="trackShape">Track Shape:</label> 
+					<input type="text" id="trackShape" name="trackShape"></input>
+				</div>
+				<div class="ui-field-contain">
+					<label for="trackType">Track Type:</label> 
+					<input type="text" id="trackType" name="trackType"></input>
+				</div>
+
+				<div class="ui-field-contain">
+					<label for="comment">Comment:</label> <textarea name="comment" type="textarea" id="comment"></textarea>
+				</div>
+
+
+		</form>
+
+		<a href="#popupConfirm" id="loginButton" data-rel="popup" data-position-to="#popupConfirm" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Preview Data</a>
+		
+		<!-- POPUP TO DELETE IMAGE -->
+		<div data-role="popup" id="popupDialogDelete" data-overlay-theme="b" data-theme="b" data-dismissible="false" style="max-width:400px;">
+		    <div data-role="header" data-theme="a">
+		    <h1>Delete Image?</h1>
+		    </div>
+		    <div role="main" class="ui-content">
+		        <h3 class="ui-title">Are you sure you want to delete this image?</h3>
+		    <p>This action cannot be undone.</p>
+		        <a href="#" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back">Cancel</a>
+		        <a href="#" id="confirmDelete" class="ui-btn ui-corner-all ui-shadow ui-btn-inline ui-btn-b" data-rel="back" data-transition="flow">Delete</a>
+		    </div>
+		</div>
+
+	</div>
+
+
+	<div data-role="popup" id="popupConfirm" data-theme="a" class="ui-corner-all">
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<div class="summary-popup-form">				
+			<h3>Preview of Nest Data</h3>
+			<hr>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn" onClick="recordNewNest('new','1');">RECORD NOW</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">No, Need Corrections </a>
+		</div>
 	</div>
 	
-	<div data-role="footer" data-position="fixed">
+	<div data-role="popup" id="popupConfirm2" data-theme="a" class="ui-corner-all">
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<div class="summary-popup-form">
+			<h3>Preview of Nest Data</h3>
+			<div id="popupBasic" class="red-banner">
+			  	<p><b>NOTE:</b> You opting this because not sure where nest is, but it is likely here</p>
+			</div>
+			<hr>
+			<div id="summary2"></div>
+			<button class="ui-btn" id="unsuccessfulButton" onClick="recordNewNest('new','0');">RECORD NOW</button>
+			<a href="#" data-rel="back" data-role="button" data-theme="a"
+				data-icon="delete">Wait! Need Corrections </a>		
+		</div>
+	</div>
+
+
+	
+
+
+	<!-- ADD TURTLE POPUP -->
+	<div data-role="popup" id="popupAddTurtle" data-theme="a" class="ui-corner-all ui-content" data-overlay-theme="b">
+		<a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn ui-icon-delete ui-btn-icon-notext ui-btn-right">Close</a>
+		<div class="summary-popup-form">
+			<h3>Add Turtle Info</h3>
+			
+			<p id="message" class="message"></p>
+			<form id="turtleInfoForm">
+				<div>
+					<label>Non Nesting Emergence ID : <b id="turtleNneId"></b></label> 
+				</div>
+				<hr>
+
+				<div>
+					<label for="tagID">tag ID</label> <input type="text"
+						 id="tagid" name="tagID" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="rightflipper_tagid">Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid" id="rightflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid">Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid" id="leftflipper_tagid" class="transform-to-caps" placeholder=""></input>
+				</div>
+				<div>
+				<label for="rightflipper_tagid_replaced">Replaced Right Flipper Tag ID</label> <input type="text"
+						name="rightflipper_tagid_replaced" class="transform-to-caps" id="rightflipper_tagid_replaced" placeholder=""></input>
+				</div>
+				<div>
+				<label for="leftflipper_tagid_replaced">Replaced Left Flipper Tag ID</label> <input type="text"
+						name="leftflipper_tagid_replaced" class="transform-to-caps" id="leftflipper_tagid_replaced" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="taggingDate">Tagging date</label><input type="date"
+						name="taggingDate" id="taggingDate" placeholder=""></input>
+				</div>
+
+				<div>
+					<label for="replacedID">replaced tag ID</label> <input type="text"
+						id="replacedID" name="replacedID" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="replacedDate">Replaced date</label><input type="date"
+						name="replacedDate" id="replacedDate" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="nameOfMeasurer">Name of Measurer</label>
+				<input type="text"
+						name="nameOfMeasurer" id="nameOfMeasurer" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="straight_carapace_length">Straight Carapace Length</label> <input type="number"
+						name="straight_carapace_length" id="straight_carapace_length" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="straight_carapace_width">Straight Carapace Width</label> <input type="number"
+						name="straight_carapace_width" id="straight_carapace_width" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="curved_carapace_length">Curved Carapace Length</label> <input type="number"
+						name="curved_carapace_length" id="curved_carapace_length" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="curved_carapace_width">Curved Carapace Width</label> <input type="number"
+						name="curved_carapace_width" id="curved_carapace_width" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="nuchal">Nuchal</label> <input type="number"
+						name="nuchal" id="nuchal" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="costal_right">Costal Right</label> <input type="number"
+						name="costal_right" id="costal_right" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="costal_left">Costal Left</label> <input type="number"
+						name="costal_left" id="costal_left" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="marginal_right">Marginal Right</label> <input type="number"
+						name="marginal_right" id="marginal_right" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="vertbral">Vertebral</label> <input type="number"
+						name="vertbral" id="vertbral" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="marginal_left">Marginal Left</label> <input type="number"
+						name="marginal_left" id="marginal_left" placeholder=""></input>
+				</div>
+
+				<div>
+				<label for="supracaudal">Supracaudal</label> <input type="number"
+						name="supracaudal" id="supracaudal" placeholder=""></input>
+				</div>
+				
+
+				<div>
+					<label for="devices">Devices</label> <input type="text"
+						name="devices" id="devices" placeholder=""></input>
+				</div>
+				
+				<div>
+				<label for="notes">Notes</label> <textarea 
+						name="notes" id="notes" placeholder=""></textarea>
+				</div>
+				<a href="#" data-role="button" data-theme="b" onclick="openTurtleSummary()">Save</a>
+				
+			</form>			
+
+			<div class="summary-popup-form" style="visibility:hidden">
+				<h3>Summary of the data below. Submit?</h3>
+			</div>
+		</div>
+	</div>
+
+
+	<div data-role="popup" id="popupConfirmTurtleInfo" data-theme="a" class="ui-corner-all">
+		<div class="summary-popup-form">
+			<h3>Summary of the data below. Submit?</h3>
+			<div id="summary"></div>
+			<button id="successfulButton" class="ui-btn" onClick="saveTurtle('nest');">Record Now</button>
+			<button data-rel="back" data-role="button" data-theme="a" data-icon="delete">Wait! Need Corrections </button>
+		</div>
+	</div>
+
+	<div class="dismissible_poup">
+		<div id="summary_turtle"></div>
+		<div class="summary_button_wrapper">
+			<!-- <button id="successfulButton" class="ui-btn ui-btn-b" onClick="saveTurtle('nest');">Yes</button> -->
+			<a id="successfulButton" data-role="button" data-theme="b" data-icon="check" onClick="saveTurtle('nest');">RECORD NOW</a>
+			<a href="#" onclick="closeTurtleSummary()" data-role="button" data-theme="b" data-icon="delete">Wait! Need Corrections </a>
+		</div>		
+	</div>
+
+	<!-- ASSOCIATE TURTLE POPUP -->
+	<div data-role="popup" id="associateTurtle" data-theme="a" class="ui-corner-all" data-overlay-theme="b" >
+		<div role="main" class="ui-content">
+	        <p>Do you want to associate this turtle with the nest you're recording now?</p>
+	        <a onClick="associateTurtle()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-check">Yes, Associate</a>
+			<a onClick="doNotAssociateTurtle()" class="ui-shadow ui-btn ui-corner-all ui-btn-icon-left ui-icon-forbidden ui-btn-b" data-rel="back" data-transition="flow">No, Don't associate</a>
+	    </div>
 	</div>
 </div>
