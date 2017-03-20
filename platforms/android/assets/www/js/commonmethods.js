@@ -41,7 +41,7 @@ function captureImage(imageDiv, quality, destinationType, sourceType, targetWidt
           break;
   }
 
-  navigator.camera.getPicture(onSuccess, onFail, { 
+  navigator.camera.getPicture(onSuccess, onFail, {
     quality: quality,
     destinationType: destinationType,
     sourceType: sourceType,

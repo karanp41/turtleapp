@@ -1,3 +1,13 @@
+$(document).on("pagebeforeshow","#selectUser",function(){
+	console.log('before refresh')
+	$('.ui-select select').val('').selectmenu('refresh');
+});
+
+$(document).on("pagehide","#selectUser",function(){
+	console.log('after select user page hides')
+	$('.ui-select select').val('').selectmenu('refresh');
+});
+
 $(document).on('pageinit','#recordNestPage', function(){	
 	getCurLoc();
 	getRecordNestInformation();
@@ -42,9 +52,16 @@ $(document).on("pagebeforehide","#recordNestPage",function(){
 });
 
 $(document).on('pageinit','#editNestPage', function(){
-	console.log('currentNestData: ', window.currentNestData)
-	getRecordNestInformation()	
+	// console.log('currentNestData: ', window.currentNestData)
+	getRecordNestInformation();
 	setTimeout(function() {setNestFieldsValue()}, 100);
+});
+
+$(document).on('pageinit','#editNnePage', function(){
+	// console.log('nneNestId: ', window.nneNestId)
+	// console.log('currentNestData: ', window.currentNestData)
+	getRecordNestInformation()
+	setTimeout(function() {setNestFieldsValue()}, 500);
 });
 
 $(document).on('pageinit','#mainPage', function(){

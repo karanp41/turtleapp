@@ -1,6 +1,5 @@
-/**
- * 
- */
+/**********     PREVIOUS CONSTANTS    ********/
+
 var id="";
 var ownID="turleDemo";
 var interval=null;
@@ -132,6 +131,10 @@ var POS_OPTIONS_MINIFY = {
 var HOST = 'http://203.129.220.70:8005/';
 // var HOST = 'http://203.100.79.86:8005/';
 // var HOST = 'http://192.155.246.146:8292/';
+
+var SENDER_ID = 213999491046
+var SERVER_KEY = 'AAAAMdNdF-Y:APA91bHr1-h-jKj4UiV6vZQjLIYXHbGOZ17AXP9QNASVgkCNqNByGRDDEuDmbXPKZGP4GZE5QgrBKQnHGZXsSbuoirgsY6YqcVHGNkYPc--1-EPhIccYneyCe7iapsz6f7h3G5jGz18G';
+var LEGACY_SERVER_KEY = 'AIzaSyD-uGtmXShXwP_Tz1nB9aO0ZCS_BSGPxv0';
 
 var API_PATH = 'webservices/';
 // var API_PATH = 'application/ajax/';

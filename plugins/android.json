@@ -48,6 +48,10 @@
         },
         "cordova-plugin-keyboard": {
             "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
+        },
+        "phonegap-plugin-push": {
+            "SENDER_ID": "213999491046",
+            "PACKAGE_NAME": "com.hrafn.rfidnestingtesting"
         }
     },
     "dependent_plugins": {}
