@@ -247,7 +247,7 @@ function ajaxCall(requestData,type,serverUrl,dataType) {
 
 function formateDate(date) {
   var newDate = new Date(date)
-  return newDate.getDate()+'-'+newDate.getMonth()+'-'+newDate.getFullYear()
+  return newDate.getDate()+'-'+(newDate.getMonth()+1)+'-'+newDate.getFullYear()
 }
 
 function setDateOfField(date,field) {

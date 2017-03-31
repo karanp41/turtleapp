@@ -13,6 +13,31 @@
 				onClick="altGetCurLoc();" name="alt_loc" id="alt_loc"></input>
 			</div> -->
 			<div class="ui-field-contain">
+				<label for="relocatenestId">Nest ID</label> 
+				<input type="text" name="relocatenestId" id="relocatenestId" readonly=""></input>
+			</div>
+			<!-- <div class="ui-field-contain">
+				<label for="locationRelocate">Nest location:</label>
+				<p id="locationRelocate" class="message"><img src="img/loader-mini.gif"></p>
+			</div> -->
+			<div class="ui-field-contain">
+				<label for="loc">Relocated Nest position:</label>
+				<p id="locationRelocate" class="message"><img src="img/loader-mini.gif"></p>
+				<input type="button" value="click for current position" onClick="getCurLoc();" name="loc" id="loc" style="display:none"></input>					
+			</div>
+			<div class="ui-field-contain">
+				<label for="alt_lat">Latitude:</label>
+				<input type="text" name="alt_lat" id="alt_lat" readonly=""></input>
+				
+			</div>
+			<div class="ui-field-contain">
+				<label for="alt_long">Longitude:</label>
+				<input type="text" name="alt_long" id="alt_long" readonly=""></input>
+			</div>
+
+
+
+			<div class="ui-field-contain">
 				<label for="alternationTime">Alteration date:</label> 
 				<!-- <input type="text" name="alterationTime" data-role="date" data-inline="true" placeholder="YYYY-MM-DD" id="alt_date"></input> -->
 				<input type="date" name="alternationTime" id="alternationTime"></input>
@@ -101,12 +126,12 @@
 				<textarea name="commentAlt" id="commentAlt" placeholder=""></textarea>
 			</div>
 
-			<input type="hidden" name="alt_lat" 	id="lat" />
-			<input type="hidden" name="alt_long" 	id="long" />
+			<!-- <input type="hidden" name="alt_lat" 	id="lat" />
+			<input type="hidden" name="alt_long" 	id="long" /> -->
 			<input type="hidden" name="id" 			id="primaryId">
 			<input type="hidden" name="isRelocate" 	id="isRelocate" value="true" >
 		</form>
-		<a href="#popupConfirmRelocate" id="loginButton" data-rel="popup" data-position-to="#popupConfirmRelocate" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Successful</a>
+		<a href="#popupConfirmRelocate" id="loginButton" data-rel="popup" data-position-to="#popupConfirmRelocate" class="ui-btn ui-btn-b ui-corner-all" data-transition="pop">Record</a>
 	
 	</div>
 

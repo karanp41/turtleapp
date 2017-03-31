@@ -25,11 +25,11 @@
 			<hr />
 			<!-- <input id="dbid" type="hidden" disabled="disabled" name="dbid" value="new"></input> -->
 			<input type="hidden" id="rfidHEX" name="rfidHEX"></input>
-			<input type="hidden" name="origLat" 	id="lat" />
-			<input type="hidden" name="origLong" 	id="long" />
+			<!-- <input type="hidden" name="origLat" 	id="lat" /> -->
+			<!-- <input type="hidden" name="origLong" 	id="long" /> -->
 			<input type="hidden" name="accurazy" 	id="accurazy" />
-			<input type="hidden" name="alt_lat" 	id="alt_lat" />
-			<input type="hidden" name="alt_long" 	id="alt_long" />
+			<!-- <input type="hidden" name="alt_lat" 	id="alt_lat" /> -->
+			<!-- <input type="hidden" name="alt_long" 	id="alt_long" /> -->
 			<input type="hidden" name="alt_accurazy"  id="alt_accurazy"/>
 			<div class="ui-field-contain">
 				<label for="NestID">Nest ID:</label> 
@@ -77,11 +77,23 @@
 							<option value="<12hrs">More than 10 days</option>         
 						</select>
 				</div>
+
 				<div class="ui-field-contain">
-					<label for="loc">Nest location:</label> <input type="button"
-						value="click for current position" onClick="getCurLoc();"
-						name="loc" id="loc"></input>
+					<label for="loc">Nest location:</label> 
+					<input type="button" value="click for current position" onClick="getCurLoc();" name="loc" id="loc"></input>
 				</div>
+				<div class="ui-field-contain">
+					<label for="origLat">Latitude:</label>
+					<input type="text" name="origLat" id="origLat" readonly=""></input>
+					
+				</div>
+				<div class="ui-field-contain">
+					<label for="origLong">Longitude:</label>
+					<input type="text" name="origLong" id="origLong" readonly=""></input>
+				</div>
+
+				<Hr>
+
 				<div class="ui-field-contain">
 					<label for="wetZone">Dist. wet zone (m):</label> <input type="number"
 						id="wetZone" name="wetZone" onblur="$('#distanceFromSea').val(Number($('#tideZone').val())+Number($('#wetZone').val())+Number($('#drySand').val()));"> </input>

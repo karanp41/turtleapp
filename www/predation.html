@@ -1,6 +1,7 @@
 <div id="predationPage" data-role="page">
 	<div data-role="header"  data-position="fixed" >
-		<a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-b ui-corner-all ui-shadow">Home</a>		
+		<!-- <a href="index.html" class="ui-btn ui-icon-home ui-btn-icon-left ui-btn-b ui-corner-all ui-shadow">Home</a> -->
+		<a data-rel="back" class="ui-btn ui-corner-all ui-btn-b ui-shadow ui-icon-carat-l ui-btn-icon-left">Back</a>
 		<h3>Predation</h3>
 	</div><!-- /header -->
 	<div role="main" class="ui-content">
@@ -8,7 +9,7 @@
 		<form id="PredationData">
 			<div>
 				<label for="rfid">NEST tag rfid</label>
-				<input readonly type="text" name="rfid" id="rfid" ></input>
+				<input readonly type="text" name="rfid" id="rfid" value=""></input>
 				<input type="button" onClick="scanOnce()" value="Read TAG"></input>
 			</div>
 			<div>

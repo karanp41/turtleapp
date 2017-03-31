@@ -1,11 +1,6 @@
-$(document).on("pagebeforeshow","#selectUser",function(){
-	console.log('before refresh')
-	$('.ui-select select').val('').selectmenu('refresh');
-});
-
-$(document).on("pagehide","#selectUser",function(){
-	console.log('after select user page hides')
-	$('.ui-select select').val('').selectmenu('refresh');
+$(document).on("pagebeforeshow","#loginPage",function(){
+	$('#un').val('');
+	$('#pw').val('');
 });
 
 $(document).on('pageinit','#recordNestPage', function(){	
@@ -18,7 +13,7 @@ $(document).on('pageinit','#recordNestPage', function(){
 		setNestIdOnTurtelForm()
 		var val = $(this).val()
 		if (val==1) {$( "#popupAddTurtle" ).popup( "open" );$("html, body").animate({ scrollTop: 0 }, "slow")}
-		else{$( "#turtleTagID" ).focus()}	
+		else{$( "#turtleTagID" ).focus()}
         // $('.ui-block-c').hide();
         // $("#daysOperating-"+$(this).val()).show('slow');
         // ($(this).val()==1)? $('#depthOfProbeContainer').hide() : $("#depthOfProbeContainer").show('slow');
@@ -40,8 +35,8 @@ $(document).on('pageinit','#nonNestingEmergence', function(){
 
 $(document).on('pageinit','#relocateNestPage', function(){
 	getCurLoc();
-	getRecordNestInformation();
-	setTimeout(function() {setNestFieldsValue()}, 100);
+	getRecordNestInformation('setNestFieldsvalue');
+	// setTimeout(function() {setNestFieldsValue()}, 1000);
 });
 
 $(document).on("pagebeforehide","#recordNestPage",function(){
@@ -53,15 +48,15 @@ $(document).on("pagebeforehide","#recordNestPage",function(){
 
 $(document).on('pageinit','#editNestPage', function(){
 	// console.log('currentNestData: ', window.currentNestData)
-	getRecordNestInformation();
-	setTimeout(function() {setNestFieldsValue()}, 100);
+	getRecordNestInformation('setNestFieldsvalue');
+	// setTimeout(function() {setNestFieldsValue()}, 1000);
 });
 
 $(document).on('pageinit','#editNnePage', function(){
 	// console.log('nneNestId: ', window.nneNestId)
 	// console.log('currentNestData: ', window.currentNestData)
-	getRecordNestInformation()
-	setTimeout(function() {setNestFieldsValue()}, 500);
+	getRecordNestInformation('setNestFieldsvalue')
+	// setTimeout(function() {setNestFieldsValue()}, 500);
 });
 
 $(document).on('pageinit','#mainPage', function(){
@@ -82,11 +77,12 @@ $(document).on('pageshow','#mainPage', function(){
 
 $(document).on('pageinit','#predationPage', function(){	
 	// $('#rfid').val(curTag);
-	// $('#nestID').val(nestID);
+	$('#nestID').val(nestID);
+	$('#rfid').val(rfid);
 	getCurLoc()
 	fetchPredationData();
 	if (window.currentNestEventsData) {
-		setTimeout(function() {prefillCurrentNestPredationData()}, 100);
+		setTimeout(function() {prefillCurrentNestPredationData()}, 1000);
 	}
 });
 
@@ -94,10 +90,11 @@ $(document).on('pageinit','#emergPage', function(){
 	getCurLoc()
 	// $('#locationEmerg').html(lat.toFixed(5)+", "+long.toFixed(5));
 	if (window.currentNestEventsData) {
-		setTimeout(function() {prefillCurrentNestEmergenceData()}, 100);
+		setTimeout(function() {prefillCurrentNestEmergenceData()}, 1000);
 	}
 	// $('#rfid').val(curTag);
-	// $('#nestID').val(nestID);
+	$('#nestID').val(nestID);
+	$('#rfid').val(rfid);
 });
 
 $(document).on('pageinit','#nonNestingEmergence', function(){
@@ -111,7 +108,8 @@ $(document).on('pageinit','#uncoverPage', function(){
 	getCurLoc()
 	// $('#locationUncover').html(lat.toFixed(5)+", "+long.toFixed(5));
 	// $('#rfid').val(curTag);
-	// $('#nestID').val(nestID);
+	$('#nestID').val(nestID);
+	$('#rfid').val(rfid);
 });
 
 $(document).on('pageinit','#turtleInfo', function(){
@@ -218,7 +216,7 @@ $(document).on('pageinit','#experimentalTempRecord', function(){
 });
 
 $(document).on('pageinit','#selectUser', function(){
-	setTeamData()
+	// setTeamData()
 });
 
 $(document).on('pageinit','#offlineReadLoggerListPage', function(){
