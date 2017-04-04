@@ -705,11 +705,17 @@ function saveEventToFile(event){
 	});	
 }
 
-function saveEventToFileNest(data, fileNameToUpdate){
+function saveEventToFileNest(data, fileNameToUpdate, isNNE){
 
 	window.resolveLocalFileSystemURL(cordova.file.externalDataDirectory, function(dir) {
 		var fileDate = new Date();
-		var filename = "NEST_" + data.NestID + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		if(typeof isNNE != "undefined"){
+			var filename = "NEST_" + data.NNE_ID + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);
+		}
+		else{
+			var filename = "NEST_" + data.NestID + "_" + fileDate.getFullYear()+("0"+(fileDate.getMonth()+1)).slice(-2)+("0"+fileDate.getDate()).slice(-2)+("0"+fileDate.getHours()).slice(-2)+("0"+fileDate.getMinutes()).slice(-2);	
+		}
+		
 		    dir.getFile(filename + ".csv", {create:true}, function(file) {
 		        console.log("got the file", file);
 		        logOb = file;		        
@@ -2038,6 +2044,9 @@ function recordNewNest(type, successStatus){
 		}else if (type=='relocate') {
     		// FOR SAVING RELOCATE NEST DATA OFFLINE
     		saveRelocateOffline(requestData);
+		}else if (type=='nne') {
+    		// FOR SAVING NNE NEST DATA OFFLINE
+    		saveEventToFileNest(requestData, false, true);
 		}else{
 			// FOR SAVING NEW NEST DATA OFFLINE
 			saveEventToFileNest(requestData,false);
