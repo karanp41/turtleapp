@@ -53,6 +53,13 @@ input.not-ok-button{
     border-radius: 6px;
 }
 
+.green-banner {
+    background: rgba(69, 255, 0, 0.53);
+    color: #666;
+    padding: 0px 12px;
+    border-radius: 6px;
+}
+
 
 
 

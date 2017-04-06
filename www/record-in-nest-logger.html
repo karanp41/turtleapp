@@ -15,6 +15,17 @@
 				<input name="loggerRFID"  type="text" id="loggerRFID"></input>
 				<a onClick="readTempLoggerRFID();" href="#" data-role="button" data-theme="b" >Read Temperature sensor(s)</a>
 			</div>
+
+			<div class="ui-field-contain">
+				<label for="alt_lat">Latitude:</label>
+				<input type="text" name="latitude"  id="lat" readonly=""></input>
+				
+			</div>
+			<div class="ui-field-contain">
+				<label for="alt_long">Longitude:</label>
+				<input type="text" name="longitude" id="long" readonly=""></input>
+			</div>
+			
 			<div class="ui-field-contain">
 				<label for="loggerid">Temp Logger Id:</label>
 				<input name="loggerid"  type="text" id="loggerid"></input>
@@ -148,8 +159,8 @@
 
 			<hr />
 		
-			<input type="hidden" name="latitude"  id="lat" />
-			<input type="hidden" name="longitude" id="long" />
+			<!-- <input type="hidden" name="latitude"  id="lat" />
+			<input type="hidden" name="longitude" id="long" /> -->
 			<input type="hidden" name="tempRecordType" value="0" />
 			<input type="hidden" name="daysOperating" id="daysOperating" value="333" />
 			<!-- <input type="submit" class="ui-btn ui-btn-b ui-corner-all" value="Set & Start Recording" /> -->
