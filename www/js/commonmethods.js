@@ -84,7 +84,7 @@ function uploadFileToServer(ServerURI, fileURL, nativeURL, type){
       console.log("Code = " + r.responseCode);
       console.log("Response = " + r.response);
       console.log("Sent = " + r.bytesSent);
-      removeFile(fileURL, type)
+      // removeFile(fileURL, type)
   }
 
   function fail(error) {

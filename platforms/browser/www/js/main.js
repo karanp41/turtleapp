@@ -134,7 +134,11 @@ function putNestMarkers(latitude,longitude){
 				// 	fillColor: '#f03',
 				// 	fillOpacity: 0.5
 				// });
-				L.marker([val.Nest.origLat, val.Nest.origLong], {icon: greenIcon}).addTo(map).bindPopup("<b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+val.Nest.nestingDate+"<br/><button onClick='processTagDbId(\""+val.Nest.id+"\");' class='mapNestInfo' value='nestInfo'>Nest Info</button>");
+				var rfid = "";
+				if(typeof val.Nest.rfid != ""){
+					rfid = val.Nest.rfid.substring(val.Nest.rfid.length-6)
+				}
+				L.marker([val.Nest.origLat, val.Nest.origLong], {icon: greenIcon}).addTo(map).bindPopup("<b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+val.Nest.nestingDate+"<br/>RFID:..."+rfid+"<br/><button onClick='processTagDbId(\""+val.Nest.id+"\");' class='mapNestInfo' value='nestInfo'>Nest Info</button>");
 				// circle.bindPopup("<b>Nest ID: "+val.Nest.NestID+"</b><br />Nestingdate: "+val.Nest.nestingDate+"<br/><button onClick='processTag(\""+val.Nest.rfid+"\");' value='nestInfo'>nestInfo</button>").addTo(map);
 			});
 		},
@@ -3099,16 +3103,21 @@ function searchRFIDSuccess(rfid,search){
 				
 				console.log(data.data.length)
 				console.log(typeof data)
+
+				if(typeof hex != ""){
+					hex = hex.substring(hex.length-6)
+				}
+
 				if (data.data.length != 0){
 					if (typeof data.data[0].Nest.NestID != "undefined"){
-						ASYNC_HTML_OUTPUT += "<li class='custom-li' id='"+hex+"' hex='"+hex+"'><strong>"+data.data[0].Nest.NestID+"</strong> ("+hex+")</li>";
+						ASYNC_HTML_OUTPUT += "<li class='custom-li' id='"+hex+"' hex='"+hex+"'><strong>"+data.data[0].Nest.NestID+"</strong> (..."+hex+")</li>";
 						
 						//				if (data.indexOf(search)>-1){
 						//					navigator.notification.beep(1)
 						//				}
 					}
 				}else{
-					ASYNC_HTML_OUTPUT += "<li class='custom-li new-tag-li' id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" ("+hex+")</li>";
+					ASYNC_HTML_OUTPUT += "<li class='custom-li new-tag-li' id='"+hex+"' hex='"+hex+"'>"+"New Tag"+" (..."+hex+")</li>";
 				}
 
 
