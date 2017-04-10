@@ -1969,7 +1969,7 @@ function recordNewNest(type, successStatus){
 	if (requestData.totEggs < 0) {
 		showToast("Enter valid total eggs count", 'bottom', 'long');return;
 	}
-	if (type!="relocate") {
+	if (!(type =="relocate" || type == "flag")) {
 		if (!requestData.species||requestData.species==0) {
 			showToast("Specie is required", 'bottom', 'long');return;
 		}
@@ -1985,7 +1985,7 @@ function recordNewNest(type, successStatus){
 		requestData.beach_id = localStorage.getItem("current_beach_id");
 	}
 
-	if (type != "relocate") {
+	if (!(type =="relocate" || type == "flag")) {
 		if (typeof window['nestImage1']!='object') {
 			requestData.nestImage1 = window['nestImage1'].toString(); delete window['nestImage1'];
 			if (typeof window['nestImage1_id']!='object'&&requestData.id) {
