@@ -79,45 +79,48 @@ function getUrlVars(){
     return vars;
 }
 
-function uploadFileToServer(ServerURI, fileURL, nativeURL, type){
-  function win(r) {
-      console.log("Code = " + r.responseCode);
-      console.log("Response = " + r.response);
-      console.log("Sent = " + r.bytesSent);
-      // removeFile(fileURL, type)
-  }
+function uploadFileToServer(ServerURI, fileURL, nativeURL, type) {
+    function win(r) {
+        console.log("Code = " + r.responseCode);
+        console.log("Response = " + r.response);
+        console.log("Sent = " + r.bytesSent);
+        removeFile(fileURL, type);
+    }
 
-  function fail(error) {
-      // alert("An error has occurred: Code = " + error.code);
-      showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long')
-      console.log("upload error source " + error.source);
-      console.log("upload error target " + error.target);
-  }
+    function fail(error) {
+        // alert("An error has occurred: Code = " + error.code);
+        showToast("Error occured while syncing. Check your internet connection.", 'bottom', 'long')
+        console.log("upload error source " + error.source);
+        console.log("upload error target " + error.target);
+    }
 
-  var uri = encodeURI(ServerURI);
+    var uri = encodeURI(ServerURI);
 
-  var options = new FileUploadOptions();
-  options.fileKey="file";
-  options.fileName=fileURL.substr(fileURL.lastIndexOf('/')+1);
-  options.mimeType="text/plain";
+    var options = new FileUploadOptions();
+    options.fileKey = "file";
+    options.fileName = fileURL.substr(fileURL.lastIndexOf('/') + 1);
+    options.mimeType = "text/plain";
 
-  var headers={'headerParam':'headerValue'};
+    var headers = {
+        'headerParam': 'headerValue'
+    };
 
-  options.headers = headers;
+    options.headers = headers;
 
-  var ft = new FileTransfer();
-  ft.onprogress = function(progressEvent) {
-      showImageLoader()
-      if (progressEvent.lengthComputable) {
-        var loadValue = loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
-        console.log(loadValue)
-      } else {
-        loadingStatus.increment();
-      }
-  };
-  ft.upload(fileURL, uri, win, fail, options);
+    var ft = new FileTransfer();
+    ft.onprogress = function(progressEvent) {
+        showImageLoader();
+        /*
+        if (progressEvent.lengthComputable) {
+            var loadValue = loadingStatus.setPercentage(progressEvent.loaded / progressEvent.total);
+            console.log(loadValue)
+        } else {
+            loadingStatus.increment();
+        }
+        */
+    };
+      ft.upload(fileURL, uri, win, fail, options);
 }
-
 function removeFile(relativeFilePath, type) {
   // var relativeFilePath = "MyDir/file_name.png";
   var fileName = relativeFilePath.substr(relativeFilePath.lastIndexOf('/')+1);
@@ -270,9 +273,9 @@ function showImageLoader(){
 // SCANNING RFID
 function scanOnce(){
   rfidRunning = 1;
+  console.log("Hitesh Jain");
   Caenrfid.scanSingle(function(data){
     // showToast('Got the RFID.', 'bottom', 'long')
-    console.log('data',data)
     scanOnceSuccess(data.substring(0)+"");
   },function (err){
     console.log("error",err)

@@ -5,15 +5,15 @@ Caenrfid.prototype.scanRFID = function(success,error){ console.log("caenrfid.js:
 }
 Caenrfid.prototype.stopRFID = function(success,error){ console.log("caenrfid.js: stopRFID"); exec(success, error ,"Caenrfid","stopRFID",[]);
 }
-Caenrfid.prototype.readTemp = function(success,error,args){ 
-	console.log("caenrfid.js: readTemp"); 
+Caenrfid.prototype.readTemp = function(success,error,args){
+	console.log("caenrfid.js: readTemp");
 	exec(success, error ,"Caenrfid","readTemp",args);
 }
-Caenrfid.prototype.restartTemp = function(success,error,args){ 
-	console.log("caenrfid.js: restartTemp"); 
+Caenrfid.prototype.restartTemp = function(success,error,args){
+	console.log("caenrfid.js: restartTemp");
 	exec(success, error ,"Caenrfid","restartTemp",args);
 }
-Caenrfid.prototype.scanSingle = function(success,error){ console.log("caenrfid.js: scanSingle"); exec(success, error ,"Caenrfid","scanSingle",[]);
+Caenrfid.prototype.scanSingle = function(success,error,args){ console.log("caenrfid.js: scanSingle"); exec(success, error ,"Caenrfid","scanSingle",args);
 }
 
 var Caenrfid = new Caenrfid();

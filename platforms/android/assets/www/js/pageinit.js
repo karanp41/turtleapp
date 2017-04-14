@@ -6,7 +6,7 @@ $(document).on("pagebeforeshow","#loginPage",function(){
 $(document).on('pageinit','#recordNestPage', function(){	
 	getCurLoc();
 	getRecordNestInformation();
-	// $('#rfid').val(curTag);
+	$('#rfid').val(curTag);
 	// $('#rfidHEX').val(curTag);
 	populateTurtlesList();
 	$("[name=turtleType]").click(function(){
@@ -223,14 +223,16 @@ $(document).on('pageinit','#offlineReadLoggerListPage', function(){
 	listOfflineReadLoggers()
 });
 
-$(document).on('pageinit','#tempDataInfoPage', function(){
+$(document).on('pageshow','#tempDataInfoPage', function(){
 	tempDataDetails()
 });
 
 $(document).on("pagebeforehide","#tempDataInfoPage",function(){
-	// if (plotTemp) {
-	// 	plotTemp.destroy();
-	// }
+	/*
+	if (plotTemp) {
+	 	plotTemp.destroy();
+	}
+	*/
 });
 
 /*

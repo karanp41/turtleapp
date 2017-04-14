@@ -33,14 +33,16 @@
 
 			<div class="ui-field-contain">
 				<label for="rfid">Nest Tag RFID:</label>
-				<input name=rfid  type="text" id="rfid"></input>
+				<input name=rfid  type="text" id="rfid" readonly="readonly"></input>
 				<!-- <input type="button" onClick="scanOnce()" value="Read TAG"></input> -->
 				<a onClick="scanOnce();" href="#" data-role="button" data-theme="b" >Read Nest Tag</a>
 			</div>
 
 			<div class="ui-field-contain">
 				<label for="nestId">Nest ID:</label> 
-				<input name="nestId" type="text" id="nestId"></input>
+				<input name="nestId" type="text" id="nestId" readonly="readonly" ></input>
+				<!-- Nest Primary Key -->
+				<input name="nest_id" type="hidden" id="nest_id" ></input> 
 			</div>
 		
 			<div class="ui-field-contain">
